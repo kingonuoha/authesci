@@ -1,0 +1,32 @@
+/* Template Name: Wesoon - Coming Soon HTML Template
+   Author: Shreethemes
+   Email: support@shreethemes.in
+   Website: https://shreethemes.in
+   Version: 1.0.0
+   Created: Feb 2022
+   File Description: Main Css file of the template
+*/
+
+/*********************************/
+/*         INDEX                 */
+/*================================
+ *     01.  Variables            *
+ *     02.  General              *
+ *     03.  Helper               *
+ *     04.  Bootstrap Custom     *
+ *     05.  Components           *
+ *     06.  Menu                 *
+ *     07.  Home / Landing       *
+ *     08.  Features             *
+ *     09.  Contact              *
+ ================================*/
+
+@import "variables";
+@import "general";
+@import "helper";
+@import "bootstrap-custom";
+@import "components";
+@import "menu";
+@import "home";
+@import "features";
+@import "contact";
