@@ -1,0 +1,262 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SCIENTIST
+  EMPLOYER
+  COLLABORATOR
+  ADMIN
+}
+
+enum JobType {
+  REMOTE
+  HYBRID
+  ON_SITE
+  CONTRACT
+}
+
+enum JobStatus {
+  DRAFT
+  PENDING_PAYMENT
+  ACTIVE
+  CLOSED
+}
+
+enum ApplicationStatus {
+  PENDING
+  SHORTLISTED
+  REJECTED
+  ACCEPTED
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum TaskStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+}
+
+enum PaymentStatus {
+  PENDING
+  FUNDED
+  RELEASED
+  CANCELLED
+}
+
+enum CollaboratorStatus {
+  ACTIVE
+  REMOVED
+  LEFT
+}
+
+model Profile {
+  id               String          @id @default(uuid())
+  userId           String          @unique
+  email            String          @unique
+  fullName         String          @map("full_name")
+  role             Role
+  bio              String?
+  skills           String[]        @default([])
+  experience       String?
+  cvUrl            String?         @map("cv_url")
+  avatarUrl        String?         @map("avatar_url")
+  institution      String?
+  publications     String[]        @default([])
+  certifications   String[]        @default([])
+  completionScore  Int             @default(0) @map("completion_score")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  jobsPosted       Job[]           @relation("JobsPosted")
+  applications     Application[]   @relation("Applications")
+  projectsCreated  Project[]       @relation("ProjectsCreated")
+  collaborations   Collaborator[]  @relation("Collaborations")
+  notifications    Notification[]  @relation("Notifications")
+  projectFiles     ProjectFile[]   @relation("ProjectFiles")
+  tasks            Task[]          @relation("Tasks")
+  projectActivities ProjectActivity[] @relation("ProjectActivities")
+  paymentsAsEmployer Payment[]       @relation("PaymentsAsEmployer")
+  paymentsAsScientist Payment[]       @relation("PaymentsAsScientist")
+
+  @@map("profiles")
+}
+
+model Job {
+  id           String        @id @default(uuid())
+  employerId   String        @map("employer_id")
+  title        String
+  description  String
+  requirements String[]      @default([])
+  category     String?
+  jobType      JobType       @map("job_type")
+  location     String?
+  salaryRange  String?       @map("salary_range")
+  status       JobStatus     @default(DRAFT)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  employer     Profile       @relation("JobsPosted", fields: [employerId], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  @@map("jobs")
+}
+
+model Application {
+  id            String            @id @default(uuid())
+  jobId         String            @map("job_id")
+  applicantId   String            @map("applicant_id")
+  coverLetter   String?           @map("cover_letter")
+  resumeUrl     String?           @map("resume_url")
+  status        ApplicationStatus @default(PENDING)
+  shortlistedAt DateTime?         @map("shortlisted_at")
+  rejectedAt    DateTime?         @map("rejected_at")
+  contactedAt   DateTime?         @map("contacted_at")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  job           Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicant     Profile           @relation("Applications", fields: [applicantId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, applicantId])
+  @@map("applications")
+}
+
+model Project {
+  id           String         @id @default(uuid())
+  creatorId    String         @map("creator_id")
+  title        String
+  description  String
+  budget       Decimal?       @db.Decimal(10, 2)
+  status       ProjectStatus  @default(ACTIVE)
+  hasQuestions Boolean        @default(false) @map("has_questions")
+  deletedAt    DateTime?      @map("deleted_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  creator      Profile        @relation("ProjectsCreated", fields: [creatorId], references: [id], onDelete: Cascade)
+  collaborators Collaborator[]
+  files        ProjectFile[]
+  tasks        Task[]
+  questions    ProjectQuestion[]
+  activities   ProjectActivity[]
+  payments     Payment[]
+
+  @@map("projects")
+}
+
+model Collaborator {
+  id         String             @id @default(uuid())
+  projectId  String             @map("project_id")
+  userId     String             @map("user_id")
+  role       String
+  permissions String[]           @default(["view"])
+  status     CollaboratorStatus @default(ACTIVE)
+  joinedAt   DateTime           @default(now()) @map("joined_at")
+  project    Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user       Profile            @relation("Collaborations", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("collaborators")
+}
+
+model ProjectFile {
+  id          String   @id @default(uuid())
+  projectId   String   @map("project_id")
+  uploadedBy  String   @map("uploaded_by")
+  fileName    String   @map("file_name")
+  fileUrl     String   @map("file_url")
+  fileType    String   @map("file_type")
+  fileSize    Int?
+  createdAt   DateTime @default(now()) @map("created_at")
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  uploader    Profile  @relation("ProjectFiles", fields: [uploadedBy], references: [id], onDelete: Cascade)
+
+  @@map("project_files")
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  projectId   String     @map("project_id")
+  assignedTo  String?    @map("assigned_to")
+  title       String
+  description String?
+  status      TaskStatus @default(OPEN)
+  dueDate     DateTime?  @map("due_date")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee    Profile?   @relation("Tasks", fields: [assignedTo], references: [id])
+
+  @@map("tasks")
+}
+
+model ProjectQuestion {
+  id           String  @id @default(uuid())
+  projectId    String  @map("project_id")
+  questionText String  @map("question_text")
+  required     Boolean
+  orderIndex   Int?    @map("order_index")
+  project      Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_questions")
+}
+
+model ProjectActivity {
+  id        String   @id @default(uuid())
+  projectId String   @map("project_id")
+  userId    String   @map("user_id")
+  action    String
+  metadata  Json?    @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at")
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      Profile  @relation("ProjectActivities", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("project_activity")
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  projectId   String        @map("project_id")
+  employerId  String        @map("employer_id")
+  scientistId String        @map("scientist_id")
+  amount      Decimal       @db.Decimal(10, 2)
+  status      PaymentStatus @default(PENDING)
+  reference   String?       @unique
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employer    Profile       @relation("PaymentsAsEmployer", fields: [employerId], references: [id], onDelete: Cascade)
+  scientist   Profile       @relation("PaymentsAsScientist", fields: [scientistId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  type      String
+  message   String
+  read      Boolean  @default(false)
+  metadata  Json?    @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at")
+  user      Profile  @relation("Notifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  source    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("subscriptions")
+}

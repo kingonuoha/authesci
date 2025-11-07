@@ -1,0 +1,165 @@
+{
+	"meta": {
+		"generatedAt": "2025-11-07T02:52:29.538Z",
+		"tasksAnalyzed": 19,
+		"totalTasks": 19,
+		"analysisCount": 19,
+		"thresholdScore": 5,
+		"projectName": "Taskmaster",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Install Prisma and Prisma Client Dependencies",
+			"complexityScore": 1,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "This is a very straightforward task involving a single `npm install` command. The effort is minimal, and the technical challenge is negligible. Verification is also quick and simple."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Initialize Prisma Configuration",
+			"complexityScore": 3,
+			"recommendedSubtasks": 1,
+			"expansionPrompt": "Break down the initialization process into generating the Prisma directory and then meticulously configuring the `.env.local` file with Supabase-specific connection strings, including `pgbouncer=true` and `connection_limit=1`, and other environment variables.",
+			"reasoning": "While running `npx prisma init` is simple, the detailed configuration of `.env.local` with specific Supabase `DATABASE_URL` and `DIRECT_URL` (including `pgbouncer=true` and `connection_limit=1`) requires careful attention and potential lookup of external Supabase project details. Incorrect configuration here can lead to connection issues later."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Create Prisma Singleton Client Utility",
+			"complexityScore": 2,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "The task provides a complete and well-established code snippet for implementing a Prisma singleton in a Next.js environment. It primarily involves creating a new file and copying the provided code, requiring minimal implementation effort or technical challenge."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Add Prisma CLI Scripts to package.json",
+			"complexityScore": 1,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "This is a simple text editing task within `package.json`. The scripts are clearly defined and just need to be added to the existing JSON structure. Minimal effort and no technical challenge."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Define Complete Prisma Schema Models",
+			"complexityScore": 8,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Expand into defining core models and their scalar fields, then establishing all relationships, and finally adding enums, unique constraints, `@@map` directives, and soft-delete fields across the entire schema.",
+			"reasoning": "This is a high-complexity task as it involves translating a comprehensive database design into Prisma's Schema Definition Language. It requires meticulous attention to detail for each model, field type, relationship (`@relation`), enum, unique constraint (`@@unique`), default values, UUIDs, `@@map` directives, and soft-delete implementations. Errors here will impact all subsequent database operations."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Generate Initial Database Migration",
+			"complexityScore": 4,
+			"recommendedSubtasks": 1,
+			"expansionPrompt": "Break down the task into executing the `prisma migrate dev` command with the appropriate name, and then performing a thorough review of the generated SQL migration file to ensure it accurately reflects the intended schema changes before proceeding.",
+			"reasoning": "While the command `npx prisma migrate dev` is straightforward, the critical aspect is the subsequent review of the generated SQL migration file. This step requires careful inspection to ensure the schema changes match the design from Task 5 and will correctly configure the database. This review can be time-consuming and requires basic SQL understanding."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Verify Applied Migration in Supabase and Generate Prisma Client Types",
+			"complexityScore": 2,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "This task is primarily a verification step. Visually inspecting the Supabase dashboard and confirming TypeScript auto-completion in an IDE are quick checks. Prisma Client types are generated automatically by previous steps, so this task just confirms their success."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Install Supabase SSR Dependencies",
+			"complexityScore": 1,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "Similar to Task 1, this is a basic package installation using `npm install`. The effort is minimal, and the technical challenge is negligible. Verification involves checking `package.json`."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "Create Supabase Server Component Client Utility",
+			"complexityScore": 2,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "The task provides a complete code snippet for a standard Supabase client utility in Next.js Server Components. It involves creating a new file and copying the provided code, with minimal technical challenge."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "Create Supabase Client Component Utility",
+			"complexityScore": 2,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "Similar to Task 9, this involves creating a new file and copying the provided standard code for a Supabase client in Next.js Client Components. Minimal effort and low technical risk."
+		},
+		{
+			"taskId": 11,
+			"taskTitle": "Create Supabase Middleware Client Utility",
+			"complexityScore": 2,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "Again, this task involves creating a new file and copying a provided, standard code snippet for a Supabase client utility specifically for Next.js middleware. Minimal effort and low technical challenge."
+		},
+		{
+			"taskId": 12,
+			"taskTitle": "Update Next.js Middleware for Supabase Session Refresh",
+			"complexityScore": 5,
+			"recommendedSubtasks": 2,
+			"expansionPrompt": "Break down the task into integrating the `createClient` and `supabase.auth.getSession()` logic into the `middleware.ts` file, and then meticulously configuring the `matcher` export to ensure the middleware applies to the correct paths.",
+			"reasoning": "This task involves modifying a critical Next.js file (`middleware.ts`) that affects all requests. While the code is provided, correctly integrating it and especially configuring the `matcher` for optimal performance and behavior requires careful attention. Testing involves observing network behavior for cookie updates, adding to complexity."
+		},
+		{
+			"taskId": 13,
+			"taskTitle": "Remove Old Basic Supabase Client",
+			"complexityScore": 3,
+			"recommendedSubtasks": 1,
+			"expansionPrompt": "Expand into deleting the `lib/supabase.ts` file, and then performing a codebase-wide search to identify and update any lingering imports or references to the old client to point to the new SSR-compatible client utilities.",
+			"reasoning": "Deleting a file is simple, but the complexity lies in ensuring that no other parts of the codebase still import or rely on the old client. This requires a thorough search (Grep tool) and potential refactoring of other files, which can introduce unexpected issues if not handled carefully."
+		},
+		{
+			"taskId": 14,
+			"taskTitle": "Implement Database Error Handling Helpers",
+			"complexityScore": 2,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "The task involves creating a new file and copying the provided code for Prisma error handling. It's a self-contained utility and primarily a copy-paste operation, with clear examples of how to extend it."
+		},
+		{
+			"taskId": 15,
+			"taskTitle": "Export Prisma Type Helpers",
+			"complexityScore": 2,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "This task is about creating a new file and copying the provided code to centralize and re-export Prisma-generated types. It's a straightforward organization task for type safety and code consistency, requiring minimal effort."
+		},
+		{
+			"taskId": 16,
+			"taskTitle": "Create Prisma Seed Script for Test Data",
+			"complexityScore": 5,
+			"recommendedSubtasks": 2,
+			"expansionPrompt": "Break down the task into creating the basic `prisma/seed.ts` structure and implementing seeding for initial core models (e.g., Profile, Job), then expanding it to include comprehensive test data for all defined models, ensuring correct relationships and realistic values.",
+			"reasoning": "While example code is provided, creating a comprehensive seed script that populates all defined models with meaningful and interconnected test data (e.g., profiles, jobs, applications, payments, etc.) can be time-consuming. It requires careful coding to establish relationships correctly and ensure data consistency, building upon the schema defined in Task 5."
+		},
+		{
+			"taskId": 17,
+			"taskTitle": "Configure Seed Script Execution and Add Prisma Studio Script",
+			"complexityScore": 1,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "No expansion needed.",
+			"reasoning": "This task involves a simple `npm install` command for `tsx` and adding two lines to `package.json`. It's a quick and easy configuration task with minimal impact and straightforward verification."
+		},
+		{
+			"taskId": 18,
+			"taskTitle": "Update Prisma Integration Documentation",
+			"complexityScore": 7,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Expand into outlining the document structure, drafting content for Prisma installation, configuration, and schema definition, and then drafting content for Prisma Client usage, Supabase SSR client context, utilities, development scripts, and troubleshooting tips.",
+			"reasoning": "This task requires synthesizing a significant amount of technical information from nearly all preceding tasks into a comprehensive, clear, and accurate documentation. It demands strong writing skills, a deep understanding of the entire integration, and careful organization to be useful for new developers. This is intellectually demanding, even if not coding."
+		},
+		{
+			"taskId": 19,
+			"taskTitle": "Create Database Schema Reference Documentation",
+			"complexityScore": 6,
+			"recommendedSubtasks": 2,
+			"expansionPrompt": "Break down the task into outlining the document's structure and detailing each model's fields and types, then focusing on thoroughly documenting all relationships, enums, unique constraints, and naming conventions within the database schema.",
+			"reasoning": "This task involves creating a detailed reference document directly from `prisma/schema.prisma`. While based on existing definitions, presenting the schema clearly, explaining complex relationships, enums, constraints, and naming conventions in an easily digestible format for developers requires careful writing, formatting, and attention to detail to ensure accuracy and completeness."
+		}
+	]
+}

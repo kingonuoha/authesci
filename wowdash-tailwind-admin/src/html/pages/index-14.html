@@ -1,0 +1,1080 @@
+<!-- meta tags and other links -->
+@@include('../partial-html/_template-top.html')
+@@include('../layouts/_sidebar.html')
+
+<main class="dashboard-main">
+    @@include('../layouts/_nav.html')
+
+    <div class="dashboard-main-body">
+
+        @@include('../layouts/_breadcrumb.html',{
+        pageTitle: "Podcast",
+        activePage: "Podcast"
+        })
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div class="col-span-12 lg:col-span-5 2xl:col-span-4">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div class="col-span-12 md:col-span-6 lg:col-span-12">
+                        <div class="bg-white dark:bg-dark-2 rounded-xl py-5 px-6 shadow">
+                            <div class="flex items-center justify-between">
+                                <div class="">
+                                    <span class="text-secondary-light mb-2">Total Users</span>
+                                    <div class="flex items-center gap-3">
+                                        <h6 class="mb-0">17,500</h6>
+                                        <div
+                                            class="flex items-center gap-1 font-semibold text-success-600 dark:text-success-500">
+                                            <span class="text-success-600 dark:text-success-500">+2.5%</span>
+                                            <i class="ri-arrow-up-line"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span
+                                    class="w-[60px] h-[60px] bg-primary-600 text-white rounded-[50%] flex justify-center items-center text-2xl shadow-[0px_17px_30px_-4px_rgba(72,127,255,0.4)]">
+                                    <i class="ri-group-fill"></i>
+                                </span>
+                            </div>
+
+                            <div class="mt-[32px] flex items-center justify-between gap-3 flex-wrap">
+                                <div class="py-2 px-3 rounded-md bg-gradient-to-t from-blue-500/15 to-bg-white grow">
+                                    <span class="text-secondary-light mb-2 text-sm">Active User:</span>
+                                    <h6 class="mb-0 text-xl">3,500</h6>
+                                </div>
+                                <div class="py-2 px-3 rounded-md bg-gradient-to-t from-cyan-500/15 to-bg-white grow">
+                                    <span class="text-secondary-light mb-2 text-sm">New Sign ups:</span>
+                                    <h6 class="mb-0 text-xl">5,700</h6>
+                                </div>
+                                <div class="py-2 px-3 rounded-md bg-gradient-to-t from-purple-500/15 to-bg-white grow">
+                                    <span class="text-secondary-light mb-2 text-sm">Subscribed:</span>
+                                    <h6 class="mb-0 text-xl">8,000</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-12 md:col-span-6 lg:col-span-12">
+                        <div class="bg-white dark:bg-dark-2 rounded-xl py-5 px-6 shadow">
+                            <div class="flex items-center justify-between">
+                                <div class="">
+                                    <span class="text-secondary-light mb-2">Total Podcasts</span>
+                                    <div class="flex items-center gap-3">
+                                        <h6 class="mb-0">450</h6>
+                                        <div
+                                            class="flex items-center gap-1 font-semibold text-success-600 dark:text-success-500">
+                                            <span class="text-success-600 dark:text-success-500">+2.5%</span>
+                                            <i class="ri-arrow-up-line"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span
+                                    class="w-[60px] h-[60px] bg-warning-600 text-white rounded-[50%] flex justify-center items-center text-2xl shadow-[0px_17px_30px_-4px_rgba(255,159,41,0.4)]">
+                                    <i class="ri-mic-fill"></i>
+                                </span>
+                            </div>
+
+                            <div class="mt-[32px] flex items-center justify-between gap-3 flex-wrap">
+                                <div class="py-2 px-3 rounded-md bg-gradient-to-t from-danger-500/15 to-bg-white grow">
+                                    <span class="text-secondary-light mb-2 text-sm">Trending:</span>
+                                    <h6 class="mb-0 text-xl">60</h6>
+                                </div>
+                                <div class="py-2 px-3 rounded-md bg-gradient-to-t from-warning-500/15 to-bg-white grow">
+                                    <span class="text-secondary-light mb-2 text-sm">Free Podcasts:</span>
+                                    <h6 class="mb-0 text-xl">240</h6>
+                                </div>
+                                <div class="py-2 px-3 rounded-md bg-gradient-to-t from-success-500/15 to-bg-white grow">
+                                    <span class="text-secondary-light mb-2 text-sm">Premium:</span>
+                                    <h6 class="mb-0 text-xl">150</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 lg:col-span-7 2xl:col-span-8">
+                <div class="bg-white dark:bg-dark-2 rounded-xl py-5 px-6 shadow h-full">
+                    <div class="flex items-center flex-wrap gap-2 justify-between">
+                        <h6 class="mb-0 font-bold text-lg">Audience Stats</h6>
+                        <select
+                            class="form-select form-select-sm w-auto bg-white dark:bg-dark-2 border text-secondary-light radius-8">
+                            <option>Yearly</option>
+                            <option>Monthly</option>
+                            <option>Weekly</option>
+                            <option>Today</option>
+                        </select>
+                    </div>
+                    <ul class="flex flex-wrap items-center justify-center mt-18 gap-4">
+                        <li class="flex items-center gap-2">
+                            <span class="w-[10px] h-[6px] rounded-[50rem] bg-primary-600"></span>
+                            <span class="text-secondary-light text-sm font-medium d-inline-flex items-center gap-1">
+                                Total Audience:
+                                <span class="text-primary-light text-xl font-bold">26,201</span>
+                            </span>
+                        </li>
+                    </ul>
+                    <div class="mt-6">
+                        <div id="paymentStatusChart" class=""></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 lg:col-span-4">
+                <div class="bg-white dark:bg-dark-2 rounded-xl py-5 px-6 shadow h-full mb-5">
+                    <div class="flex items-center flex-wrap gap-2 justify-between">
+                        <h6 class="mb-0 font-bold text-lg">Earnings Overview</h6>
+                        <select
+                            class="form-select form-select-sm w-auto bg-white dark:bg-dark-2 border text-secondary-light radius-8">
+                            <option>Yearly</option>
+                            <option>Monthly</option>
+                            <option>Weekly</option>
+                            <option>Today</option>
+                        </select>
+                    </div>
+                    <ul class="flex flex-wrap items-center justify-center mt-6 gap-4">
+                        <li class="flex items-center gap-2">
+                            <span class="w-[8px] h-[8px] rounded-[50%] bg-primary-600"></span>
+                            <span class="text-secondary-light text-sm font-medium d-inline-flex items-center gap-1">
+                                Income:
+                                <span class="text-primary-light text-xl font-bold">$26,201</span>
+                            </span>
+                            <div class="flex items-center gap-1 font-semibold text-success-600 dark:text-success-500">
+                                <span class="text-success-600 dark:text-success-500">10%</span>
+                                <i class="ri-arrow-up-s-fill"></i>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="mt-6">
+                        <div id="revenueChart" class="apexcharts-tooltip-style-1"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 lg:col-span-8">
+                <div class="bg-white dark:bg-dark-2 rounded-xl py-5 px-6 shadow h-full">
+                    <div
+                        class="flex items-center flex-wrap gap-2 justify-between border-b border-neutral-200 dark:border-neutral-600 mb-6 pb-4">
+                        <h6 class="mb-0 font-bold text-lg">Recently Played</h6>
+                        <a href="javascript:void(0)"
+                            class="text-primary-600 hover:text-blue-600 dark:text-blue-500 hover:underline flex items-center gap-1">
+                            View All
+                            <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                        </a>
+                    </div>
+                    <div class="mt-5">
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                            <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+                                <div class="">
+                                    <div class="radius-8 overflow-hidden relative">
+                                        <img src="assets/images/home-fourteen/podcast-img1.png" alt="Thumb"
+                                            class="w-full h-full object-fit-cover">
+                                        <a href="javascript:void(0)"
+                                            class="w-[28px] h-[24px] text-white bg-white bg-opacity-50 flex justify-center items-center absolute start-0 bottom-0 ms-2.5 mb-2.5 rounded-md hover:bg-white hover:text-[#000] text-lg">
+                                            <i class="ri-play-fill leading-none flex"></i>
+                                        </a>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-base mb-0">Talk show </h6>
+                                        <span class="text-sm text-secondary-light">Esther Howard</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+                                <div class="">
+                                    <div class="radius-8 overflow-hidden relative">
+                                        <img src="assets/images/home-fourteen/podcast-img2.png" alt="Thumb"
+                                            class="w-full h-full object-fit-cover">
+                                        <a href="javascript:void(0)"
+                                            class="w-[28px] h-[24px] text-white bg-white bg-opacity-50 flex justify-center items-center absolute start-0 bottom-0 ms-2.5 mb-2.5 rounded-md hover:bg-white hover:text-[#000] text-lg">
+                                            <i class="ri-play-fill leading-none flex"></i>
+                                        </a>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-base mb-0">Change Life Style </h6>
+                                        <span class="text-sm text-secondary-light">Cameron Williamson</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+                                <div class="">
+                                    <div class="radius-8 overflow-hidden relative">
+                                        <img src="assets/images/home-fourteen/podcast-img3.png" alt="Thumb"
+                                            class="w-full h-full object-fit-cover">
+                                        <a href="javascript:void(0)"
+                                            class="w-[28px] h-[24px] text-white bg-white bg-opacity-50 flex justify-center items-center absolute start-0 bottom-0 ms-2.5 mb-2.5 rounded-md hover:bg-white hover:text-[#000] text-lg">
+                                            <i class="ri-play-fill leading-none flex"></i>
+                                        </a>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-base mb-0">Neon Lights</h6>
+                                        <span class="text-sm text-secondary-light">Leslie Alexander</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+                                <div class="">
+                                    <div class="radius-8 overflow-hidden relative">
+                                        <img src="assets/images/home-fourteen/podcast-img4.png" alt="Thumb"
+                                            class="w-full h-full object-fit-cover">
+                                        <a href="javascript:void(0)"
+                                            class="w-[28px] h-[24px] text-white bg-white bg-opacity-50 flex justify-center items-center absolute start-0 bottom-0 ms-2.5 mb-2.5 rounded-md hover:bg-white hover:text-[#000] text-lg">
+                                            <i class="ri-play-fill leading-none flex"></i>
+                                        </a>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-base mb-0">Product Design</h6>
+                                        <span class="text-sm text-secondary-light">Bessie Cooper</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 2xl:col-span-8">
+                <div class="shadow-7 rounded-xl bg-white dark:bg-dark-2 h-full overflow-hidden">
+                    <div
+                        class="card-header border-b bg-white dark:bg-dark-2 py-4 px-6 flex items-center justify-between">
+                        <h6 class="text-lg font-semibold mb-0">Recent Purchase Plan</h6>
+                        <a href="javascript:void(0)"
+                            class="text-primary-600 hover:text-blue-600 dark:text-blue-500 hover:underline flex items-center gap-1">
+                            View All
+                            <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                        </a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive scroll-sm">
+                            <table class="table bordered-table table-py-2 mb-0 rounded-0 border-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="rounded-0">User</th>
+                                        <th scope="col" class="rounded-0">Amount</th>
+                                        <th scope="col" class="rounded-0">StartDate</th>
+                                        <th scope="col" class="rounded-0">End Date</th>
+                                        <th scope="col" class="rounded-0">Duration</th>
+                                        <th scope="col" class="rounded-0 text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-secondary-light">
+                                            <div class="flex items-center gap-3">
+                                                <span class="w-[40px] h-[40px] rounded overflow-hidden rounded-[50%]">
+                                                    <img src="assets/images/user-grid/user-grid-img5.png" alt="Avatar"
+                                                        class="w-full h-full object-fit-cover">
+                                                </span>
+                                                <span class="text-secondary-light">Dianne Russell</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-secondary-light">$29.00</td>
+                                        <td class="text-secondary-light">Jan 10, 2025</td>
+                                        <td class="text-secondary-light">Feb 10, 2025</td>
+                                        <td class="text-secondary-light">1 Month</td>
+                                        <td class="text-center">
+                                            <span
+                                                class="bg-success-focus text-success-main dark:text-success-main px-4 py-1 rounded font-medium text-sm">Basic</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-secondary-light">
+                                            <div class="flex items-center gap-3">
+                                                <span class="w-[40px] h-[40px] rounded overflow-hidden rounded-[50%]">
+                                                    <img src="assets/images/user-grid/user-grid-img4.png" alt="Avatar"
+                                                        class="w-full h-full object-fit-cover">
+                                                </span>
+                                                <span class="text-secondary-light">Cody Fisher</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-secondary-light">$$99.00</td>
+                                        <td class="text-secondary-light">Feb 10, 2025</td>
+                                        <td class="text-secondary-light">April 10, 2025</td>
+                                        <td class="text-secondary-light">3 Month</td>
+                                        <td class="text-center">
+                                            <span
+                                                class="bg-warning-focus text-warning-main dark:text-warning-main px-4 py-1 rounded font-medium text-sm">Standard</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-secondary-light">
+                                            <div class="flex items-center gap-3">
+                                                <span class="w-[40px] h-[40px] rounded overflow-hidden rounded-[50%]">
+                                                    <img src="assets/images/user-grid/user-grid-img3.png" alt="Avatar"
+                                                        class="w-full h-full object-fit-cover">
+                                                </span>
+                                                <span class="text-secondary-light">Ronald Richards</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-secondary-light">$499.00</td>
+                                        <td class="text-secondary-light">Jan 10, 2025</td>
+                                        <td class="text-secondary-light">Jan 10, 2026</td>
+                                        <td class="text-secondary-light">1 Year</td>
+                                        <td class="text-center">
+                                            <span
+                                                class="bg-info-focus text-info-main dark:text-info-main px-4 py-1 rounded font-medium text-sm">Premium
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-secondary-light">
+                                            <div class="flex items-center gap-3">
+                                                <span class="w-[40px] h-[40px] rounded overflow-hidden rounded-[50%]">
+                                                    <img src="assets/images/user-grid/user-grid-img2.png" alt="Avatar"
+                                                        class="w-full h-full object-fit-cover">
+                                                </span>
+                                                <span class="text-secondary-light">Albert Flores</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-secondary-light">$29.00</td>
+                                        <td class="text-secondary-light">Jan 10, 2025</td>
+                                        <td class="text-secondary-light">Feb 10, 2025</td>
+                                        <td class="text-secondary-light">1 Month</td>
+                                        <td class="text-center">
+                                            <span
+                                                class="bg-success-focus text-success-main dark:text-success-main px-4 py-1 rounded font-medium text-sm">Basic</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-secondary-light">
+                                            <div class="flex items-center gap-3">
+                                                <span class="w-[40px] h-[40px] rounded overflow-hidden rounded-[50%]">
+                                                    <img src="assets/images/user-grid/user-grid-img1.png" alt="Avatar"
+                                                        class="w-full h-full object-fit-cover">
+                                                </span>
+                                                <span class="text-secondary-light">Cameron Williamson</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-secondary-light">$99.00</td>
+                                        <td class="text-secondary-light">Feb 10, 2025</td>
+                                        <td class="text-secondary-light">April 10, 2025</td>
+                                        <td class="text-secondary-light">3 Month</td>
+                                        <td class="text-center">
+                                            <span
+                                                class="bg-warning-focus text-warning-main dark:text-warning-main px-4 py-1 rounded font-medium text-sm">Standard</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-secondary-light">
+                                            <div class="flex items-center gap-3">
+                                                <span class="w-[40px] h-[40px] rounded overflow-hidden rounded-[50%]">
+                                                    <img src="assets/images/user-grid/user-grid-img7.png" alt="Avatar"
+                                                        class="w-full h-full object-fit-cover">
+                                                </span>
+                                                <span class="text-secondary-light">John Doe</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-secondary-light">$99.00</td>
+                                        <td class="text-secondary-light">Feb 10, 2025</td>
+                                        <td class="text-secondary-light">April 10, 2025</td>
+                                        <td class="text-secondary-light">3 Month</td>
+                                        <td class="text-center">
+                                            <span
+                                                class="bg-success-focus text-success-main dark:text-success-main px-4 py-1 rounded font-medium text-sm">Basic</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-secondary-light">
+                                            <div class="flex items-center gap-3">
+                                                <span class="w-[40px] h-[40px] rounded overflow-hidden rounded-[50%]">
+                                                    <img src="assets/images/user-grid/user-grid-img8.png" alt="Avatar"
+                                                        class="w-full h-full object-fit-cover">
+                                                </span>
+                                                <span class="text-secondary-light">John Robiul </span>
+                                            </div>
+                                        </td>
+                                        <td class="text-secondary-light">$99.00</td>
+                                        <td class="text-secondary-light">Feb 10, 2025</td>
+                                        <td class="text-secondary-light">April 10, 2025</td>
+                                        <td class="text-secondary-light">3 Month</td>
+                                        <td class="text-center">
+                                            <span
+                                                class="bg-success-focus text-success-main dark:text-success-main px-4 py-1 rounded font-medium text-sm">Basic</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-6 2xl:col-span-4">
+                <div class="card radius-8 border-0 h-full">
+                    <div class="card-body">
+                        <div class="flex items-center flex-wrap gap-2 justify-between">
+                            <h6 class="mb-2 font-bold text-lg">Countries Status</h6>
+                            <div class="">
+                                <select
+                                    class="form-select form-select-sm w-auto bg-white dark:bg-dark-2 border text-secondary-light radius-8">
+                                    <option>Yearly</option>
+                                    <option>Monthly</option>
+                                    <option>Weekly</option>
+                                    <option>Today</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="world-map" class="h-[200px] bg-neutral-100 dark:bg-neutral-600/30 rounded-lg"></div>
+
+                    <div class="card-body p-6 max-h-[266px] scroll-sm overflow-y-auto">
+                        <div class="">
+
+                            <div class="flex items-center justify-between gap-4 mb-3 pb-2">
+                                <div class="flex items-center w-full">
+                                    <img src="assets/images/flags/flag1.png" alt=""
+                                        class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-sm mb-0">USA</h6>
+                                        <span class="text-xs text-secondary-light font-medium">1,240 Users</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 w-full">
+                                    <div class="w-full max-w-66 ms-auto">
+                                        <div class="progress progress-sm rounded-[50rem]" role="progressbar"
+                                            aria-label="Success example" aria-valuenow="25" aria-valuemin="0"
+                                            aria-valuemax="100">
+                                            <div class="progress-bar bg-primary-600 rounded-[50rem]" style="width: 80%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="text-secondary-light font-xs font-semibold">80%</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-4 mb-3 pb-2">
+                                <div class="flex items-center w-full">
+                                    <img src="assets/images/flags/flag2.png" alt=""
+                                        class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-sm mb-0">Japan</h6>
+                                        <span class="text-xs text-secondary-light font-medium">1,240 Users</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 w-full">
+                                    <div class="w-full max-w-66 ms-auto">
+                                        <div class="progress progress-sm rounded-[50rem]" role="progressbar"
+                                            aria-label="Success example" aria-valuenow="25" aria-valuemin="0"
+                                            aria-valuemax="100">
+                                            <div class="progress-bar bg-orange rounded-[50rem]" style="width: 60%;"></div>
+                                        </div>
+                                    </div>
+                                    <span class="text-secondary-light font-xs font-semibold">60%</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-4 mb-3 pb-2">
+                                <div class="flex items-center w-full">
+                                    <img src="assets/images/flags/flag3.png" alt=""
+                                        class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-sm mb-0">France</h6>
+                                        <span class="text-xs text-secondary-light font-medium">1,240 Users</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 w-full">
+                                    <div class="w-full max-w-66 ms-auto">
+                                        <div class="progress progress-sm rounded-[50rem]" role="progressbar"
+                                            aria-label="Success example" aria-valuenow="25" aria-valuemin="0"
+                                            aria-valuemax="100">
+                                            <div class="progress-bar bg-yellow rounded-[50rem]" style="width: 49%;"></div>
+                                        </div>
+                                    </div>
+                                    <span class="text-secondary-light font-xs font-semibold">49%</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-4">
+                                <div class="flex items-center w-full">
+                                    <img src="assets/images/flags/flag4.png" alt=""
+                                        class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-sm mb-0">Germany</h6>
+                                        <span class="text-xs text-secondary-light font-medium">1,240 Users</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 w-full">
+                                    <div class="w-full max-w-66 ms-auto">
+                                        <div class="progress progress-sm rounded-[50rem]" role="progressbar"
+                                            aria-label="Success example" aria-valuenow="25" aria-valuemin="0"
+                                            aria-valuemax="100">
+                                            <div class="progress-bar bg-success-main rounded-[50rem]" style="width: 100%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="text-secondary-light font-xs font-semibold">100%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-span-12 md:col-span-6 2xl:col-span-4">
+                <div class="shadow-7 rounded-xl bg-white dark:bg-dark-2 h-full overflow-hidden">
+                    <div
+                        class="card-header border-b bg-white dark:bg-dark-2 py-4 px-6 flex items-center justify-between">
+                        <h6 class="text-lg font-semibold mb-0">Trending Episodes</h6>
+                        <select
+                            class="form-select form-select-sm w-auto bg-white dark:bg-dark-2 border text-secondary-light radius-8">
+                            <option>Yearly</option>
+                            <option>Monthly</option>
+                            <option>Weekly</option>
+                            <option>Today</option>
+                        </select>
+                    </div>
+                    <div class="card-body p-5 flex flex-col gap-4">
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                                <img src="assets/images/home-fourteen/trending-img1.png" alt=""
+                                    class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-base mb-0 font-medium">Product Design</h6>
+                                    <span class="text-sm text-secondary-light font-medium">Esther Howand</span>
+                                </div>
+                            </div>
+                            <div class="text-end flex gap-1 justify-end flex-col">
+                                <span class="">Durations: <span class="font-semibold text-neutral-900">30:05
+                                        mins</span> </span>
+                                <span class="">Views: <span class="font-semibold text-neutral-900">512k</span> </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                                <img src="assets/images/home-fourteen/trending-img2.png" alt=""
+                                    class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-base mb-0 font-medium">How to Change Your Life</h6>
+                                    <span class="text-sm text-secondary-light font-medium">Esther Howand</span>
+                                </div>
+                            </div>
+                            <div class="text-end flex gap-1 justify-end flex-col">
+                                <span class="">Durations: <span class="font-semibold text-neutral-900">30:05
+                                        mins</span> </span>
+                                <span class="">Views: <span class="font-semibold text-neutral-900">512k</span> </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                                <img src="assets/images/home-fourteen/trending-img3.png" alt=""
+                                    class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-base mb-0 font-medium">Logo Design</h6>
+                                    <span class="text-sm text-secondary-light font-medium">Esther Howand</span>
+                                </div>
+                            </div>
+                            <div class="text-end flex gap-1 justify-end flex-col">
+                                <span class="">Durations: <span class="font-semibold text-neutral-900">30:05
+                                        mins</span> </span>
+                                <span class="">Views: <span class="font-semibold text-neutral-900">512k</span> </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                                <img src="assets/images/home-fourteen/trending-img3.png" alt=""
+                                    class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-base mb-0 font-medium">Good Health</h6>
+                                    <span class="text-sm text-secondary-light font-medium">Esther Howand</span>
+                                </div>
+                            </div>
+                            <div class="text-end flex gap-1 justify-end flex-col">
+                                <span class="">Durations: <span class="font-semibold text-neutral-900">30:05
+                                        mins</span> </span>
+                                <span class="">Views: <span class="font-semibold text-neutral-900">512k</span> </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                                <img src="assets/images/home-fourteen/trending-img4.png" alt=""
+                                    class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-base mb-0 font-medium">Episodes Name</h6>
+                                    <span class="text-sm text-secondary-light font-medium">Esther Howand</span>
+                                </div>
+                            </div>
+                            <div class="text-end flex gap-1 justify-end flex-col">
+                                <span class="">Durations: <span class="font-semibold text-neutral-900">30:05
+                                        mins</span> </span>
+                                <span class="">Views: <span class="font-semibold text-neutral-900">512k</span> </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-6 2xl:col-span-4">
+                <div class="shadow-7 rounded-xl bg-white dark:bg-dark-2 h-full overflow-hidden">
+                    <div
+                        class="card-header border-b bg-white dark:bg-dark-2 py-4 px-6 flex items-center justify-between">
+                        <h6 class="text-lg font-semibold mb-0">Top 5 Categories </h6>
+                        <a href="javascript:void(0)"
+                            class="text-primary-600 hover:text-blue-600 dark:text-blue-500 hover:underline flex items-center gap-1">
+                            View All
+                            <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                        </a>
+                    </div>
+                    <div class="card-body py-[32px] px-6 mt-5 flex items-center justify-between">
+                        <div class="">
+                            <div id="userOverviewDonutChart"
+                                class="margin-4-minus y-value-left apexcharts-tooltip-z-none"></div>
+                        </div>
+                        <ul class="flex flex-col gap-3">
+                            <li>
+                                <span class="text-lg">UI/UX Design: <span
+                                        class="text-success-600 dark:text-success-600 font-semibold">50%</span> </span>
+                            </li>
+                            <li>
+                                <span class="text-lg">Entertainment: <span class="text-purple-600 dark:text-purple-600 font-semibold">30%</span>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="text-lg">Lifestyle: <span class="text-danger-600 dark:text-danger-600 font-semibold">87%</span>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="text-lg">Business: <span class="text-primary-600 dark:text-primary-600 font-semibold">87%</span>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="text-lg">Health: <span class="text-warning-600 dark:text-warning-600 font-semibold">40%</span>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-6 2xl:col-span-4">
+                <div class="shadow-7 rounded-xl bg-white dark:bg-dark-2 h-full overflow-hidden">
+                    <div
+                        class="card-header border-b bg-white dark:bg-dark-2 py-4 px-6 flex items-center justify-between">
+                        <h6 class="text-lg font-semibold mb-0">Top Podcaster</h6>
+                        <a href="javascript:void(0)"
+                            class="text-primary-600 hover:text-blue-600 dark:text-blue-500 hover:underline flex items-center gap-1">
+                            View All
+                            <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                        </a>
+                    </div>
+                    <div class="card-body p-5 flex flex-col gap-5">
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                                <img src="assets/images/homeThirteen/podcaster-img1.png" alt=""
+                                    class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-base mb-0 font-medium">Digital Assets</h6>
+                                    <span class="text-sm text-secondary-light font-medium">UI Design</span>
+                                </div>
+                            </div>
+                            <button type="button"
+                                class="follow-btn bg-success-100 hover:bg-success-300 rounded px-5 py-1.5 text-success-600">Follow</button>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                                <img src="assets/images/homeThirteen/podcaster-img2.png" alt=""
+                                    class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-base mb-0 font-medium">Side Project</h6>
+                                    <span class="text-sm text-secondary-light font-medium">Business</span>
+                                </div>
+                            </div>
+                            <button type="button"
+                                class="follow-btn bg-success-100 hover:bg-success-300 rounded px-5 py-1.5 text-success-600">Follow</button>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                                <img src="assets/images/homeThirteen/podcaster-img3.png" alt=""
+                                    class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-base mb-0 font-medium">Investment</h6>
+                                    <span class="text-sm text-secondary-light font-medium">Lifestyle</span>
+                                </div>
+                            </div>
+                            <button type="button"
+                                class="follow-btn bg-success-100 hover:bg-success-300 rounded px-5 py-1.5 text-success-600">Follow</button>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                                <img src="assets/images/homeThirteen/podcaster-img4.png" alt=""
+                                    class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-base mb-0 font-medium">Investment</h6>
+                                    <span class="text-sm text-secondary-light font-medium">Lifestyle</span>
+                                </div>
+                            </div>
+                            <button type="button"
+                                class="follow-btn bg-success-100 hover:bg-success-300 rounded px-5 py-1.5 text-success-600">Follow</button>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                                <img src="assets/images/homeThirteen/podcaster-img5.png" alt=""
+                                    class="w-[40px] h-[40px] rounded-[50%] flex-shrink-0 me-3 overflow-hidden">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-base mb-0 font-medium">Investment</h6>
+                                    <span class="text-sm text-secondary-light font-medium">Lifestyle</span>
+                                </div>
+                            </div>
+                            <button type="button"
+                                class="follow-btn bg-success-100 hover:bg-success-300 rounded px-5 py-1.5 text-success-600">Follow</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @@include('../layouts/_footer.html')
+</main>
+
+@@include('../partial-html/_template-bottom.html')
+
+
+<script>
+    // ================================ Client Payment Status chart End ================================ 
+    var options = {
+        series: [{
+            name: 'Net Profit',
+            data: [44, 100, 40, 56, 30, 58, 50, 44, 100, 40, 56, 30]
+        }, {
+            name: 'Revenue',
+            data: [90, 140, 80, 125, 70, 140, 110, 90, 140, 80, 125, 70]
+        }, {
+            name: 'Free Cash',
+            data: [60, 120, 60, 90, 50, 95, 90, 60, 120, 60, 90, 50]
+        }],
+        colors: ['#E4F1FF', '#E4F1FF', '#E4F1FF'],
+        labels: ['Active', 'New', 'Total'],
+
+        legend: {
+            show: false
+        },
+        chart: {
+            type: 'bar',
+            height: 300,
+            toolbar: {
+                show: false
+            },
+        },
+        grid: {
+            show: true,
+            borderColor: '#00000000',
+            strokeDashArray: 4, // Use a number for dashed style
+            position: 'back',
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 2,
+                columnWidth: '70%',
+                borderRadiusApplication: 'end'
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        states: {
+            hover: {
+                filter: {
+                    type: 'none'
+                }
+            }
+        },
+        stroke: {
+            show: true,
+            width: 4,
+            colors: ['transparent']
+        },
+        xaxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        },
+        yaxis: {
+            categories: ['0', '10,000', '20,000', '30,000', '50,000', '1,00,000', '1,00,000'],
+            labels: {
+                formatter: function (value) {
+                    return "$" + value + "k";
+                },
+                style: {
+                    fontSize: "14px"
+                }
+            },
+        },
+        fill: {
+            opacity: 1,
+            width: 18,
+        },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#paymentStatusChart"), options);
+    chart.render();
+    // ================================ Client Payment Status chart End ================================ 
+
+    // ===================== Revenue Chart Start =============================== 
+    function createChartTwo(chartId, color1, color2) {
+        var options = {
+            series: [{
+                name: 'series1',
+                data: [6, 20, 15, 48, 28, 55, 28, 52, 25, 32, 15, 25]
+            }],
+            legend: {
+                show: false
+            },
+            chart: {
+                type: 'area',
+                width: '100%',
+                height: 200,
+                toolbar: {
+                    show: false
+                },
+                padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 0,
+                colors: [color1, color2], // Use two colors for the lines
+                lineCap: 'round'
+            },
+            grid: {
+                show: true,
+                borderColor: '#D1D5DB',
+                strokeDashArray: 1,
+                position: 'back',
+                xaxis: {
+                    lines: {
+                        show: false
+                    }
+                },
+                yaxis: {
+                    lines: {
+                        show: true
+                    }
+                },
+                row: {
+                    colors: undefined,
+                    opacity: 0.5
+                },
+                column: {
+                    colors: undefined,
+                    opacity: 0.5
+                },
+                padding: {
+                    top: -5,
+                    right: 0,
+                    bottom: -10,
+                    left: 0
+                },
+            },
+            colors: [color1, color2], // Set color for series
+            fill: {
+                type: 'gradient',
+                colors: [color1, color2], // Use two colors for the gradient
+                gradient: {
+                    shade: 'light',
+                    type: 'vertical',
+                    shadeIntensity: 0.5,
+                    gradientToColors: [undefined, `${color2}00`], // Apply transparency to both colors
+                    inverseColors: false,
+                    opacityFrom: [1, 0.6], // Starting opacity for both colors
+                    opacityTo: [0.5, 0.4], // Ending opacity for both colors
+                    stops: [0, 100],
+                },
+            },
+            markers: {
+                colors: [color1, color2],
+                strokeWidth: 2,
+                size: 0,
+                hover: {
+                    size: 8
+                }
+            },
+
+            xaxis: {
+                labels: {
+                    show: false
+                },
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                tooltip: {
+                    enabled: false
+                },
+                labels: {
+                    formatter: function (value) {
+                        return value;
+                    },
+                    style: {
+                        fontSize: "14px"
+                    }
+                }
+            },
+            yaxis: {
+                labels: {
+                    formatter: function (value) {
+                        return "$" + value + "k";
+                    },
+                    style: {
+                        fontSize: "14px"
+                    }
+                },
+            },
+            tooltip: {
+                x: {
+                    format: 'dd/MM/yy HH:mm'
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector(`#${chartId}`), options);
+        chart.render();
+    }
+
+    createChartTwo('revenueChart', '#98B6FF', '#6593FF');
+    // ===================== Revenue Chart End =============================== 
+
+    // ================================ J Vector Map Start ================================ 
+    $('#world-map').vectorMap(
+        {
+            map: 'world_mill_en',
+            backgroundColor: 'transparent',
+            borderColor: '#fff',
+            borderOpacity: 0.25,
+            borderWidth: 0,
+            color: '#000000',
+            regionStyle: {
+                initial: {
+                    fill: '#D1D5DB'
+                }
+            },
+            markerStyle: {
+                initial: {
+                    r: 5,
+                    'fill': '#fff',
+                    'fill-opacity': 1,
+                    'stroke': '#000',
+                    'stroke-width': 1,
+                    'stroke-opacity': 0.4
+                },
+            },
+            markers: [{
+                latLng: [35.8617, 104.1954],
+                name: 'China : 250'
+            },
+
+            {
+                latLng: [25.2744, 133.7751],
+                name: 'AustrCalia : 250'
+            },
+
+            {
+                latLng: [36.77, -119.41],
+                name: 'USA : 82%'
+            },
+
+            {
+                latLng: [55.37, -3.41],
+                name: 'UK   : 250'
+            },
+
+            {
+                latLng: [25.20, 55.27],
+                name: 'UAE : 250'
+            }],
+
+            series: {
+                regions: [{
+                    values: {
+                        "US": '#487FFF ',
+                        "SA": '#487FFF',
+                        "AU": '#487FFF',
+                        "CN": '#487FFF',
+                        "GB": '#487FFF',
+                    },
+                    attribute: 'fill'
+                }]
+            },
+            hoverOpacity: null,
+            normalizeFunction: 'linear',
+            zoomOnScroll: false,
+            scaleColors: ['#000000', '#000000'],
+            selectedColor: '#000000',
+            selectedRegions: [],
+            enableZoom: false,
+            hoverColor: '#fff',
+        });
+    // ================================ J Vector Map End ================================ 
+
+
+    // ================================ Follow Btn Start ================================ 
+    let followBtns = document.querySelectorAll('.follow-btn');
+
+    followBtns.forEach(followBtn => {
+        followBtn.addEventListener("click", function () {
+            if (this.innerHTML === "Follow") {
+                this.innerHTML = "Following";
+                this.classList.add('bg-success-600', 'text-white');
+                this.classList.remove('bg-success-100', 'text-success-600');
+            } else {
+                this.innerHTML = "Follow";
+                this.classList.remove('bg-success-600', 'text-white');
+                this.classList.add('bg-success-100', 'text-success-600');
+            }
+        });
+    });
+    // ================================ Follow Btn End ================================ 
+
+    // ================================ Users Overview Donut chart Start ================================ 
+    var options = {
+        series: [40, 87, 87, 30, 50],
+        colors: ['#FF9F29', '#487FFF', '#EF4A00', '#9935FE', '#45B369'],
+        labels: ['Health', 'Business', 'Lifestyle', 'Entertainment', 'UI/UX Design'],
+        legend: {
+            show: false
+        },
+        chart: {
+            type: 'donut',
+            height: 270,
+            sparkline: {
+                enabled: true // Remove whitespace
+            },
+            margin: {
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0
+            },
+            padding: {
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0
+            }
+        },
+        stroke: {
+            width: 0,
+        },
+        dataLabels: {
+            enabled: false
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }],
+    };
+
+    var chart = new ApexCharts(document.querySelector("#userOverviewDonutChart"), options);
+    chart.render();
+    // ================================ Users Overview Donut chart End ================================ 
+
+</script>
+
+</body>
+
+</html>

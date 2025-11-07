@@ -1,0 +1,590 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize Next.js 16 Project with TypeScript, ESLint, and Tailwind CSS",
+        "description": "Scaffold a new Next.js 16 application named 'authesci' using the App Router, with TypeScript, ESLint, and Tailwind CSS configured by default.",
+        "details": "Execute the command `npx create-next-app@latest authesci --typescript --eslint --tailwind` in the desired project directory. After creation, navigate into the new `authesci` directory. Verify `next.config.js`, `tailwind.config.js`, `.eslintrc.json`, and `tsconfig.json` are present and correctly configured.",
+        "testStrategy": "Verify project creation by running `npm run dev` and ensuring the default Next.js welcome page loads successfully in the browser. Check `package.json` for dependencies related to TypeScript, ESLint, and Tailwind CSS.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Execute the create-next-app Scaffolding Command",
+            "description": "Run the official Next.js CLI command to create the project directory and scaffold the initial application files with TypeScript, ESLint, and Tailwind CSS.",
+            "dependencies": [],
+            "details": "Open your terminal in the desired parent directory and execute: `npx create-next-app@latest authesci --typescript --eslint --tailwind --app --src-dir false --import-alias \"@/*\"`. This command will prompt for configuration choices; select the defaults. This sets up the project without a `src` directory and with a `@/*` import alias.",
+            "status": "done",
+            "testStrategy": "After the command finishes, verify that a new directory named `authesci` has been created in the current path. Check the command output for any error messages."
+          },
+          {
+            "id": 2,
+            "title": "Verify Core Configuration Files",
+            "description": "Inspect the project root to ensure that the key configuration files for Next.js, TypeScript, ESLint, and Tailwind CSS were generated correctly.",
+            "dependencies": [
+              1
+            ],
+            "details": "Navigate into the newly created `authesci` directory. Check for the existence and basic content of the following files: `next.config.js`, `tailwind.config.ts`, `.eslintrc.json`, and `tsconfig.json`.",
+            "status": "done",
+            "testStrategy": "Use a file explorer or the `ls -a` command to confirm the presence of all specified configuration files in the project's root directory."
+          },
+          {
+            "id": 3,
+            "title": "Review package.json for Correct Dependencies",
+            "description": "Examine the `package.json` file to confirm that all necessary libraries and scripts for the selected stack have been added.",
+            "dependencies": [
+              1
+            ],
+            "details": "Open `authesci-app/package.json`. In the `dependencies` section, verify the presence of `next`, `react`, and `react-dom`. In `devDependencies`, confirm `typescript`, `@types/node`, `tailwindcss`, `eslint`, and `eslint-config-next` are listed.",
+            "status": "done",
+            "testStrategy": "Read the contents of the `package.json` file. Ensure that the versions specified for the key dependencies are recent and that the default scripts (`dev`, `build`, `start`, `lint`) are present."
+          },
+          {
+            "id": 4,
+            "title": "Clean Up Default Boilerplate from Home Page",
+            "description": "Remove the default Next.js welcome page content from `app/page.tsx` to create a clean slate for development.",
+            "dependencies": [
+              1
+            ],
+            "details": "Edit the `app/page.tsx` file. Remove all existing JSX within the `Home` component's return statement. Replace it with a simple `<h1>Welcome to Authesci</h1>` to serve as a placeholder.",
+            "status": "done",
+            "testStrategy": "After editing the file, there will be no immediate visual change until the development server is run. The test is simply to confirm the file's contents have been successfully simplified."
+          },
+          {
+            "id": 5,
+            "title": "Start Development Server and Verify Project Runs",
+            "description": "Run the local development server to confirm the entire initialization process was successful and the application is accessible.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "In your terminal, while inside the `authesci` directory, execute the command `npm run dev`. This will start the development server, typically on port 3000.",
+            "status": "done",
+            "testStrategy": "Open a web browser and navigate to `http://localhost:3000`. Verify that the page loads and displays the 'Welcome to Authesci' heading from the modified `page.tsx`. Check the browser console and terminal for any errors."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Copy WowDash Template Files into Project Structure",
+        "description": "Integrate the provided `wowdash-tailwind-admin` template into the `authesci` project by copying it to a dedicated `templates/wowdash` directory.",
+        "details": "From the repository root (assuming `authesci` and `wowdash-tailwind-admin` are siblings or `wowdash-tailwind-admin` is accessible), execute `cp -r wowdash-tailwind-admin authesci-app/templates/wowdash`. This will create the structure `authesci-app/templates/wowdash/dist/` and `authesci-app/templates/wowdash/html/`.",
+        "testStrategy": "Verify the presence of the `authesci-app/templates/wowdash` directory and its `dist/` and `html/` subdirectories containing the template files. Check for specific files like `dist/dashboard.html` and `html/index.html`.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create 'templates' Directory in Project Structure",
+            "description": "Create the parent directory `authesci-app/templates` to serve as the destination for the WowDash template files and any other future templates.",
+            "dependencies": [],
+            "details": "From the project root, execute the command `mkdir -p authesci-app/templates`. This ensures the target directory exists before attempting to copy files into it.",
+            "status": "done",
+            "testStrategy": "Verify that the `authesci-app/templates` directory has been successfully created using a file explorer or the `ls -d authesci-app/templates/` command."
+          },
+          {
+            "id": 2,
+            "title": "Copy WowDash Template Directory into Project",
+            "description": "Perform the recursive copy of the `wowdash-tailwind-admin` directory into the newly created `authesci-app/templates/wowdash` path.",
+            "dependencies": [
+              1
+            ],
+            "details": "Assuming the `wowdash-tailwind-admin` directory is a sibling to the project's root folder, execute the command: `cp -r ../wowdash-tailwind-admin authesci-app/templates/wowdash`.",
+            "status": "done",
+            "testStrategy": "Check if the `authesci-app/templates/wowdash` directory now exists and is not empty."
+          },
+          {
+            "id": 3,
+            "title": "Verify Integrity of Copied WowDash File Structure",
+            "description": "Confirm that the template files have been copied correctly and that the key subdirectories (`dist` and `html`) are present and contain the expected content.",
+            "dependencies": [
+              2
+            ],
+            "details": "Inspect the `authesci-app/templates/wowdash` directory. Verify the existence of `dist/assets` and `html/` subdirectories. Specifically, check for key files like `html/index.html` and `dist/dashboard.html`.",
+            "status": "done",
+            "testStrategy": "Run `ls authesci-app/templates/wowdash/html` and `ls authesci-app/templates/wowdash/dist` to ensure they list the template's HTML and distribution files, respectively."
+          },
+          {
+            "id": 4,
+            "title": "Review and Update .gitignore for Template Directory",
+            "description": "Analyze the contents of the newly added `templates/wowdash` directory and update the root `.gitignore` file to exclude any unnecessary build artifacts, caches, or dependency folders from version control.",
+            "dependencies": [
+              2
+            ],
+            "details": "Inspect the `authesci-app/templates/wowdash` directory for any `node_modules` folders, log files, or other machine-generated content. Add specific paths like `authesci-app/templates/wowdash/node_modules/` to the root `.gitignore` file to keep the repository clean.",
+            "status": "done",
+            "testStrategy": "Run `git status` after creating the `.gitignore` rule. The ignored files and directories within `templates/wowdash` should not appear in the list of untracked files."
+          },
+          {
+            "id": 5,
+            "title": "Add Copied Template Files to Git Staging Area",
+            "description": "Commit the raw template files to the repository to serve as a baseline reference for future component development and integration tasks.",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "After verifying the file structure and updating the `.gitignore` file, stage the new template directory for commit using the command `git add authesci-app/templates/wowdash`.",
+            "status": "done",
+            "testStrategy": "Run `git status` to confirm that the relevant files within `authesci-app/templates/wowdash/` are now staged for the next commit and that ignored files are not included."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Integrate WowDash Template Static Assets into Public Directory",
+        "description": "Copy all necessary static assets (images, fonts, icons, etc.) from the WowDash template's `dist/assets` directory into the Next.js `public/assets` directory to make them publicly accessible.",
+        "details": "Execute the command `cp -r authesci-app/templates/wowdash/dist/assets/* authesci-app/public/assets/`. Ensure that no global CSS files from the template are copied or imported to avoid conflicts with Tailwind CSS.",
+        "testStrategy": "Verify that `authesci-app/public/assets/` contains the copied assets from the WowDash template. Check if a sample image or font file from the template is accessible via `http://localhost:3000/assets/some-image.png` (replace with an actual asset name).",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Refine WowDash Static Asset Copy Scope and Exclusions",
+            "description": "Analyze the `authesci-app/templates/wowdash/dist/assets` directory to identify specific subdirectories (e.g., `images`, `fonts`, `icons`) containing static assets required for the application. Determine the best approach to copy only these necessary assets while explicitly excluding any global CSS files or other unwanted files from the copy operation to `authesci-app/public/assets`.",
+            "dependencies": [],
+            "details": "Inspect the contents of `authesci-app/templates/wowdash/dist/assets/`. Identify key subdirectories like `images`, `fonts`, `icons`, `vendor-js`, etc., that need to be copied. Formulate a precise `cp` or `rsync` command that targets these directories specifically. Crucially, identify and exclude any global CSS files (e.g., `style.css` in `assets/css/`) to prevent conflicts with Tailwind CSS.",
+            "status": "done",
+            "testStrategy": "Document the specific list of folders/files to be included in the copy and the explicit exclusion patterns or commands that will be used. Ensure no template-specific global CSS files are on the inclusion list."
+          },
+          {
+            "id": 2,
+            "title": "Execute Selective Copy of WowDash Static Assets",
+            "description": "Execute the refined copy command to transfer the identified static asset folders and files from `authesci-app/templates/wowdash/dist/assets/` into `authesci-app/public/assets/`, ensuring that global CSS files and other unwanted files are explicitly excluded during the transfer process.",
+            "dependencies": [
+              1
+            ],
+            "details": "Based on the scope defined in subtask 1, run the appropriate terminal command (e.g., `cp -r authesci-app/templates/wowdash/dist/assets/{images,fonts,icons} authesci-app/public/assets/`) to perform the selective copy. Ensure the `public/assets` directory is created if it doesn't exist. Verify the command completes without errors.",
+            "status": "done",
+            "testStrategy": "Verify the contents of `authesci-app/public/assets/`. Confirm that the expected asset folders (e.g., `images`, `fonts`, `icons`) are present. Explicitly check for the absence of any template-specific global CSS files (e.g., `style.css`) in the `public/assets` directory and its subdirectories."
+          },
+          {
+            "id": 3,
+            "title": "Verify WowDash Static Assets are Publicly Accessible",
+            "description": "Start the Next.js development server and verify that at least one example static asset (e.g., an image or font file) copied from the WowDash template is correctly accessible via its public URL through the Next.js application.",
+            "dependencies": [
+              2
+            ],
+            "details": "Launch the Next.js development server by running `npm run dev` or `yarn dev`. Select a specific, easily identifiable asset that was copied (e.g., an image like `logo.png` located at `authesci-app/public/assets/images/logo.png`). Open a web browser and navigate to its corresponding public URL, such as `http://localhost:3000/assets/images/logo.png`, to confirm it loads correctly.",
+            "status": "done",
+            "testStrategy": "Navigate to `http://localhost:3000/assets/images/wowdash_logo.png` (or a similar, actual asset path). Verify that the asset renders in the browser. Check the browser's developer tools network tab to confirm a successful HTTP 200 status code for the asset request."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Configure Tailwind CSS Content Paths to Include Template References",
+        "description": "Update the `tailwind.config.js` file to include content paths for the copied WowDash template directories (`dist` and `html`) to ensure Tailwind scans these files for class names during development, especially for prototyping.",
+        "details": "Modify `tailwind.config.js` within the `authesci` project to add the following paths to the `content` array:
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./modules/**/*.{js,ts,jsx,tsx}",
+    "./templates/wowdash/dist/**/*.html",
+    "./templates/wowdash/html/**/*.html"
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+Note: These paths are optional for production but useful for development and prototyping. Focus should be on converting to TSX.",
+        "testStrategy": "Run `npm run dev` and ensure no Tailwind build errors related to content paths. Later, when a template page is rendered, visually inspect if Tailwind classes are being applied correctly without issues.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Initialize Shadcn/UI and Configure Components",
+        "description": "Set up Shadcn/UI in the Next.js project to provide a robust, accessible UI component library, allowing for selective import and customization.",
+        "details": "Follow Shadcn/UI's official installation guide for Next.js. Typically, this involves running `npx shadcn-ui@latest init` and selecting appropriate options for TypeScript, Tailwind CSS, and `app` directory. Subsequently, install a few basic components like `Button` or `Card` using `npx shadcn-ui@latest add button` to verify the setup.",
+        "testStrategy": "Add a Shadcn `Button` component to `app/page.tsx` and ensure it renders correctly with Tailwind styling. Check that the `components.json` file is generated in the project root and that the `ui` directory contains the added components.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Execute Shadcn/UI Initialization Command",
+            "description": "Run the primary CLI command to begin the Shadcn/UI setup process in the Next.js project. This command will initiate an interactive setup wizard.",
+            "dependencies": [],
+            "details": "Navigate to the root of the Next.js project (e.g., 'authesci') in your terminal. Execute the command: `npx shadcn-ui@latest init`.",
+            "status": "done",
+            "testStrategy": null
+          },
+          {
+            "id": 2,
+            "title": "Configure Shadcn/UI CLI Prompts for Next.js Setup",
+            "description": "Respond to the interactive prompts generated by the `shadcn-ui init` command, ensuring correct selections for a Next.js project utilizing TypeScript, Tailwind CSS, and the App Router.",
+            "dependencies": [
+              1
+            ],
+            "details": "During the `npx shadcn-ui@latest init` command, make the following selections (or similar, based on project specifics): 'Yes' for TypeScript, select desired style/color, 'app/globals.css' for global CSS, 'Yes' for CSS variables, 'tailwind.config.js' for Tailwind config, '@/components' for components alias, '@/lib/utils' for utils alias, 'Yes' for React Server Components, and 'components/ui' for new components directory.",
+            "status": "done",
+            "testStrategy": null
+          },
+          {
+            "id": 3,
+            "title": "Verify Shadcn/UI Project Configuration Files",
+            "description": "Confirm that the `shadcn-ui init` command has successfully created and modified necessary configuration files and directories as per the setup, including `components.json`.",
+            "dependencies": [
+              2
+            ],
+            "details": "After the `init` command completes, verify the presence of `components.json` in the project root. Inspect `tailwind.config.js` to ensure Shadcn/UI's content path and theme extensions are added. Check `app/globals.css` for the inclusion of CSS variables. Confirm `lib/utils.ts` (or equivalent) has been created.",
+            "status": "done",
+            "testStrategy": null
+          },
+          {
+            "id": 4,
+            "title": "Add a Sample Shadcn/UI Component (e.g., Button)",
+            "description": "Use the Shadcn/UI CLI to add a basic component, such as `Button` or `Card`, to verify the component installation process and confirm the configured component directory structure.",
+            "dependencies": [
+              3
+            ],
+            "details": "Execute the command `npx shadcn-ui@latest add button` in the terminal. Verify that a new file named `button.tsx` (or similar) is created inside the `components/ui` directory (or your configured components directory).",
+            "status": "done",
+            "testStrategy": null
+          },
+          {
+            "id": 5,
+            "title": "Integrate and Test Sample Component Rendering",
+            "description": "Integrate the newly added Shadcn/UI component into a Next.js page (e.g., `app/page.tsx`) and verify its correct rendering and styling within the application.",
+            "dependencies": [
+              4
+            ],
+            "details": "Open `app/page.tsx`. Add an import statement for the button: `import { Button } from '@/components/ui/button';`. Insert the `<Button>` component into the page's JSX, for example: `<Button>Hello Shadcn</Button>`. Start the development server (`npm run dev`) and view the page in a browser to confirm the button renders correctly with Tailwind styling.",
+            "status": "done",
+            "testStrategy": "Verify the Shadcn `Button` component is rendered correctly in the browser on `app/page.tsx` with appropriate styling. Check the browser's developer tools for any console errors related to the component."
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Link Supabase Project for Authentication and Database",
+        "description": "Configure the Next.js application to connect with a Supabase project, setting up environment variables and initial client-side integration for future authentication and database interactions.",
+        "details": "Create a `.env.local` file and add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` variables with values from your Supabase project settings. Install the Supabase client library: `npm install @supabase/supabase-js`. Create a utility file (e.g., `lib/supabase.ts`) to initialize the Supabase client.
+```typescript
+// lib/supabase.ts
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables')
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+```",
+        "testStrategy": "Add a simple test to `app/page.tsx` to log `supabase.auth` or `supabase.from('some_table')` to verify the client is initialized without errors. Ensure environment variables are correctly loaded by Next.js.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Preserve WowDash Design Tokens and Color Palette in Tailwind Config",
+        "description": "Extract design tokens and the color palette from the WowDash template (e.g., from its CSS or `html` files) and integrate them into `tailwind.config.js` to maintain visual consistency.",
+        "details": "Examine the WowDash template's styling (e.g., in `templates/wowdash/dist/assets/css/style.css` or `html` files) to identify core colors, font sizes, spacing, etc. Add these to the `theme.extend.colors` section of `tailwind.config.js`.
+```javascript
+// tailwind.config.js
+module.exports = {
+  // ...
+  theme: {
+    extend: {
+      colors: {
+        'primary-wow': '#1a73e8', // Example color from WowDash
+        'secondary-wow': '#f0f2f5',
+        // ... other WowDash colors
+      },
+      // ... other design tokens like fonts, spacing
+    },
+  },
+  // ...
+}
+```",
+        "testStrategy": "Create a temporary component or modify `app/page.tsx` to use one of the new custom Tailwind colors (e.g., `<div className=\"bg-primary-wow p-4\"></div>`). Visually verify that the color matches the template's equivalent color. Check browser's dev tools for applied CSS properties.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyze WowDash CSS to Identify Core Design Tokens",
+            "description": "Investigate the `style.css` file from the WowDash template to identify and document the primary color palette, font families, font sizes, and spacing units used throughout the design.",
+            "dependencies": [],
+            "details": "Open `templates/wowdash/dist/assets/css/style.css` and search for CSS custom properties (variables) or frequently used hard-coded values for colors, fonts, and spacing. Compile a list of these tokens.",
+            "status": "done",
+            "testStrategy": "Review the compiled list of tokens and cross-reference it with the visual design in `templates/wowdash/html/index.html` to confirm that all major stylistic elements have been identified."
+          },
+          {
+            "id": 2,
+            "title": "Integrate WowDash Color Palette into Tailwind Config",
+            "description": "Update the `tailwind.config.js` file to include the color palette extracted from the WowDash template under the `theme.extend.colors` section.",
+            "dependencies": [
+              1
+            ],
+            "details": "Modify `tailwind.config.js` by adding the identified colors. Use descriptive names like 'wow-primary', 'wow-secondary', 'wow-accent', etc., to map to the hex codes from the analysis.",
+            "status": "done",
+            "testStrategy": "After saving the configuration, restart the development server and check if Tailwind CSS IntelliSense in the editor suggests the newly added color utility classes (e.g., `bg-wow-primary`)."
+          },
+          {
+            "id": 3,
+            "title": "Integrate WowDash Font and Spacing Tokens into Tailwind Config",
+            "description": "Extend the Tailwind theme by adding the custom font sizes, font families, and spacing units from the WowDash template to the `tailwind.config.js` file.",
+            "dependencies": [
+              1
+            ],
+            "details": "In `tailwind.config.js`, add or extend the `fontSize`, `fontFamily`, and `spacing` keys within `theme.extend`. Populate these sections with the values identified during the CSS analysis.",
+            "status": "done",
+            "testStrategy": "Inspect the generated CSS file after a build to ensure the new font and spacing utility classes are present. Verify the values match those specified in the configuration file."
+          },
+          {
+            "id": 4,
+            "title": "Create and Test a Sample Component with New Design Tokens",
+            "description": "Develop a simple test component or modify `app/page.tsx` to utilize the newly integrated WowDash design tokens to verify their correct application.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "In a temporary test page, create elements using the new custom classes. For example: `<div class=\"bg-wow-secondary p-4\"><h1 class=\"text-wow-primary text-xl\">Test Header</h1></div>`. This will test color, spacing, and font size.",
+            "status": "done",
+            "testStrategy": "Load the test page in a browser. Visually confirm that the component's styling matches the WowDash template's aesthetic. Use browser developer tools to inspect the elements and verify that the correct CSS properties and values are being applied."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Scaffold a Rapid Prototype Page from WowDash `dist`",
+        "description": "Convert a `dist` page (e.g., `dashboard.html`) into a Next.js `page.tsx` under `app/(template)/` for quick visual prototyping and validation.",
+        "details": "Create `app/(template)/dashboard/page.tsx`. Open `templates/wowdash/dist/dashboard.html`, copy its content, and paste it into `page.tsx`. Perform minimal conversions:
+1. Change `class` to `className`.
+2. Fix relative asset paths (e.g., `assets/img/logo.png` to `/assets/img/logo.png`).
+3. Remove `<head>` content; Next.js handles this.
+This page serves as a temporary visual reference.",
+        "testStrategy": "Access `http://localhost:3000/(template)/dashboard` in the browser. Visually compare it against the original `templates/wowdash/dist/dashboard.html` to ensure layout, images, and basic styling are correctly rendered. Check browser console for asset loading errors.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          4
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Develop Workflow and Example for HTML to React Component Conversion",
+        "description": "Establish a clear workflow for converting `html/` snippets into reusable React components. Create an example component, such as `JobCard.tsx`, based on a WowDash `html` fragment.",
+        "details": "The workflow involves:
+1. Identify HTML fragment in `templates/wowdash/html/`.
+2. Copy fragment to a new `.tsx` file (e.g., `components/modules/JobCard.tsx`).
+3. Convert `class` to `className`, `href` to `Next.js Link` (if internal).
+4. Replace static data with React `props` (define `Props` interface).
+5. Add accessibility attributes (`tabIndex`, `aria-*`).
+6. Export the component. Implement the `JobCard` example provided in the PRD.",
+        "testStrategy": "Create `components/modules/JobCard.tsx` as per the PRD example. Import and render it in `app/page.tsx` or `app/(template)/dashboard/page.tsx` with sample props. Verify that it renders correctly and looks visually consistent with the template's equivalent component.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          5
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement React-Based UI Behaviors (Replacing Template JS)",
+        "description": "For any interactive UI elements (dropdowns, toggles, modals) provided by the WowDash template, reimplement their behavior using React state and component logic, or leverage Shadcn/UI primitives, instead of importing template-specific JavaScript.",
+        "details": "Identify a simple interactive element in the WowDash template's `html/` (e.g., a dropdown menu or a tab component). Convert this HTML fragment into a React component. Instead of relying on external template JS, use React's `useState` for managing component state (e.g., open/closed for a dropdown) and event handlers for interactions. If a suitable Shadcn/UI component exists (e.g., `AlertDialog`, `DropdownMenu`), prefer using that.",
+        "testStrategy": "Implement a simple interactive component (e.g., a custom dropdown or a Shadcn `DropdownMenu`). Integrate it into a page and verify that its interactive behavior functions correctly without relying on any external template JavaScript. Check browser console for errors related to DOM manipulation by conflicting JS.",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          9
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Create Basic Routes for Template Page Visual Validation",
+        "description": "Set up additional basic Next.js routes under `app/(template)/` to render a few more `dist` pages from the WowDash template, facilitating comprehensive visual validation.",
+        "details": "Following the pattern established in Task 8, choose 2-3 more `html` or `dist` pages from `templates/wowdash/` (e.g., `templates/wowdash/dist/profile.html`, `templates/wowdash/dist/forms.html`). Create corresponding `app/(template)/profile/page.tsx` and `app/(template)/forms/page.tsx` files. Convert their HTML content to TSX, similar to the dashboard page, ensuring asset paths are corrected.",
+        "testStrategy": "Access each newly created route (e.g., `http://localhost:3000/(template)/profile`, `http://localhost:3000/(template)/forms`). Visually inspect each page for correct rendering, layout, and asset loading compared to the original template files. Ensure responsiveness is maintained.",
+        "priority": "low",
+        "dependencies": [
+          8
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Perform Initial Self-Healing UI Check on Scaffolded Pages",
+        "description": "Execute the `self_heal_ui` tool on the scaffolded prototype pages (e.g., `/dashboard`) to identify any layout or visual inconsistencies, especially on smaller breakpoints.",
+        "details": "Once the Next.js development server is running (`npm run dev`), use the `self_heal_ui` command (as described in the PRD's 'Self-Healing UI' section) against the URL of at least one scaffolded template page, e.g., `self_heal_ui http://localhost:3000/(template)/dashboard`. Analyze the report for any issues and note down areas needing attention for later componentization.",
+        "testStrategy": "Run `self_heal_ui` on `http://localhost:3000/(template)/dashboard`. The test passes if the tool provides a score of `≥ 8.5` and highlights minimal or easily addressable layout issues. Document any identified issues for future iteration.",
+        "priority": "medium",
+        "dependencies": [
+          8,
+          11
+        ],
+        "status": "cancelled",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Note on cancellation",
+            "description": "Cancelled task because the `self_heal_ui` tool is not available in the current environment.",
+            "details": "",
+            "status": "cancelled",
+            "dependencies": [],
+            "parentTaskId": 12
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "title": "Configure ESLint and Prettier for Code Consistency",
+        "description": "Ensure ESLint and Prettier are properly configured and integrated into the development workflow to enforce code style and best practices across the project.",
+        "details": "Next.js initializes with basic ESLint configuration. Review `.eslintrc.json` and `package.json` scripts. Ensure Prettier is also installed (`npm install --save-dev prettier eslint-config-prettier eslint-plugin-prettier`) and integrated into ESLint. Add or verify scripts for linting and formatting:
+```json
+"scripts": {
+  "lint": "next lint",
+  "format": "prettier --write ."
+}
+```
+Configure editor extensions (VS Code) for auto-formatting on save.",
+        "testStrategy": "Introduce a small linting error or formatting inconsistency (e.g., missing semicolon, incorrect indentation) in a TypeScript file. Run `npm run lint` and `npm run format`. Verify that ESLint identifies the error and Prettier fixes the formatting. Check if auto-formatting on save works in the IDE.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Document Template Integration and Component Conversion Workflow",
+        "description": "Create documentation outlining the process of integrating the WowDash template, the strategy for converting HTML snippets to React components, and guidelines for maintaining visual consistency.",
+        "details": "Create a Markdown file (e.g., `docs/template-integration.md`) detailing:
+- Project structure for `templates/wowdash`.
+- Steps for extracting HTML fragments from `html/`.
+- Guidelines for converting HTML to React (e.g., `className`, `Link`, props, accessibility).
+- How to use Shadcn/UI for common components.
+- Best practices for preserving design tokens and colors.",
+        "testStrategy": "Review the created documentation for clarity, completeness, and accuracy based on the implemented tasks. Ensure it covers all aspects of the PRD's objectives regarding template usage and component conversion. Share with a peer for feedback.",
+        "priority": "low",
+        "dependencies": [
+          2,
+          9
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Document Template Project Structure and HTML Extraction Process",
+            "description": "Create a section in the documentation detailing the project structure for the `templates/wowdash` directory and outlining the initial steps for extracting relevant HTML fragments from the `html/` directory for conversion.",
+            "dependencies": [
+              2
+            ],
+            "details": "Outline the directory structure created by Task 2, specifically `templates/wowdash`. Explain where to find the original HTML files (e.g., `templates/wowdash/html/`) and the process or considerations for identifying and extracting specific HTML snippets from these files that are candidates for React component conversion.",
+            "status": "done",
+            "testStrategy": "Review the document section to ensure it accurately reflects the project's template structure and provides clear instructions for locating and extracting HTML fragments. Verify that the documented paths are correct."
+          },
+          {
+            "id": 2,
+            "title": "Document HTML to React Component Conversion Guidelines",
+            "description": "Develop a comprehensive guide within the documentation for converting static HTML snippets into reusable React components, covering key transformation steps and best practices.",
+            "dependencies": [
+              9
+            ],
+            "details": "Detail the step-by-step process for converting HTML to React, including changing `class` to `className`, integrating Next.js `Link` components for internal navigation, defining and using `props` for dynamic data, and incorporating accessibility attributes (e.g., `tabIndex`, `aria-*`). Refer to Task 9's implemented workflow and example component.",
+            "status": "done",
+            "testStrategy": "Check if the documented conversion guidelines are clear, exhaustive, and align with the workflow established in Task 9. Ensure all mentioned HTML-to-React transformations are covered with examples."
+          },
+          {
+            "id": 3,
+            "title": "Document Shadcn/UI and Design Token Integration Strategy",
+            "description": "Create a section outlining the strategy for using Shadcn/UI for common components and best practices for preserving design tokens and colors within the application.",
+            "dependencies": [
+              5
+            ],
+            "details": "Explain how Shadcn/UI is initialized (referencing Task 5) and how to leverage its components instead of converting every HTML element. Document the approach for maintaining visual consistency by preserving design tokens and colors, possibly through Tailwind CSS configuration or specific component styling guidelines.",
+            "status": "done",
+            "testStrategy": "Verify that the documentation clearly explains when and how to use Shadcn/UI components and provides actionable best practices for design token and color management. Confirm consistency with the Shadcn/UI setup from Task 5."
+          },
+          {
+            "id": 4,
+            "title": "Review and Finalize Template Integration Documentation",
+            "description": "Perform a thorough review of the entire 'Document Template Integration and Component Conversion Workflow' documentation for clarity, completeness, accuracy, and adherence to the stated requirements.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Read through the entire `docs/template-integration.md` file, checking for grammatical errors, typos, consistent terminology, logical flow, and ensure all specified aspects (project structure, HTML extraction, HTML-to-React conversion, Shadcn/UI, design tokens) are adequately covered. Incorporate feedback from a peer review.",
+            "status": "done",
+            "testStrategy": "Conduct a self-review followed by a peer review. Ensure the documentation is easy to understand for a developer new to the project and that all technical instructions are accurate and reproducible. Verify that it covers all details mentioned in the parent task description."
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "title": "Initial Git Repository Setup and Commit",
+        "description": "Initialize a Git repository, add all initial project files, and perform the first commit to establish version control.",
+        "details": "Navigate to the `authesci` project root. Execute `git init`, then `git add .`, followed by `git commit -m \"feat: Initial project setup with Next.js 16, WowDash template, Shadcn/UI, and Supabase config\"`. Ensure `.gitignore` is correctly configured to exclude `node_modules`, `.env.local`, and other unnecessary files.",
+        "testStrategy": "Verify that a `.git` directory exists in the project root. Run `git status` to ensure no untracked or ignored files that should be committed are missed, and that `.env.local` is correctly ignored. Check `git log` to confirm the initial commit message and content.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          13,
+          14
+        ],
+        "status": "done",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-10-30T16:16:04.355Z",
+      "updated": "2025-11-05T16:13:36.753Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
