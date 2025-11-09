@@ -1,7 +1,64 @@
 import React from 'react';
 import { Home, Users, Award, Wallet, FileText, ArrowUp, ArrowDown, ArrowRight } from 'lucide-react';
+import DataTable from '@/components/modules/utilities/DataTable';
 
 const DashboardPage = () => {
+  const registeredColumns = [
+    {
+      accessorKey: 'name',
+      header: 'Name',
+    },
+    {
+      accessorKey: 'email',
+      header: 'Email',
+    },
+    {
+      accessorKey: 'date',
+      header: 'Date',
+    },
+  ];
+
+  const registeredData = [
+    {
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      date: '2023-01-01',
+    },
+    {
+      name: 'Jane Smith',
+      email: 'jane.smith@example.com',
+      date: '2023-01-05',
+    },
+  ];
+
+  const subscribeColumns = [
+    {
+      accessorKey: 'plan',
+      header: 'Plan',
+    },
+    {
+      accessorKey: 'user',
+      header: 'User',
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+    },
+  ];
+
+  const subscribeData = [
+    {
+      plan: 'Premium',
+      user: 'John Doe',
+      status: 'Active',
+    },
+    {
+      plan: 'Basic',
+      user: 'Jane Smith',
+      status: 'Inactive',
+    },
+  ];
+
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
@@ -206,196 +263,10 @@ const DashboardPage = () => {
 
               <div id="default-tab-content">
                 <div className="hidden" id="registered" role="tabpanel" aria-labelledby="registered-tab">
-                  <div className="overflow-x-auto">
-                    <table className="table bordered-table sm-table mb-0 table-auto">
-                      <thead>
-                        <tr>
-                          <th scope="col">Users </th>
-                          <th scope="col">Registered On</th>
-                          <th scope="col">Plan</th>
-                          <th scope="col" className="text-center">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div className="flex items-center">
-                              <img src="/assets/images/users/user1.png" alt="" className="w-10 h-10 rounded-full shrink-0 me-2 overflow-hidden" />
-                              <div className="grow">
-                                <h6 className="text-base mb-0 font-medium">Dianne Russell</h6>
-                                <span className="text-sm text-secondary-light font-medium">redaniel@gmail.com</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>Free</td>
-                          <td className="text-center">
-                            <span className="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm">Active</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="flex items-center">
-                              <img src="/assets/images/users/user2.png" alt="" className="w-10 h-10 rounded-full shrink-0 me-2 overflow-hidden" />
-                              <div className="grow">
-                                <h6 className="text-base mb-0 font-medium">Wade Warren</h6>
-                                <span className="text-sm text-secondary-light font-medium">xterris@gmail.com</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>Basic</td>
-                          <td className="text-center">
-                            <span className="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm">Active</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="flex items-center">
-                              <img src="/assets/images/users/user3.png" alt="" className="w-10 h-10 rounded-full shrink-0 me-2 overflow-hidden" />
-                              <div className="grow">
-                                <h6 className="text-base mb-0 font-medium">Albert Flores</h6>
-                                <span className="text-sm text-secondary-light font-medium">seannand@mail.ru</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>Standard</td>
-                          <td className="text-center">
-                            <span className="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm">Active</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="flex items-center">
-                              <img src="/assets/images/users/user4.png" alt="" className="w-10 h-10 rounded-full shrink-0 me-2 overflow-hidden" />
-                              <div className="grow">
-                                <h6 className="text-base mb-0 font-medium">Bessie Cooper </h6>
-                                <span className="text-sm text-secondary-light font-medium">igerrin@gmail.com</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>Business</td>
-                          <td className="text-center">
-                            <span className="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm">Active</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="flex items-center">
-                              <img src="/assets/images/users/user5.png" alt="" className="w-10 h-10 rounded-full shrink-0 me-2 overflow-hidden" />
-                              <div className="grow">
-                                <h6 className="text-base mb-0 font-medium">Arlene McCoy</h6>
-                                <span className="text-sm text-secondary-light font-medium">fellora@mail.ru</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>Enterprise </td>
-                          <td className="text-center">
-                            <span className="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm">Active</span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <DataTable columns={registeredColumns} data={registeredData} />
                 </div>
                 <div className="hidden" id="subscribe" role="tabpanel" aria-labelledby="subscribe-tab">
-                  <div className="overflow-x-auto">
-                    <table className="table bordered-table sm-table mb-0 table-auto">
-                      <thead>
-                        <tr>
-                          <th scope="col">Users Name </th>
-                          <th scope="col">Registered On</th>
-                          <th scope="col">Plan</th>
-                          <th scope="col" className="text-center">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div className="flex items-center">
-                              <img src="/assets/images/users/user1.png" alt="" className="w-10 h-10 rounded-full shrink-0 me-2 overflow-hidden" />
-                              <div className="grow">
-                                <h6 className="text-base mb-0 font-medium">Dianne Russell</h6>
-                                <span className="text-sm text-secondary-light font-medium">redaniel@gmail.com</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>Free</td>
-                          <td className="text-center">
-                            <span className="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm">Active</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="flex items-center">
-                              <img src="/assets/images/users/user2.png" alt="" className="w-10 h-10 rounded-full shrink-0 me-2 overflow-hidden" />
-                              <div className="grow">
-                                <h6 className="text-base mb-0 font-medium">Wade Warren</h6>
-                                <span className="text-sm text-secondary-light font-medium">xterris@gmail.com</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>Basic</td>
-                          <td className="text-center">
-                            <span className="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm">Active</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="flex items-center">
-                              <img src="/assets/images/users/user3.png" alt="" className="w-10 h-10 rounded-full shrink-0 me-2 overflow-hidden" />
-                              <div className="grow">
-                                <h6 className="text-base mb-0 font-medium">Albert Flores</h6>
-                                <span className="text-sm text-secondary-light font-medium">seannand@mail.ru</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>Standard</td>
-                          <td className="text-center">
-                            <span className="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm">Active</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="flex items-center">
-                              <img src="/assets/images/users/user4.png" alt="" className="w-10 h-10 rounded-full shrink-0 me-2 overflow-hidden" />
-                              <div className="grow">
-                                <h6 className="text-base mb-0 font-medium">Bessie Cooper </h6>
-                                <span className="text-sm text-secondary-light font-medium">igerrin@gmail.com</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>Business</td>
-                          <td className="text-center">
-                            <span className="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm">Active</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="flex items-center">
-                              <img src="/assets/images/users/user5.png" alt="" className="w-10 h-10 rounded-full shrink-0 me-2 overflow-hidden" />
-                              <div className="grow">
-                                <h6 className="text-base mb-0 font-medium">Arlene McCoy</h6>
-                                <span className="text-sm text-secondary-light font-medium">fellora@mail.ru</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>Enterprise </td>
-                          <td className="text-center">
-                            <span className="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm">Active</span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <DataTable columns={subscribeColumns} data={subscribeData} />
                 </div>
               </div>
 
@@ -513,7 +384,7 @@ const DashboardPage = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-full max-w-66 ms-auto">
-                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}>
                             <div className="progress-bar bg-primary-600 rounded-full" style={{width: '80%'}}></div>
                           </div>
                         </div>
@@ -531,7 +402,7 @@ const DashboardPage = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-full max-w-66 ms-auto">
-                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}>
                             <div className="progress-bar bg-orange rounded-full" style={{width: '60%'}}></div>
                           </div>
                         </div>
@@ -549,7 +420,7 @@ const DashboardPage = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-full max-w-66 ms-auto">
-                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}>
                             <div className="progress-bar bg-warning-600 rounded-full" style={{width: '49%'}}></div>
                           </div>
                         </div>
@@ -567,7 +438,7 @@ const DashboardPage = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-full max-w-66 ms-auto">
-                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}>
                             <div className="progress-bar bg-success-600 rounded-full" style={{width: '100%'}}></div>
                           </div>
                         </div>
@@ -585,7 +456,7 @@ const DashboardPage = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-full max-w-66 ms-auto">
-                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}>
                             <div className="progress-bar bg-info-600 rounded-full" style={{width: '30%'}}></div>
                           </div>
                         </div>
@@ -602,7 +473,7 @@ const DashboardPage = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-full max-w-66 ms-auto">
-                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                          <div className="progress progress-sm rounded-full" role="progressbar" aria-label="Success example" aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}>
                             <div className="progress-bar bg-primary-600 rounded-full" style={{width: '80%'}}></div>
                           </div>
                         </div>

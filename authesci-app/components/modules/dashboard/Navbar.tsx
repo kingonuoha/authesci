@@ -5,7 +5,7 @@ import { Menu, ArrowRight, Search, Mail, Bell, Sun, Moon, ChevronDown, User, Set
 import Image from 'next/image';
 import Link from 'next/link';
 
-const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => void, toggleMobileSidebar: () => void }) => {
+const Navbar = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => void, toggleMobileSidebar: () => void }) => {
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isMessageDropdownOpen, setIsMessageDropdownOpen] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
@@ -24,8 +24,9 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
               <Menu className="icon !text-[30px]" />
             </button>
             <form className="navbar-search">
-              <input type="text" name="search" placeholder="Search" />
-              <Search className="icon" />
+              <label htmlFor="navbar-search-input" className="sr-only">Search</label>
+              <input type="text" name="search" placeholder="Search" id="navbar-search-input" />
+              <Search className="icon" aria-hidden="true" />
             </form>
           </div>
         </div>
@@ -35,12 +36,13 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
               type="button"
               id="theme-toggle"
               className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 dark:text-white"
+              aria-label="Toggle theme"
             >
               <span id="theme-toggle-dark-icon" className="hidden">
-                <Sun />
+                <Sun aria-hidden="true" />
               </span>
               <span id="theme-toggle-light-icon" className="hidden">
-                <Moon />
+                <Moon aria-hidden="true" />
               </span>
             </button>
 
@@ -50,10 +52,14 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                 onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
                 className="has-indicator flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 dark:text-white"
                 type="button"
+                aria-haspopup="true"
+                aria-expanded={isLanguageDropdownOpen}
+                aria-controls="dropdownInformation"
+                aria-label="Select language"
               >
                 <Image
                   src="/assets/images/lang-flag.png"
-                  alt="image"
+                  alt="Current language flag"
                   width={24}
                   height={24}
                   className="h-6 w-6 rounded-full object-cover"
@@ -62,7 +68,7 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
               {isLanguageDropdownOpen && (
                 <div
                   id="dropdownInformation"
-                  className="dropdown-menu-sm z-10 absolute right-0 mt-2 w-44 rounded-lg bg-white p-3 shadow-lg dark:bg-neutral-700"
+                  className="z-10 absolute right-0 mt-2 w-44 rounded-lg bg-white p-3 shadow-lg dark:bg-neutral-700"
                 >
                   {/* Language Dropdown content here */}
                   <div className="mb-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
@@ -75,7 +81,7 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                       <div className="form-check style-check flex items-center justify-between">
                         <label className="form-check-label line-height-1 text-secondary-light font-medium" htmlFor="english">
                           <span className="hover-bXg-transparent hover-text-primary flex items-center gap-3 text-black">
-                            <Image src="/assets/images/flags/flag1.png" alt="" width={36} height={36} className="bg-success-subtle h-9 w-9 shrink-0 rounded-full text-success-600" />
+                            <Image src="/assets/images/flags/flag1.png" alt="Flag of English" width={36} height={36} className="bg-success-subtle h-9 w-9 shrink-0 rounded-full text-success-600" />
                             <span className="mb-0 text-base font-semibold">English</span>
                           </span>
                         </label>
@@ -94,6 +100,10 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                 onClick={() => setIsMessageDropdownOpen(!isMessageDropdownOpen)}
                 className="has-indicator flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700"
                 type="button"
+                aria-haspopup="true"
+                aria-expanded={isMessageDropdownOpen}
+                aria-controls="dropdownMessage"
+                aria-label="View messages"
               >
                 <Mail className="text-xl text-neutral-900 dark:text-white" />
               </button>
@@ -112,7 +122,7 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                       <a href="#" className="flex justify-between gap-1 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600">
                         <div className="flex items-center gap-3">
                           <div className="relative flex-shrink-0">
-                            <Image className="h-11 w-11 rounded-full" src="/assets/images/notification/profile-3.png" alt="Joseph image" width={44} height={44} />
+                            <Image className="h-11 w-11 rounded-full" src="/assets/images/notification/profile-3.png" alt="User profile picture" width={44} height={44} />
                             <span className="absolute bottom-[2px] end-[2px] h-2.5 w-2.5 rounded-full border border-white bg-success-500 dark:border-gray-600"></span>
                           </div>
                           <div>
@@ -127,7 +137,7 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                       </a>
                     </div>
                     <div className="px-4 py-3 text-center">
-                      <a href="#" className="text-center font-semibold text-primary-600 hover:underline dark:text-primary-600">See All Message</a>
+                      <Link href="/messages" className="text-center font-semibold text-primary-600 hover:underline dark:text-primary-600">See All Message</Link>
                     </div>
                   </div>
                 </div>
@@ -141,6 +151,10 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                 onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
                 className="has-indicator flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700"
                 type="button"
+                aria-haspopup="true"
+                aria-expanded={isNotificationDropdownOpen}
+                aria-controls="dropdownNotification"
+                aria-label="View notifications"
               >
                 <Bell className="text-xl text-neutral-900 dark:text-white" />
               </button>
@@ -172,7 +186,7 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                       </a>
                     </div>
                     <div className="px-4 py-3 text-center">
-                      <a href="#" className="text-center font-semibold text-primary-600 hover:underline dark:text-primary-600">See All Notification</a>
+                      <Link href="/notifications" className="text-center font-semibold text-primary-600 hover:underline dark:text-primary-600">See All Notification</Link>
                     </div>
                   </div>
                 </div>
@@ -185,10 +199,14 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                 className="flex items-center justify-center rounded-full"
                 type="button"
+                aria-haspopup="true"
+                aria-expanded={isProfileDropdownOpen}
+                aria-controls="dropdownProfile"
+                aria-label="User profile menu"
               >
                 <Image
                   src="/assets/images/user.png"
-                  alt="image"
+                  alt="User profile picture"
                   width={40}
                   height={40}
                   className="object-fit-cover h-10 w-10 rounded-full"
@@ -204,7 +222,7 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                       <h6 className="mb-0 text-lg font-semibold text-neutral-900">Robiul Hasan</h6>
                       <span className="text-neutral-500">Admin</span>
                     </div>
-                    <button type="button" className="hover:text-danger-600">
+                    <button type="button" className="hover:text-danger-600" aria-label="Close profile menu">
                       <XCircle className="icon text-xl" />
                     </button>
                   </div>
@@ -230,10 +248,10 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                         </Link>
                       </li>
                       <li>
-                        <a className="flex items-center gap-4 px-0 py-2 text-black hover:text-danger-600" href="#">
+                        <button type="button" className="flex items-center gap-4 px-0 py-2 text-black hover:text-danger-600">
                           <LogOut className="icon text-xl" />
                           Log Out
-                        </a>
+                        </button>
                       </li>
                     </ul>
                   </div>
@@ -247,4 +265,4 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
   );
 };
 
-export default Header;
+export default Navbar;

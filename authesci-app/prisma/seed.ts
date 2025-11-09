@@ -32,16 +32,22 @@ async function main() {
     },
   });
 
-  const job = await prisma.job.upsert({
+  const existingJob = await prisma.job.findUnique({
     where: { title: 'Lead Researcher' },
+  });
+
+  const job = await prisma.job.upsert({
+    where: {
+      id: existingJob?.id || 'clp000000000000000000000', // Provide a dummy ID if not found, it will be ignored for creation
+    },
     update: {},
     create: {
       title: 'Lead Researcher',
       description: 'Seeking a lead researcher for innovative projects.',
       status: 'ACTIVE',
       employerId: employerProfile.id,
-      jobType: 'ON_SITE', // Add a jobType
-      requirements: ['PhD', 'Research Experience'], // Add requirements
+      jobType: 'ON_SITE',
+      requirements: ['PhD', 'Research Experience'],
     },
   });
 

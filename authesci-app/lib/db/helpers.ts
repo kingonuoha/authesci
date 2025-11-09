@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 export class NotFoundError extends Error {
   constructor(message: string = 'Resource not found') {
@@ -15,7 +16,7 @@ export class DuplicateError extends Error {
 }
 
 export function handlePrismaError(error: unknown): Error {
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+  if (error instanceof PrismaClientKnownRequestError) {
     // P2002: Unique constraint violation
     if (error.code === 'P2002') {
       const target = (error.meta?.target as string[])?.join(', ') || 'record';

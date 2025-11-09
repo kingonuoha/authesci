@@ -3,10 +3,10 @@
     "tasks": [
       {
         "id": 1,
-        "title": "Install Prisma and Prisma Client Dependencies",
-        "description": "Install the necessary Prisma packages (`prisma` and `@prisma/client`) as development and runtime dependencies, respectively, to enable ORM functionality.",
-        "details": "Install the Prisma CLI and the Prisma Client library. The Prisma CLI is used for schema management, migrations, and generating the client. The Prisma Client is the type-safe query builder used in application code.\n\n```bash\nnpm install prisma @prisma/client\n# or\nyarn add prisma @prisma/client\n```\n\nEnsure these are added to `package.json`.",
-        "testStrategy": "Verify `prisma` and `@prisma/client` are listed in `package.json` dependencies. Run `npx prisma -v` to confirm CLI installation and version.",
+        "title": "Setup Component Directory Structure and Barrel Exports",
+        "description": "Establish the foundational directory structure for reusable Next.js components under `components/modules/` and configure barrel exports for easy import.",
+        "details": "Create the following directory structure: `components/modules/auth`, `components/modules/dashboard`, `components/modules/jobs`, `components/modules/profiles`, `components/modules/projects`. Also, create `components/layouts/` for `DashboardLayout`. Implement `components/modules/index.ts` to re-export all components from their respective subdirectories, following the example: `export * from './auth/AuthCard';` This ensures components can be imported like `import { ComponentName } from '@/components/modules';`.",
+        "testStrategy": "Verify that the directory structure is correctly established. Create dummy `.tsx` files in each subdirectory and confirm they can be successfully imported and re-exported via `components/modules/index.ts` in a test page or component. Check for correct path resolution and no import errors.",
         "priority": "high",
         "dependencies": [],
         "status": "done",
@@ -14,11 +14,11 @@
       },
       {
         "id": 2,
-        "title": "Initialize Prisma Configuration",
-        "description": "Initialize Prisma in the project, which generates the `prisma` directory with `schema.prisma` and sets up the `.env.local` file for database connection strings.",
-        "details": "Run the Prisma initialization command. This will create a `prisma` directory containing `schema.prisma` and configure `.env.local` with a `DATABASE_URL` placeholder.\n\n```bash\nnpx prisma init\n```\n\nAfter initialization, update `.env.local` with the Supabase PostgreSQL connection details. It's crucial to define both `DATABASE_URL` (for Prisma Client connections) and `DIRECT_URL` (for Prisma Migrate/Introspection during development):\n\n```env\n# .env.local\nDATABASE_URL=\"postgresql://postgres:[PASSWORD]@db.[PROJECT_REF].supabase.co:5432/postgres?pgbouncer=true&connection_limit=1\"\nDIRECT_URL=\"postgresql://postgres:[PASSWORD]@db.[PROJECT_REF].supabase.co:5432/postgres\"\nNEXT_PUBLIC_SUPABASE_URL=\"https://[PROJECT_REF].supabase.co\"\nNEXT_PUBLIC_SUPABASE_ANON_KEY=\"[ANON_KEY]\"\n```\n\nFor `DATABASE_URL`, ensure `pgbouncer=true` and `connection_limit=1` for optimal performance and to respect Supabase's connection limits, especially in serverless environments like Next.js.",
-        "testStrategy": "Verify the `prisma` directory and `prisma/schema.prisma` file are created. Confirm `.env.local` is updated with `DATABASE_URL`, `DIRECT_URL`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY` placeholders, and then manually populate with actual Supabase credentials. Run `npx prisma validate` (will fail until schema is defined, but checks basic config).",
-        "priority": "high",
+        "title": "Configure Toast Provider and Global Styling Constants",
+        "description": "Integrate a toast notification provider into the root layout and establish a centralized file for common styling constants to ensure consistency.",
+        "details": "Configure a toast provider (e.g., using `react-hot-toast` or a Shadcn-based solution if available) in the root layout (`app/layout.tsx` or similar) to enable global toast notifications. Additionally, create `lib/constants/styles.ts` to define common Tailwind CSS class strings, such as `CARD_STYLES` as shown in the PRD, to mitigate inconsistent styling. Example: `export const CARD_STYLES = { base: 'rounded-lg border bg-card shadow-sm', hover: 'hover:shadow-md transition-shadow', padding: 'p-4' };`",
+        "testStrategy": "For the toast provider, implement a simple button in a test page that triggers a toast message and verify it appears correctly. For styling constants, apply a defined constant (e.g., `CARD_STYLES.base`) to a simple `div` and visually confirm the styles are applied as expected. Ensure the constants file is accessible and usable across components.",
+        "priority": "medium",
         "dependencies": [
           1
         ],
@@ -27,12 +27,13 @@
       },
       {
         "id": 3,
-        "title": "Create Prisma Singleton Client Utility",
-        "description": "Implement a singleton pattern for the Prisma Client to prevent multiple instances and manage database connections efficiently in a Next.js environment.",
-        "details": "Create `lib/prisma.ts` which exports a single, reusable instance of the Prisma Client. This is crucial for Next.js to prevent hot-reloading issues and ensure efficient connection pooling.\n\n```typescript\n// lib/prisma.ts\nimport { PrismaClient } from '@prisma/client';\n\nconst prismaClientSingleton = () => {\n  return new PrismaClient();\n};\n\ntype PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;\n\nconst globalForPrisma = globalThis as unknown as {\n  prisma: PrismaClientSingleton | undefined;\n};\n\nexport const prisma = globalForPrisma.prisma ?? prismaClientSingleton();\n\nif (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;\n```\n\nThis pattern ensures that in development, Prisma Client is only instantiated once across hot reloads, and in production, a single instance is used for all requests.",
-        "testStrategy": "Create a temporary Server Component or API route (e.g., `app/api/test-db/route.ts`) that imports and initializes `prisma` from `lib/prisma.ts` and logs its instance. Ensure it runs without errors. Verify that during development hot-reloads, the `prismaClientSingleton` function is called only once per server startup.",
+        "title": "Implement Tier 1 - Auth Components (`AuthCard`, `FormInput`)",
+        "description": "Develop the core authentication components, `AuthCard` and `FormInput`, with TypeScript interfaces, JSDoc, and accessibility standards.",
+        "details": "Create `components/modules/auth/AuthCard.tsx` and `components/modules/auth/FormInput.tsx`. `FormInput` should be a Client Component (`'use client'`) due to input state and validation. `AuthCard` can be a Server Component wrapping client forms. Define strict TypeScript interfaces (e.g., `AuthCardProps`, `FormInputProps`) with JSDoc comments for all props, including common patterns like `id`, `className`, `children`, and event handlers. Implement form validation display for `FormInput`. Ensure semantic HTML, `aria-label` for icon buttons, and visible focus states for interactive elements. Utilize existing Shadcn components where appropriate.",
+        "testStrategy": "Develop a test page that uses `AuthCard` to wrap a login/signup form, incorporating `FormInput` fields. Verify that `FormInput` displays labels, accepts input, and shows validation messages correctly. Test keyboard navigation and focus states for `FormInput`. Confirm TypeScript prop errors are caught at compile time if incorrect types are passed. Check for 'use client' errors in the console.",
         "priority": "high",
         "dependencies": [
+          1,
           2
         ],
         "status": "done",
@@ -40,11 +41,11 @@
       },
       {
         "id": 4,
-        "title": "Add Prisma CLI Scripts to package.json",
-        "description": "Configure `package.json` with scripts for common Prisma CLI commands like `prisma generate`, `prisma migrate dev`, `prisma studio`, and `prisma db push` to streamline development workflows.",
-        "details": "Add the following scripts to the `scripts` section of `package.json`:\n\n```json\n// package.json\n{\n  \"scripts\": {\n    \"dev\": \"next dev\",\n    \"build\": \"next build\",\n    \"start\": \"next start\",\n    \"lint\": \"next lint\",\n    \"prisma:generate\": \"prisma generate\",\n    \"prisma:migrate:dev\": \"prisma migrate dev\",\n    \"prisma:migrate:deploy\": \"prisma migrate deploy\",\n    \"prisma:studio\": \"prisma studio\",\n    \"prisma:db:push\": \"prisma db push\",\n    \"prisma:validate\": \"prisma validate\"\n  }\n}\n```\n\nAdd `\"postinstall\": \"prisma generate\"` to ensure Prisma Client types are always up-to-date after installing dependencies.",
-        "testStrategy": "Run `npm run prisma:generate` (or `yarn prisma:generate`) and ensure it completes without errors, generating `node_modules/.prisma/client`. Run `npm run prisma:validate` to ensure the current (empty) schema is valid. Run `npm run prisma:studio` to ensure it starts, even if no tables are present yet.",
-        "priority": "medium",
+        "title": "Implement Tier 2 - Dashboard Core Components (`Sidebar`, `Navbar`)",
+        "description": "Develop the interactive `Sidebar` and `Navbar` components for the dashboard shell, including role-based menus, user menu, and theme toggle.",
+        "details": "Create `components/modules/dashboard/Sidebar.tsx` and `components/modules/dashboard/Navbar.tsx`. Both must be Client Components (`'use client'`) due to interactivity (collapse/expand state, dropdown menus, theme toggle). Define TypeScript interfaces with JSDoc. Implement role-based menu rendering for `Sidebar`. Integrate user menu and notifications into `Navbar`. Use `next/link` for all navigation links and `next/image` for logos/avatars. Ensure WCAG 2.1 AA compliance with semantic HTML, `aria-label` for icon buttons, keyboard navigation, and visible focus states.",
+        "testStrategy": "Create a test page that renders both `Sidebar` and `Navbar`. Verify `Sidebar` collapse/expand functionality, active route highlighting, and role-based menu visibility. Test `Navbar` dropdown menus, user menu interactions, and theme toggle persistence. Check all links use `next/link` and images use `next/image`. Perform keyboard navigation tests and verify focus states. Confirm no 'use client' errors.",
+        "priority": "high",
         "dependencies": [
           1,
           2
@@ -54,12 +55,13 @@
       },
       {
         "id": 5,
-        "title": "Define Complete Prisma Schema Models",
-        "description": "Translate the comprehensive database design from `/docs/context/database-schema.md` into `prisma/schema.prisma`, including all models, fields, relations, enums, unique constraints, and mapping to snake_case table names.",
-        "details": "Edit `prisma/schema.prisma` to define all required models as per `/docs/context/database-schema.md`. This includes:\n\n1.  **Models:** `Profile`, `Job`, `Application`, `Project`, `Task`, `Collaborator`, `Payment`, `Notification`, `Subscription`.\n2.  **Fields:** Define scalar types (String, Int, DateTime, Boolean, etc.), default values (e.g., `cuid()` or `uuid()` for IDs, `now()` for `createdAt`), and `updatedAt @updatedAt`.\n3.  **UUID Primary Keys:** Use `id String @id @default(uuid())` for distributed compatibility.\n4.  **Enums:** Define enums for statuses (e.g., `JobStatus`, `ApplicationStatus`, `Role`) and associate them with model fields.\n5.  **Relationships:** Define one-to-many (`1:M`) and many-to-one (`M:1`) relationships using `@relation` with `onDelete: Cascade` where appropriate (e.g., `Profile` to `jobsPosted`, `Application` to `Job` and `Profile`).\n6.  **Unique Constraints:** Add `@@unique()` for fields or combinations of fields that must be unique (e.g., email in `Profile`, unique job applications).\n7.  **Table Naming:** Use `@@map(\"snake_case_table_name\")` to map Prisma's PascalCase model names to snake_case table names in the PostgreSQL database.\n8.  **Soft Deletes:** Include `deletedAt DateTime?` fields in models where soft deletion is required.\n\nExample for a `Profile` model:\n\n```prisma\n// prisma/schema.prisma\nmodel Profile {\n  id        String   @id @default(uuid())\n  email     String   @unique\n  name      String?\n  role      Role     @default(USER)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  deletedAt DateTime? // For soft deletes\n\n  jobsPosted       Job[]\n  applications     Application[]\n  projectsCreated  Project[]    @relation(\"CreatedProjects\") // Example of custom relation name\n  collaborations   Collaborator[]\n\n  @@map(\"profiles\") // Map to snake_case table name\n}\n\nenum Role {\n  USER\n  EMPLOYER\n  ADMIN\n}\n```",
-        "testStrategy": "Run `npm run prisma:validate` to ensure the schema is syntactically correct and consistent. Visually inspect `prisma/schema.prisma` to confirm all models, fields, relations, enums, unique constraints, and `@@map` directives are defined according to `/docs/context/database-schema.md`.",
+        "title": "Implement Tier 2 - Dashboard Content Components (`StatWidget`, `EmptyState`)",
+        "description": "Develop the `StatWidget` and `EmptyState` components for displaying dashboard metrics and placeholders.",
+        "details": "Create `components/modules/dashboard/StatWidget.tsx` and `components/modules/dashboard/EmptyState.tsx`. Both should be Server Components as they lack interactivity. Define strict TypeScript interfaces with JSDoc comments for props (e.g., `StatWidgetProps` for title, value, icon; `EmptyStateProps` for message, action button). Ensure semantic HTML and basic accessibility considerations like appropriate headings and descriptive text. Utilize `class-variance-authority` if variants are needed for `StatWidget` (e.g., different colors based on metric status).",
+        "testStrategy": "Render `StatWidget` with various data inputs (e.g., different numbers, titles, icons) and `EmptyState` with different messages and optional action buttons on a test page. Verify correct data display and styling. Confirm these components render without client-side errors and do not require the `'use client'` directive.",
         "priority": "high",
         "dependencies": [
+          1,
           2
         ],
         "status": "done",
@@ -67,12 +69,13 @@
       },
       {
         "id": 6,
-        "title": "Generate Initial Database Migration",
-        "description": "Create the first database migration script based on the defined Prisma schema to set up all tables and relationships in the Supabase PostgreSQL database.",
-        "details": "Run `prisma migrate dev` with a descriptive name for the initial migration. This command will:\n\n1.  Compare the `schema.prisma` with the current state of the database (or create a new migration if the database is empty).\n2.  Generate a new SQL migration file in `prisma/migrations/<timestamp>_init/migration.sql`.\n3.  Apply this migration to the database specified by `DATABASE_URL`.\n4.  Run `prisma generate` to update the Prisma Client types.\n\n```bash\nnpm run prisma:migrate:dev --name init\n# Or directly:\nnpx prisma migrate dev --name init\n```\n\nReview the generated SQL file (`prisma/migrations/<timestamp>_init/migration.sql`) to ensure it accurately reflects the schema before proceeding.",
-        "testStrategy": "After running the command, check for the creation of a new directory under `prisma/migrations/` containing `migration.sql`. Review the `migration.sql` file to ensure it contains `CREATE TABLE` statements for all defined models, including primary keys, foreign keys, unique constraints, and correct data types. The CLI output should indicate a successful migration and client generation.",
+        "title": "Implement `DashboardLayout` Component",
+        "description": "Create a reusable `DashboardLayout` component that integrates the `Sidebar` and `Navbar` to provide a consistent layout for dashboard pages.",
+        "details": "Create `components/layouts/DashboardLayout.tsx`. This component will act as a wrapper, taking `children` as a prop. It should render the `Sidebar` and `Navbar` components, positioning them correctly to form the overall dashboard structure. The `DashboardLayout` itself can be a Server Component, as it primarily composes other components. Ensure proper styling using Tailwind CSS to achieve the desired layout, considering responsiveness.",
+        "testStrategy": "Create a simple test page that uses `DashboardLayout` to wrap some content. Verify that the `Sidebar` and `Navbar` render correctly within the layout. Test responsiveness by resizing the browser window. Confirm that the layout provides a stable container for nested content and that interactive elements within `Sidebar` and `Navbar` still function as expected.",
         "priority": "high",
         "dependencies": [
+          4,
           5
         ],
         "status": "done",
@@ -80,184 +83,69 @@
       },
       {
         "id": 7,
-        "title": "Verify Applied Migration in Supabase and Generate Prisma Client Types",
-        "description": "Confirm that the initial migration successfully created tables in the Supabase database and ensure the Prisma Client types are generated and available for type-safe queries.",
-        "details": "After `prisma migrate dev` is executed, it automatically generates Prisma Client types. Verify the database state:\n\n1.  **Supabase Dashboard:** Log in to your Supabase project, navigate to the 'Table Editor' or 'SQL Editor', and confirm that all tables defined in `prisma/schema.prisma` (e.g., `profiles`, `jobs`, `applications`) exist with the correct columns and relationships.\n2.  **Prisma Client Types:** Ensure the `node_modules/.prisma/client` directory exists and contains generated type definitions. In your IDE, try importing `PrismaClient` and any model types (e.g., `Profile`, `Job`) from `@prisma/client`; they should be correctly recognized with autocomplete.\n\nThis step also implicitly validates that the `prisma generate` step (part of `migrate dev` and `postinstall`) worked correctly.",
-        "testStrategy": "Open the Supabase Dashboard and visually inspect the 'Table Editor' to verify the presence and structure of all tables. In a TypeScript file (e.g., `lib/prisma.ts` or a temporary test file), import `PrismaClient` and attempt to use it with auto-completion for defined models (e.g., `prisma.profile.findMany()`). Ensure no TypeScript errors related to missing types appear.",
-        "priority": "high",
+        "title": "Implement Tier 3 - Jobs/Profiles Components (`JobCard`, `ApplicationCard`, `ProfileCard`, `SearchBar`)",
+        "description": "Develop components for displaying job listings, applications, user profiles, and a search bar with filters.",
+        "details": "Create `components/modules/jobs/JobCard.tsx`, `components/modules/jobs/ApplicationCard.tsx`, `components/modules/jobs/SearchBar.tsx`, and `components/modules/profiles/ProfileCard.tsx`. `JobCard` and `SearchBar` must be Client Components (`'use client'`) due to interactive elements (save button, input state, filters). `ProfileCard` should be a Server Component. `ApplicationCard` can be a Server Component unless specific interactivity is required. Define TypeScript interfaces with JSDoc, including `JobType` from `@prisma/client` for `JobCardProps`. Use `next/image` for company logos/user avatars and `next/link` for navigation. Implement skeleton variants for loading states. Ensure full accessibility compliance.",
+        "testStrategy": "For each component, create a test page with sample data. Verify `JobCard` displays data correctly, and its interactive elements (e.g., save button) function. Test `SearchBar` input, filtering logic, and state management. Confirm `ProfileCard` and `ApplicationCard` render data accurately. Test loading skeletons. Perform accessibility checks for all interactive elements and image alt texts. Verify correct Server/Client component classification.",
+        "priority": "medium",
         "dependencies": [
-          6
+          1,
+          2
         ],
         "status": "done",
         "subtasks": []
       },
       {
         "id": 8,
-        "title": "Install Supabase SSR Dependencies",
-        "description": "Install `@supabase/supabase-js` and `@supabase/ssr` to enable server-side rendering compatibility for Supabase authentication and data fetching in Next.js App Router.",
-        "details": "Install the core Supabase client library and the Next.js SSR helper library:\n\n```bash\nnpm install @supabase/supabase-js @supabase/ssr\n# or\nyarn add @supabase/supabase-js @supabase/ssr\n```\n\n`@supabase/supabase-js` provides the main Supabase client, and `@supabase/ssr` offers utilities (`createServerClient`, `createBrowserClient`, `createMiddlewareClient`) specifically designed for Next.js App Router environments.",
-        "testStrategy": "Verify `@supabase/supabase-js` and `@supabase/ssr` are listed in `package.json` dependencies. Attempt to import `createServerClient` from `@supabase/ssr/server` in a dummy file to check module resolution.",
-        "priority": "high",
-        "dependencies": [],
+        "title": "Implement Tier 4 - Projects Components (`ProjectCard`, `TaskCard`, `FileCard`, `CollaboratorAvatar`)",
+        "description": "Develop components for project management, including project previews, drag-and-drop task items, file displays, and collaborator avatars.",
+        "details": "Create `components/modules/projects/ProjectCard.tsx`, `components/modules/projects/TaskCard.tsx`, `components/modules/projects/FileCard.tsx`, and `components/modules/projects/CollaboratorAvatar.tsx`. `TaskCard` must be a Client Component (`'use client'`) to support drag-and-drop functionality using `@dnd-kit` (assuming it's already installed). Other components can be Server Components. Define TypeScript interfaces with JSDoc. Use `next/image` for avatars and `next/link` for project/file links. Implement drag-and-drop for `TaskCard`. Ensure accessibility, including `aria-label` for interactive elements and proper keyboard navigation for `TaskCard`.",
+        "testStrategy": "Create a test page for each component. Verify `ProjectCard` and `FileCard` display data correctly. For `TaskCard`, test drag-and-drop functionality, ensuring items can be reordered or moved. Confirm `CollaboratorAvatar` displays correctly and any associated tooltips work. Check `next/image` and `next/link` usage. Perform accessibility checks, especially for `TaskCard`'s interactive behavior.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
         "status": "done",
         "subtasks": []
       },
       {
         "id": 9,
-        "title": "Create Supabase Server Component Client Utility",
-        "description": "Implement `lib/supabase/server.ts` to provide a Supabase client configured for use within Next.js Server Components, ensuring correct handling of cookies for session management.",
-        "details": "Create the file `lib/supabase/server.ts`.\nThis utility will use `createServerClient` from `@supabase/ssr/server` and `cookies()` from `next/headers` to securely get and set cookies, essential for session management in Server Components.\n\n```typescript\n// lib/supabase/server.ts\nimport { createServerClient, type CookieOptions } from '@supabase/ssr';\nimport { cookies } from 'next/headers';\n\nexport function createClient() {\n  const cookieStore = cookies();\n\n  return createServerClient(\n    process.env.NEXT_PUBLIC_SUPABASE_URL!,\n    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,\n    {\n      cookies: {\n        get(name: string) {\n          return cookieStore.get(name)?.value;\n        },\n        set(name: string, value: string, options: CookieOptions) {\n          try {\n            cookieStore.set({ name, value, ...options });\n          } catch (error) {\n            // The `cookies().set()` method can only be called in a Server Context.\n            // We're working on a fix for this with Next.js that will allow you to set cookies.\n            // For now, you can use a route handler to set cookies.\n            console.error('Failed to set cookie in Server Component:', error);\n          }\n        },\n        remove(name: string, options: CookieOptions) {\n          try {\n            cookieStore.set({ name, value: '', ...options });\n          } catch (error) {\n            console.error('Failed to remove cookie in Server Component:', error);\n          }\n        },\n      },\n    }\n  );\n}\n```\n\nThis client is for use in Server Components, Server Actions, and Route Handlers.",
-        "testStrategy": "Create a temporary Server Component (e.g., `app/test-server/page.tsx`) that imports `createClient` from `lib/supabase/server.ts`, initializes it, and attempts to fetch some data (e.g., `supabase.from('profiles').select('*')`). Verify the component renders without errors and that cookie handling logic doesn't throw exceptions.",
-        "priority": "high",
+        "title": "Implement Tier 5 - Utility Components (`Pagination`, `Badge`, `LoadingSkeleton`, `DataTable`)",
+        "description": "Develop general utility components for pagination, badges, loading states, and data tables.",
+        "details": "Create `components/modules/utilities/Pagination.tsx`, `components/modules/utilities/Badge.tsx`, `components/modules/utilities/LoadingSkeleton.tsx`, and `components/modules/utilities/DataTable.tsx`. `Pagination` and `DataTable` will likely be Client Components (`'use client'`) due to internal state and interactivity. `Badge` and `LoadingSkeleton` can be Server Components. Define TypeScript interfaces with JSDoc. For `DataTable`, consider using an existing Shadcn table component as a base. Ensure all components adhere to accessibility standards, including keyboard navigation for `Pagination` and `DataTable`.",
+        "testStrategy": "For each utility component, create a test scenario. Verify `Pagination` controls work and update page state. Test `Badge` with different variants/content. Confirm `LoadingSkeleton` displays correctly. For `DataTable`, verify data rendering, sorting (if implemented), and pagination. Perform accessibility checks for interactive elements and ensure proper Server/Client component classification.",
+        "priority": "low",
         "dependencies": [
-          2,
-          8
+          1,
+          2
         ],
         "status": "done",
         "subtasks": []
       },
       {
         "id": 10,
-        "title": "Create Supabase Client Component Utility",
-        "description": "Implement `lib/supabase/client.ts` to provide a Supabase client configured for use within Next.js Client Components, utilizing browser storage for session persistence.",
-        "details": "Create the file `lib/supabase/client.ts`.\nThis utility will use `createBrowserClient` from `@supabase/ssr/client` and rely on browser's `localStorage` or `sessionStorage` for token storage.\n\n```typescript\n// lib/supabase/client.ts\nimport { createBrowserClient } from '@supabase/ssr';\n\nexport function createClient() {\n  return createBrowserClient(\n    process.env.NEXT_PUBLIC_SUPABASE_URL!,\n    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!\n  );\n}\n```\n\nThis client is used within `use client` components.",
-        "testStrategy": "Create a temporary Client Component (e.g., `app/test-client/page.tsx` with `'use client'`) that imports `createClient` from `lib/supabase/client.ts`. Initialize it and perform a client-side Supabase operation (e.g., `supabase.auth.getSession()` or a data fetch). Verify it runs without errors in the browser console.",
+        "title": "Comprehensive Accessibility Audit and Refinement",
+        "description": "Conduct a thorough accessibility audit across all newly developed components to ensure WCAG 2.1 AA compliance.",
+        "details": "Perform a comprehensive review of all components (Auth, Dashboard, Jobs/Profiles, Projects, Utilities) against the WCAG 2.1 AA guidelines. Specifically check for: semantic HTML usage (e.g., `button`, `nav`, `aside` instead of `div`), `alt` text on all images, `aria-label` on icon buttons, full keyboard accessibility (`tabIndex`, `onKeyDown` handlers), visible focus states, and WCAG AA color contrast (4.5:1). Utilize tools like Axe DevTools for automated checks and manual keyboard navigation testing.",
+        "testStrategy": "For each component, run Axe DevTools and address all reported issues. Manually test keyboard navigation for all interactive elements (buttons, links, inputs, drag-and-drop items). Verify focus states are clearly visible. Use a color contrast checker to confirm text and interactive element contrasts meet WCAG AA standards. Document findings and implement necessary refinements.",
         "priority": "high",
         "dependencies": [
-          2,
-          8
-        ],
-        "status": "done",
-        "subtasks": []
-      },
-      {
-        "id": 11,
-        "title": "Create Supabase Middleware Client Utility",
-        "description": "Implement `lib/supabase/middleware.ts` to provide a Supabase client configured for use within Next.js middleware, specifically for refreshing authentication tokens.",
-        "details": "Create the file `lib/supabase/middleware.ts`.\nThis utility will use `createMiddlewareClient` from `@supabase/ssr/middleware` to handle cookie management within Next.js middleware, which is critical for refreshing user sessions securely.\n\n```typescript\n// lib/supabase/middleware.ts\nimport { createMiddlewareClient } from '@supabase/ssr';\nimport { NextResponse, type NextRequest } from 'next/server';\n\nexport async function createClient(req: NextRequest, res: NextResponse) {\n  return createMiddlewareClient({\n    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,\n    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,\n    request: req,\n    response: res,\n  });\n}\n```\n\nThis client is exclusively for use in the `middleware.ts` file.",
-        "testStrategy": "This client will be tested as part of Task 12 when integrated into the actual `middleware.ts` file.",
-        "priority": "high",
-        "dependencies": [
-          2,
-          8
-        ],
-        "status": "done",
-        "subtasks": []
-      },
-      {
-        "id": 12,
-        "title": "Update Next.js Middleware for Supabase Session Refresh",
-        "description": "Integrate the Supabase middleware client into the Next.js `middleware.ts` file to manage and refresh user authentication sessions, crucial for cookie-based authentication.",
-        "details": "Modify the existing `middleware.ts` file at the project root to utilize the `createClient` from `lib/supabase/middleware.ts`. This middleware will refresh the user's session and update the cookies, ensuring persistent authentication.\n\n```typescript\n// middleware.ts\nimport { NextResponse, type NextRequest } from 'next/server';\nimport { createClient } from '@/lib/supabase/middleware'; // Adjust path if necessary\n\nexport async function middleware(request: NextRequest) {\n  const response = NextResponse.next();\n  const supabase = await createClient(request, response);\n\n  // Refresh user's auth session\n  // This will refresh the session if expired and set new cookies.\n  // It's vital for keeping the user logged in across page navigations.\n  await supabase.auth.getSession();\n\n  return response;\n}\n\n// Optionally, define paths where the middleware should run\nexport const config = {\n  matcher: [\n    /*\n     * Match all request paths except for the ones starting with:\n     * - _next/static (static files)\n     * - _next/image (image optimization files)\n     * - favicon.ico (favicon file)\n     * Feel free to modify this pattern to include more paths.\n     */\n    '/((?!_next/static|_next/image|favicon.ico).*)',\n  ],\n};\n```\n\nThis setup ensures that Supabase cookies are correctly handled and refreshed on every applicable request, preventing session expiry issues and enabling future cookie-based authentication.",
-        "testStrategy": "Deploy the middleware. Using browser developer tools, observe network requests and cookies. Navigate through pages; ensure Supabase auth cookies are present and `sb-access-token` and `sb-refresh-token` are being updated or refreshed by the middleware. Verify there are no hydration errors or authentication issues (though auth logic itself is Batch 2).",
-        "priority": "high",
-        "dependencies": [
-          9,
-          11
-        ],
-        "status": "done",
-        "subtasks": []
-      },
-      {
-        "id": 13,
-        "title": "Remove Old Basic Supabase Client",
-        "description": "Delete the outdated `lib/supabase.ts` file, which contained the basic Supabase client, as it has been superseded by the new SSR-compatible client utilities.",
-        "details": "Locate and delete the file `lib/supabase.ts` (or similar path if named differently, as per previous implementation). This file is no longer needed as the project now uses the dedicated Supabase SSR clients for server, client, and middleware contexts.\n\n```bash\nrm lib/supabase.ts # or delete manually\n```\n\nUpdate any imports that might still be referencing the old client to point to the new `lib/supabase/server.ts` or `lib/supabase/client.ts` as appropriate.",
-        "testStrategy": "Ensure the file `lib/supabase.ts` is deleted. Run the application (dev server) and verify there are no compilation errors or runtime errors related to missing `lib/supabase.ts` imports. A global search for `lib/supabase.ts` should yield no results outside of this task's documentation.",
-        "priority": "medium",
-        "dependencies": [
-          9,
-          10,
-          11,
-          12
-        ],
-        "status": "done",
-        "subtasks": []
-      },
-      {
-        "id": 14,
-        "title": "Implement Database Error Handling Helpers",
-        "description": "Create `lib/db/helpers.ts` to provide reusable functions for handling common Prisma errors, such as unique constraint violations and record not found errors.",
-        "details": "Create the file `lib/db/helpers.ts`. This file will contain functions to abstract Prisma error handling, making it easier to provide user-friendly error messages and handle specific error codes.\n\n```typescript\n// lib/db/helpers.ts\nimport { Prisma } from '@prisma/client';\n\nexport class NotFoundError extends Error {\n  constructor(message: string = 'Resource not found') {\n    super(message);\n    this.name = 'NotFoundError';\n  }\n}\n\nexport class DuplicateError extends Error {\n  constructor(message: string = 'Resource already exists') {\n    super(message);\n    this.name = 'DuplicateError';\n  }\n}\n\nexport function handlePrismaError(error: unknown): Error {\n  if (error instanceof Prisma.PrismaClientKnownRequestError) {\n    // P2002: Unique constraint violation\n    if (error.code === 'P2002') {\n      const target = (error.meta?.target as string[])?.join(', ') || 'record';\n      return new DuplicateError(`A record with this ${target} already exists.`);\n    }\n    // P2025: Record to update/delete not found\n    if (error.code === 'P2025') {\n      return new NotFoundError(error.message.split('\\n')[0]);\n    }\n    // Add more specific error codes as needed\n  }\n  return error instanceof Error ? error : new Error(String(error));\n}\n\n// Example usage:\n// try {\n//   await prisma.profile.create({ data: { email: 'test@example.com' } });\n// } catch (e) {\n//   throw handlePrismaError(e);\n// }\n```",
-        "testStrategy": "Create a temporary API route or Server Action that attempts to perform database operations designed to trigger specific Prisma errors (e.g., creating a record with a duplicate unique field, attempting to update a non-existent record). Call `handlePrismaError` with the caught exception and verify that the correct custom error (`DuplicateError`, `NotFoundError`) is thrown.",
-        "priority": "medium",
-        "dependencies": [
-          7
-        ],
-        "status": "done",
-        "subtasks": []
-      },
-      {
-        "id": 15,
-        "title": "Export Prisma Type Helpers",
-        "description": "Create `lib/db/types.ts` to re-export and define custom TypeScript types derived from Prisma Client, improving type consistency and reducing direct `@prisma/client` imports in application code.",
-        "details": "Create the file `lib/db/types.ts`. This file will be used to centralize and potentially extend Prisma-generated types, making them easier to manage and use across the application.\n\n```typescript\n// lib/db/types.ts\nimport { Prisma } from '@prisma/client';\n\n// Export all Prisma model types\nexport type { Profile, Job, Application, Project, Task, Collaborator, Payment, Notification, Subscription } from '@prisma/client';\n\n// Example of creating a custom type for a profile with relations\nexport type ProfileWithJobs = Prisma.ProfileGetPayload({\n  include: { jobsPosted: true },\n});\n\n// Example of creating input types (useful for API routes/forms)\nexport type ProfileCreateInput = Prisma.ProfileCreateInput;\nexport type ProfileUpdateInput = Prisma.ProfileUpdateInput;\n\n// Add more complex query types or custom type definitions as the project grows.\n```",
-        "testStrategy": "In a temporary TypeScript file (e.g., a Server Component or API route), import specific types (e.g., `Profile`, `ProfileWithJobs`) from `lib/db/types.ts`. Assign a `prisma.profile.findUnique(...)` result to a variable typed as `ProfileWithJobs` and ensure type inference and auto-completion work correctly without errors. This confirms types are correctly re-exported and accessible.",
-        "priority": "medium",
-        "dependencies": [
-          7
-        ],
-        "status": "done",
-        "subtasks": []
-      },
-      {
-        "id": 16,
-        "title": "Create Prisma Seed Script for Test Data",
-        "description": "Develop `prisma/seed.ts` to populate the database with initial test data, including scientist and employer profiles, for development and testing purposes.",
-        "details": "Create `prisma/seed.ts`. This script will use the Prisma Client to insert predefined test data into the database. It should be written in TypeScript and executed using `tsx`.\n\n```typescript\n// prisma/seed.ts\nimport { PrismaClient } from '@prisma/client';\n\nconst prisma = new PrismaClient();\n\nasync function main() {\n  console.log(`Start seeding ...`);\n\n  // Clear existing data (optional, for repeatable seeding)\n  await prisma.application.deleteMany();\n  await prisma.job.deleteMany();\n  await prisma.profile.deleteMany();\n\n  const employerProfile = await prisma.profile.upsert({\n    where: { email: 'employer@example.com' },\n    update: {},\n    create: {\n      email: 'employer@example.com',\n      name: 'Acme Corp',\n      role: 'EMPLOYER',\n    },\n  });\n\n  const scientistProfile = await prisma.profile.upsert({\n    where: { email: 'scientist@example.com' },\n    update: {},\n    create: {\n      email: 'scientist@example.com',\n      name: 'Dr. Jane Doe',\n      role: 'USER',\n    },\n  });\n\n  const job = await prisma.job.upsert({\n    where: { title: 'Lead Researcher' },\n    update: {},\n    create: {\n      title: 'Lead Researcher',\n      description: 'Seeking a lead researcher for innovative projects.',\n      status: 'OPEN',\n      postedById: employerProfile.id,\n    },\n  });\n\n  await prisma.application.upsert({\n    where: { applicantId_jobId: { applicantId: scientistProfile.id, jobId: job.id } },\n    update: {},\n    create: {\n      applicantId: scientistProfile.id,\n      jobId: job.id,\n      status: 'SUBMITTED',\n      coverLetter: 'I am highly interested in this position.',\n    },\n  });\n\n  console.log(`Seeding finished.`);\n}\n\nmain()\n  .catch((e) => {\n    console.error(e);\n    process.exit(1);\n  })\n  .finally(async () => {\n    await prisma.$disconnect();\n  });\n```",
-        "testStrategy": "This task will be tested in Task 17.",
-        "priority": "medium",
-        "dependencies": [
-          7
-        ],
-        "status": "done",
-        "subtasks": []
-      },
-      {
-        "id": 17,
-        "title": "Configure Seed Script Execution and Add Prisma Studio Script",
-        "description": "Install `tsx` for running TypeScript seed scripts and add `db:seed` and `db:studio` commands to `package.json` for easy execution of the seed script and launching Prisma Studio.",
-        "details": "1.  **Install `tsx`:** `tsx` is a TypeScript execution environment that allows running TypeScript files directly, which is needed for `prisma/seed.ts`.\n    ```bash\nnpm install -D tsx\n# or\nyarn add -D tsx\n    ```\n2.  **Add scripts to `package.json`:** Add the `db:seed` and `db:studio` commands to the `scripts` section.\n    ```json\n    // package.json\n    {\n      \"scripts\": {\n        // ... existing scripts ...\n        \"db:seed\": \"tsx prisma/seed.ts\",\n        \"db:studio\": \"prisma studio\"\n      }\n    }\n    ```\n\nNow you can run `npm run db:seed` to populate your database and `npm run db:studio` to visually browse and manage your data.",
-        "testStrategy": "Run `npm run db:seed`. Verify in the Supabase Dashboard's 'Table Editor' or by running `npm run db:studio` that the `profiles` and `jobs` tables contain the seeded test data (e.g., 'employer@example.com', 'scientist@example.com', 'Lead Researcher'). Confirm `npm run db:studio` successfully launches Prisma Studio in the browser, showing the connected database.",
-        "priority": "medium",
-        "dependencies": [
-          16
-        ],
-        "status": "done",
-        "subtasks": []
-      },
-      {
-        "id": 18,
-        "title": "Update Prisma Integration Documentation",
-        "description": "Update `docs/template-integration.md` to reflect the new Prisma ORM setup, configuration steps, and best practices for using Prisma with Supabase in the Next.js project.",
-        "details": "Edit `docs/template-integration.md` to include a dedicated section for Prisma ORM integration. Cover:\n\n1.  **Installation:** How to install Prisma packages.\n2.  **Configuration:** Details on `prisma init`, `.env.local` setup with `DATABASE_URL` and `DIRECT_URL`.\n3.  **Schema Definition:** Guidance on defining models, relations, enums, `@@map`, and UUIDs in `prisma/schema.prisma`.\n4.  **Migrations:** Workflow for `prisma migrate dev`, reviewing generated SQL, and applying migrations.\n5.  **Prisma Client Usage:** How to use the singleton Prisma Client (`lib/prisma.ts`) for type-safe queries.\n6.  **Supabase SSR Client Usage:** Briefly mention the new `lib/supabase/*` clients and their context (Server/Client/Middleware Components).\n7.  **Utilities:** Reference `lib/db/helpers.ts` and `lib/db/types.ts`.\n8.  **Development Scripts:** Explain `npm run prisma:studio`, `npm run db:seed`, etc.\n9.  **Troubleshooting:** Common issues and their resolutions (e.g., connection limits, type generation failures).",
-        "testStrategy": "Review the updated `docs/template-integration.md` to ensure accuracy, clarity, and completeness. A new developer or team member should be able to follow the documentation to set up the Prisma integration from scratch without additional guidance.",
-        "priority": "low",
-        "dependencies": [
+          3,
+          4,
+          5,
+          6,
           7,
-          13,
-          17
-        ],
-        "status": "done",
-        "subtasks": []
-      },
-      {
-        "id": 19,
-        "title": "Create Database Schema Reference Documentation",
-        "description": "Create `docs/context/database-schema.md` to serve as the definitive reference for the Authesci database schema, detailing all Prisma models, relationships, and constraints.",
-        "details": "Create the file `docs/context/database-schema.md`. This document should provide a clear and comprehensive overview of the database structure as defined in `prisma/schema.prisma`.\n\nInclude:\n\n1.  **Overview:** A high-level description of the database purpose and key entities.\n2.  **Model Definitions:** For each Prisma model (e.g., `Profile`, `Job`, `Application`), list its fields, their types, default values, and any specific attributes (e.g., `@unique`, `@id`, `?` for optional).\n3.  **Relationships:** Clearly describe all relationships between models (e.g., 'One-to-Many: A `Profile` can post multiple `Jobs`'). Use diagrams or clear textual explanations.\n4.  **Enums:** List all defined enums and their possible values.\n5.  **Constraints:** Detail unique constraints, foreign keys (implied by relations), and any other data integrity rules.\n6.  **Naming Conventions:** Explain the `PascalCase` to `snake_case` mapping for tables.\n7.  **Key Patterns:** Document UUIDs, soft deletes, and cascading deletes where applicable.",
-        "testStrategy": "Review `docs/context/database-schema.md` against `prisma/schema.prisma`. Ensure every model, field, relationship, and constraint is accurately documented. Verify that the documentation is easy to understand and serves as a reliable single source of truth for the database structure.",
-        "priority": "low",
-        "dependencies": [
-          7
+          8,
+          9
         ],
         "status": "done",
         "subtasks": []
       }
     ],
     "metadata": {
-      "created": "2025-11-07T02:50:18.572Z",
-      "updated": "2025-11-07T04:21:45.492Z",
+      "created": "2025-11-07T21:33:58.814Z",
+      "updated": "2025-11-09T22:24:56.611Z",
       "description": "Tasks for master context"
     }
   }

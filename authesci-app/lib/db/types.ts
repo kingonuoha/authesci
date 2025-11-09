@@ -1,12 +1,9 @@
 import { Prisma } from '@prisma/client';
 
-// Export all Prisma model types
-export type { Profile, Job, Application, Project, Task, Collaborator, Payment, Notification, Subscription } from '@prisma/client';
-
 // Example of creating a custom type for a profile with relations
-export type ProfileWithJobs = Prisma.ProfileGetPayload({
-  include: { jobsPosted: true },
-});
+export type ProfileWithJobs = Prisma.ProfileGetPayload<{
+  include: { jobsPosted: true };
+}>;
 
 // Example of creating input types (useful for API routes/forms)
 export type ProfileCreateInput = Prisma.ProfileCreateInput;

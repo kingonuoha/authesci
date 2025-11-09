@@ -94,8 +94,7 @@ model Profile {
 
 model Job {
   id           String        @id @default(uuid())
-  employerId   String        @map("employer_id")
-  title        String
+    title        String @unique
   description  String
   requirements String[]      @default([])
   category     String?
@@ -105,6 +104,7 @@ model Job {
   status       JobStatus     @default(DRAFT)
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
+  employerId   String        @map("employer_id")
   employer     Profile       @relation("JobsPosted", fields: [employerId], references: [id], onDelete: Cascade)
   applications Application[]
 

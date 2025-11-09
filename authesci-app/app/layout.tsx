@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import { Toaster } from 'react-hot-toast';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -48,6 +49,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-100 dark:bg-neutral-800 dark:text-white`}
       >
         {children}
+        <Toaster />
 
         <Script src="/assets/js/lib/jquery-3.7.1.min.js"></Script>
         <Script src="/assets/js/lib/apexcharts.min.js"></Script>

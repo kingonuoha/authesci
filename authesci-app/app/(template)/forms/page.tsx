@@ -200,16 +200,13 @@ const FormsPage = () => {
                             <div className="grid grid-cols-12 gap-5">
                                 <div className="lg:col-span-4 col-span-12">
                                     <label className="form-label">Description</label>
-                                    <textarea name="#0" className="form-control" rows="4" cols="50" placeholder="Enter a description..."></textarea>
-                                </div>
+                                                                         <textarea name="#0" className="form-control" rows={4} cols={50} placeholder="Enter a description..."></textarea>                                </div>
                                 <div className="lg:col-span-4 col-span-12">
                                     <label className="form-label">Description</label>
-                                    <textarea name="#0" className="form-control" rows="4" cols="50" placeholder="Enter a description..." readOnly></textarea>
-                                </div>
+                                                                         <textarea name="#0" className="form-control" rows={4} cols={50} placeholder="Enter a description..." readOnly></textarea>                                </div>
                                 <div className="lg:col-span-4 col-span-12">
                                     <label className="form-label">Description</label>
-                                    <textarea className="form-control border-danger-600" rows="4" cols="50" placeholder="Enter a description..." required></textarea>
-                                    <div className="text-danger-600 text-sm">
+                                                                         <textarea className="form-control border-danger-600" rows={4} cols={50} placeholder="Enter a description..." required></textarea>                                    <div className="text-danger-600 text-sm">
                                         Please enter a message in the textarea.
                                     </div>
                                 </div>

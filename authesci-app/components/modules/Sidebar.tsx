@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { X, Home, Mail, MessageSquare, Calendar, LayoutGrid, FileText, BrainCircuit, Bitcoin, Component, Book, Table, BarChart2, Package, Users, Key, GalleryHorizontal, DollarSign, HelpCircle, Frown, Info, Settings } from 'lucide-react';
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobileSidebar }: { isSidebarOpen: boolean, toggleSidebar: () => void, isMobileSidebarOpen: boolean, toggleMobileSidebar: () => void }) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -19,7 +20,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
   return (
     <aside className={`sidebar ${isSidebarOpen ? '' : 'w-20'} ${isMobileSidebarOpen ? 'sidebar-open' : ''}`}>
         <button type="button" className="sidebar-close-btn !mt-4" onClick={toggleMobileSidebar}>
-          <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
+          <X size={24} />
         </button>
         <div>
           <Link href="/" className="sidebar-logo">
@@ -32,7 +33,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
           <ul className="sidebar-menu" id="sidebar-menu">
             <li className={`dropdown ${openDropdown === 'dashboard' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('dashboard')}>
-                <iconify-icon icon="solar:home-smile-angle-outline" className="menu-icon"></iconify-icon>
+                <Home className="menu-icon" />
                 <span>Dashboard</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'dashboard' ? 'block' : 'none' }}>
@@ -55,31 +56,31 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
             <li className="sidebar-menu-group-title">Application</li>
             <li>
               <Link href="/email">
-                <iconify-icon icon="mage:email" className="menu-icon"></iconify-icon>
+                <Mail className="menu-icon" />
                 <span>Email</span>
               </Link>
             </li>
             <li>
               <Link href="/chat-message">
-                <iconify-icon icon="bi:chat-dots" className="menu-icon"></iconify-icon>
+                <MessageSquare className="menu-icon" />
                 <span>Chat</span>
               </Link>
             </li>
             <li>
               <Link href="/calendar-main">
-                <iconify-icon icon="solar:calendar-outline" className="menu-icon"></iconify-icon>
+                <Calendar className="menu-icon" />
                 <span>Calendar</span>
               </Link>
             </li>
             <li>
               <Link href="/kanban">
-                <iconify-icon icon="material-symbols:map-outline" className="menu-icon"></iconify-icon>
+                <LayoutGrid className="menu-icon" />
                 <span>Kanban</span>
               </Link>
             </li>
             <li className={`dropdown ${openDropdown === 'invoice' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('invoice')}>
-                <iconify-icon icon="hugeicons:invoice-03" className="menu-icon"></iconify-icon>
+                <FileText className="menu-icon" />
                 <span>Invoice</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'invoice' ? 'block' : 'none' }}>
@@ -91,7 +92,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
             </li>
             <li className={`dropdown ${openDropdown === 'ai-app' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('ai-app')}>
-                <iconify-icon icon="hugeicons:ai-brain-03" className="menu-icon"></iconify-icon>
+                <BrainCircuit className="menu-icon" />
                 <span>Ai Application</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'ai-app' ? 'block' : 'none' }}>
@@ -105,7 +106,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
 
             <li className={`dropdown ${openDropdown === 'crypto' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('crypto')}>
-                <iconify-icon icon="hugeicons:bitcoin-circle" className="menu-icon"></iconify-icon>
+                <Bitcoin className="menu-icon" />
                 <span>Crypto Currency</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'crypto' ? 'block' : 'none' }}>
@@ -117,7 +118,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
 
             <li className={`dropdown ${openDropdown === 'components' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('components')}>
-                <iconify-icon icon="solar:document-text-outline" className="menu-icon"></iconify-icon>
+                <Component className="menu-icon" />
                 <span>Components</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'components' ? 'block' : 'none' }}>
@@ -146,7 +147,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
             </li>
             <li className={`dropdown ${openDropdown === 'forms' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('forms')}>
-                <iconify-icon icon="heroicons:document" className="menu-icon"></iconify-icon>
+                <Book className="menu-icon" />
                 <span>Forms</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'forms' ? 'block' : 'none' }}>
@@ -158,7 +159,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
             </li>
             <li className={`dropdown ${openDropdown === 'table' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('table')}>
-                <iconify-icon icon="mingcute:storage-line" className="menu-icon"></iconify-icon>
+                <Table className="menu-icon" />
                 <span>Table</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'table' ? 'block' : 'none' }}>
@@ -168,7 +169,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
             </li>
             <li className={`dropdown ${openDropdown === 'chart' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('chart')}>
-                <iconify-icon icon="solar:pie-chart-outline" className="menu-icon"></iconify-icon>
+                <BarChart2 className="menu-icon" />
                 <span>Chart</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'chart' ? 'block' : 'none' }}>
@@ -179,13 +180,13 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
             </li>
             <li>
               <Link href="/widgets">
-                <iconify-icon icon="fe:vector" className="menu-icon"></iconify-icon>
+                <Package className="menu-icon" />
                 <span>Widgets</span>
               </Link>
             </li>
             <li className={`dropdown ${openDropdown === 'users' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('users')}>
-                <iconify-icon icon="flowbite:users-group-outline" className="menu-icon"></iconify-icon>
+                <Users className="menu-icon" />
                 <span>Users</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'users' ? 'block' : 'none' }}>
@@ -200,7 +201,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
 
             <li className={`dropdown ${openDropdown === 'authentication' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('authentication')}>
-                <iconify-icon icon="simple-line-icons:vector" className="menu-icon"></iconify-icon>
+                <Key className="menu-icon" />
                 <span>Authentication</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'authentication' ? 'block' : 'none' }}>
@@ -211,37 +212,37 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isMobileSidebarOpen, toggleMobi
             </li>
             <li>
               <Link href="/gallery">
-                <iconify-icon icon="solar:gallery-wide-linear" className="menu-icon"></iconify-icon>
+                <GalleryHorizontal className="menu-icon" />
                 <span>Gallery</span>
               </Link>
             </li>
             <li>
               <Link href="/pricing">
-                <iconify-icon icon="hugeicons:money-send-square" className="menu-icon"></iconify-icon>
+                <DollarSign className="menu-icon" />
                 <span>Pricing</span>
               </Link>
             </li>
             <li>
               <Link href="/faq">
-                <iconify-icon icon="mage:message-question-mark-round" className="menu-icon"></iconify-icon>
+                <HelpCircle className="menu-icon" />
                 <span>FAQs.</span>
               </Link>
             </li>
             <li>
               <Link href="/error">
-                <iconify-icon icon="streamline:straight-face" className="menu-icon"></iconify-icon>
+                <Frown className="menu-icon" />
                 <span>404</span>
               </Link>
             </li>
             <li>
               <Link href="/terms-condition">
-                <iconify-icon icon="octicon:info-24" className="menu-icon"></iconify-icon>
+                <Info className="menu-icon" />
                 <span>Terms & Conditions</span>
               </Link>
             </li>
             <li className={`dropdown ${openDropdown === 'settings' ? 'open' : ''}`}>
               <a href="#" onClick={() => handleDropdown('settings')}>
-                <iconify-icon icon="icon-park-outline:setting-two" className="menu-icon"></iconify-icon>
+                <Settings className="menu-icon" />
                 <span>Settings</span>
               </a>
               <ul className="sidebar-submenu" style={{ display: openDropdown === 'settings' ? 'block' : 'none' }}>

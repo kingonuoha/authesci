@@ -1,5 +1,5 @@
 ---
-description: Guidelines for AI development on the Authesci project.
+description: AI development guidelines for Authesci project
 globs: "**/*"
 alwaysApply: true
 ---
@@ -8,86 +8,176 @@ alwaysApply: true
 
 ## 1. Primary Directive
 
-You are an expert AI development assistant for the Authesci project. Your primary goal is to understand project requirements from the provided documentation and implement features while adhering to the project's architecture, coding standards, and established workflows.
+Expert AI assistant for Authesci. Understand requirements from documentation and implement features following project architecture and standards.
 
-## 2. Source of Truth & Core Documentation
+---
 
-Before starting any task, you MUST consult the following documents to understand the context and requirements.
+## 2. Source of Truth Documents
 
-- **Overall Project Vision:** [`docs/batches/SOURCE_OF_TRUTH.md`](mdc:docs/batches/SOURCE_OF_TRUTH.md)
+**Always consult before starting tasks:**
 
-  - This is the main Product Requirements Document (PRD). It contains the project's vision, user roles, core modules, and technical stack. All development must align with this document.
+- **Project Vision:** `docs/batches/SOURCE_OF_TRUTH.md` - Main PRD with vision, roles, modules, tech stack
+- **Batch PRDs:** `docs/batches/[batch-name]/prd.md` - Specific requirements per batch
+- **Database Schema:** `docs/context/database-schema.md` - Data models and relationships
+- **UI/UX Guidelines:** `docs/context/ui-ux.md` - Design principles, component usage, accessibility
 
-- **Batch-Specific Requirements:** [`docs/batches/`](mdc:docs/batches/)
-
-  - The project is developed in batches. Each batch has its own PRD (e.g., `1-project-setup/prd.md`). Always refer to the relevant batch document for specific tasks.
-
-- **Database Schema:** [`docs/context/database-schema.md`](mdc:docs/context/database-schema.md)
-
-  - This document defines the data models. Refer to it for any database-related work, especially when working with Prisma.
-
-- **UI/UX Guidelines:** [`docs/context/ui-ux.md`](mdc:docs/context/ui-ux.md)
-  - All frontend work must comply with the guidelines in this document. It covers design principles, component usage, and accessibility standards.
+---
 
 ## 3. Core Workflow
 
-### Step 1: Understand the Task
+### Step 1: Understand Task
+- Analyze request
+- Cross-reference with SOURCE_OF_TRUTH.md and batch PRD
+- Identify features, requirements, dependencies
 
-- Analyze the user's request.
-- Cross-reference the request with the `SOURCE_OF_TRUTH.md` and the relevant batch PRD in `docs/batches/`.
-- Identify all features, technical requirements, and dependencies related to the task.
-
-### Step 2: Locate Relevant Files
-
-- The main application code is in `authesci-app/`.
-- **Frontend Components:** `authesci-app/components/`. Many components are adapted from the `wowdash-tailwind-admin/` template.
-- **Pages/Routes:** `authesci-app/app/`. The project uses Next.js App Router.
-- **Database Client & Schema:** `authesci-app/prisma/schema.prisma` and `authesci-app/lib/prisma.ts`.
-- **Supabase Clients:** `authesci-app/lib/supabase/`.
-- **API Routes:** `authesci-app/app/api/`.
+### Step 2: Locate Files
+- **App code:** `authesci-app/`
+- **Components:** `authesci-app/components/`
+  - `ui/` - Shadcn components
+  - `modules/` - Custom domain components
+- **Routes:** `authesci-app/app/` (Next.js App Router)
+- **Database:** `authesci-app/prisma/schema.prisma`, `authesci-app/lib/prisma.ts`
+- **Supabase:** `authesci-app/lib/supabase/` (server.ts, client.ts, middleware.ts)
+- **API Routes:** `authesci-app/app/api/`
+- **Server Actions:** `authesci-app/app/actions/`
 
 ### Step 3: Implementation
+- **Follow:** ESLint config and Prettier formatting
+- **UI:** Use Shadcn for primitives, custom components for domain logic, adapt WowDash for layouts
+- **Database:** Use Prisma singleton, update schema + migrate, use correct Supabase client
+- **Components:** Server by default, Client only for interactivity, TypeScript interfaces with JSDoc
+- **Reference:** `docs/context/ui-ux.md` and `docs/context/database-schema.md`
 
-- **Follow Coding Standards:** Adhere to existing code style. The project uses ESLint (`authesci-app/eslint.config.mjs`).
-- **UI Implementation:**
-  - Use shadcn/ui components for common UI elements like dialogs, dropdowns, etc.
-  - For larger layouts and styles, adapt from the `wowdash-tailwind-admin/` HTML templates.
-  - Ensure all UI work aligns with `docs/context/ui-ux.md`.
-- **Backend & Database:**
-  - Use the singleton Prisma client (`authesci-app/lib/prisma.ts`) for all database interactions.
-  - When making schema changes, update `authesci-app/prisma/schema.prisma` and generate a new migration (`npx prisma migrate dev`).
-  - Use the correct Supabase SSR client (`server`, `client`, or `middleware`) depending on the context.
+### Step 4: Completion
+- Verify functionality works per PRD
+- Check code follows structure and UI/UX guidelines
+- Test accessibility and responsiveness
+- No errors or warnings
 
-### Step 4: Task Completion
-
-- Ensure the implemented functionality works as described in the PRD.
-- Verify that the code follows project structure and UI/UX guidelines.
-- Make sure there are no new errors or warnings.
+---
 
 ## 4. Best Practices
 
-- **File References:** Use `[filename](mdc:path/to/file)` to reference files in your explanations.
-- **Code Examples:** Use language-specific, formatted code blocks. Show good examples and explain why they are good.
-- **Consistency:** Maintain consistency with the existing codebase and design patterns.
-- **Clarity:** Be clear and concise in your explanations and commit messages.
+- Use `[filename](mdc:path)` for file references
+- Provide formatted code blocks with explanations
+- Maintain consistency with existing patterns
+- Use strict TypeScript (no `any`)
+- Follow WCAG 2.1 AA accessibility
+- Prefer Server Components for performance
+
+---
 
 ## 5. Available MCP Tools
 
-You have access to the following Model Context Protocol (MCP) servers to assist with development:
+### Development & Documentation
+- **context7:** Get latest docs and code examples for any library
 
-- **firecrawl-mcp:** For web scraping and content extraction.
-- **context7:** For retrieving up-to-date documentation and code examples for any library.
-- **task-master-ai:** For managing and tracking tasks.
-- **github:** For interacting with GitHub repositories.
-- **github.com/executeautomation/mcp-playwright:** For browser automation and testing with Playwright.
-- **vibe-check-mcp-server:** For UI/UX analysis and feedback.
+### Database & Backend
+- **supabase:** Query database, get Supabase docs, check RLS policies
+  - Query data: `SELECT * FROM profiles LIMIT 5`
+  - Get docs: Auth SSR, Realtime, Storage
+  - Use for understanding state, NOT for writing production data
 
-## 6. Git Workflow for Task Completion
+### Web & Content
+- **firecrawl-mcp:** Scrape documentation and extract structured data
 
-Upon completing a full list of tasks (e.g., all subtasks for a specific phase in the `Implementation.md`):
+### Task Management
+- **task-master-ai:** Create, update, track tasks from PRDs
 
-1.  **Create a new Git branch:** The branch name should be a concise summary of the completed work, **maximum 7 words**.
-    - Example: `feat/prisma-setup-complete`
-2.  **Commit your changes:** Ensure all relevant changes are committed to this new branch.
-3.  **Push changes to GitHub:** Push your new branch and its commits to the `https://github.com/kingonuoha/authesci` repository.
-4.  **DO NOT MERGE TO MAIN:** Under no circumstances should you merge your changes directly into the `main` branch. All merges will be handled manually by the user.
+### Version Control
+- **github:** Create branches, push commits, create PRs (DO NOT MERGE)
+
+### Testing & QA
+- **playwright:** Automated UI testing, cross-browser checks
+- **vibe-check-mcp-server:** Visual consistency checks, design compliance
+
+---
+
+## 6. Database Guidelines
+
+### Using Supabase MCP
+**Use for:**
+- Understanding current database state
+- Verifying migrations applied
+- Getting Supabase-specific documentation
+
+**Do NOT use for:**
+- Writing production data (use Prisma)
+- Complex transactions (use Prisma)
+- Application logic (use server actions)
+
+### Using Prisma Client
+**Always use for:**
+- CRUD operations in server actions
+- Complex queries with joins
+- Transactions
+- Type-safe database access
+
+### Schema Changes
+1. Check current structure with Supabase MCP
+2. Update `prisma/schema.prisma`
+3. Run `npx prisma migrate dev --name description`
+4. Verify with Supabase MCP
+
+---
+
+## 7. Git Workflow
+
+### On Task Completion:
+1. **Create branch:** `feat/brief-description` (max 7 words)
+2. **Commit:** Use conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`)
+3. **Push:** To `https://github.com/kingonuoha/authesci`
+4. **DO NOT MERGE TO MAIN**
+5. **Optional PR:** If requested, with description and task list
+
+---
+
+## 8. Quality Checklist
+
+### Code
+- [ ] Strict TypeScript (no `any`)
+- [ ] ESLint clean
+- [ ] Prettier formatted
+- [ ] No console.log in production
+- [ ] Error handling implemented
+
+### UI/UX (if applicable)
+- [ ] Follows ui-ux.md guidelines
+- [ ] Responsive on all screens
+- [ ] Keyboard accessible
+- [ ] ARIA attributes added
+- [ ] Loading/error/empty states
+
+### Database (if applicable)
+- [ ] Prisma schema updated and migrated
+- [ ] Verified with Supabase MCP
+- [ ] RLS policies considered
+- [ ] Data validation implemented
+
+### Testing
+- [ ] Manually tested
+- [ ] Edge cases considered
+- [ ] Error scenarios handled
+
+---
+
+## 9. Common Issues & Solutions
+
+### "Functions cannot be passed to Client Components"
+**Solution:** Add `"use client"` directive at top of file
+
+### Hydration Errors
+**Solution:** Ensure Server/Client boundary correct, check datetime/random values
+
+### Type Errors
+**Solution:** Import types from Prisma Client: `import type { Role } from '@prisma/client'`
+
+### Missing Prisma Types
+**Solution:** Run `npx prisma generate`
+
+### Migration Failed
+**Solution:** Check error, fix schema, run `npx prisma migrate reset` (dev only)
+
+---
+
+**End of AI Development Workflow**
