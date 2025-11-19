@@ -1,0 +1,174 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Define Role-Specific Navigation Constants",
+        "description": "Create and populate `lib/constants/navigation.ts` with navigation links tailored for each user role (Employer, Scientist, Collaborator, Admin).",
+        "details": "Create `lib/constants/navigation.ts`. Export a JavaScript object or array of objects, where each key represents a role (e.g., 'EMPLOYER', 'SCIENTIST') and its value is an array of navigation link objects. Each link object should contain `href` (string), `label` (string), and optionally an `icon` property. Example structure: `export const NAV_LINKS = { EMPLOYER: [{ href: '/employer/dashboard', label: 'Dashboard' }], SCIENTIST: [{ href: '/scientist/dashboard', label: 'Dashboard' }] };`",
+        "testStrategy": "Verify that `lib/constants/navigation.ts` exists and contains correctly structured navigation data for all specified roles. Ensure that the data is easily importable and accessible by other components.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Enhance `getAuthenticatedUser` Service for Role-Based Access",
+        "description": "Ensure the `getAuthenticatedUser` service in `lib/services/auth-service.ts` correctly processes `allowedRoles` and handles unauthorized access by redirecting users.",
+        "details": "Review and, if necessary, modify `lib/services/auth-service.ts` to ensure the `getAuthenticatedUser` function accepts an `allowedRoles` array as an option. This function should internally check the authenticated user's role against `allowedRoles`. If the user's role is not in `allowedRoles`, it must trigger a `redirect('/login')` or an 'access denied' mechanism as per the PRD. On success, it should return the `user` and `profile` objects.",
+        "testStrategy": "Test `getAuthenticatedUser` by calling it with different `allowedRoles` arrays and simulating users with various roles. Verify that authorized users receive `user` and `profile` data, and unauthorized users are correctly redirected to the login page or an access denied page.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Update `getAuthenticatedUser` Signature and Implement Role Validation",
+            "description": "Modify the `getAuthenticatedUser` function in `lib/services/auth-service.ts` to accept an optional `allowedRoles` array. Implement logic to retrieve the authenticated user's role from their profile and validate it against the provided `allowedRoles`.",
+            "dependencies": [],
+            "details": "In `lib/services/auth-service.ts`, update the `getAuthenticatedUser` function signature to include `allowedRoles?: UserRole[]`. Inside the function, after successfully retrieving the user and profile, access `profile.role` and check if it is included in the `allowedRoles` array if `allowedRoles` is provided. Ensure the `UserRole` enum is accessible.",
+            "status": "pending",
+            "testStrategy": "Unit test the role validation logic with mock user profiles and various `allowedRoles` arrays (empty, matching, non-matching). Verify that the function correctly identifies authorized and unauthorized roles based on the input."
+          },
+          {
+            "id": 2,
+            "title": "Implement Unauthorized Access Redirection in `getAuthenticatedUser`",
+            "description": "Extend the `getAuthenticatedUser` service to redirect unauthorized users to the `/login` page when their role does not match the `allowedRoles` provided.",
+            "dependencies": [
+              1
+            ],
+            "details": "Within `lib/services/auth-service.ts`, if the `allowedRoles` array is provided and the authenticated user's role is not found within it, call `redirect('/login')` to prevent access. Ensure the `redirect` function from `next/navigation` is imported and used correctly. This should occur before returning the user and profile.",
+            "status": "pending",
+            "testStrategy": "Integration test by calling `getAuthenticatedUser` with a user having a non-matching role and asserting that a redirect to `/login` occurs. Use a testing utility that can capture redirects or mock the `redirect` function to assert its invocation."
+          },
+          {
+            "id": 3,
+            "title": "Develop Comprehensive Tests for `getAuthenticatedUser` Role-Based Access",
+            "description": "Write unit and integration tests to cover all scenarios for the enhanced `getAuthenticatedUser` service, including authorized access, unauthorized access with redirection, and cases where `allowedRoles` is not provided.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create new test files or update existing ones for `lib/services/auth-service.ts`. Unit tests should mock Supabase and Prisma calls to verify role validation. Integration tests should simulate actual requests to `getAuthenticatedUser` with different user roles and `allowedRoles` parameters, verifying correct user/profile return or redirection. Cover cases for 'Scientist' and 'Employer' roles.",
+            "status": "pending",
+            "testStrategy": "Unit tests for `getAuthenticatedUser` with mock `user` and `profile` objects, testing `allowedRoles` matching and non-matching. Integration tests simulating HTTP requests to a route protected by this service, verifying successful access for authorized roles and redirection for unauthorized roles. Test edge cases like empty `allowedRoles` or `allowedRoles` not provided."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Implement Employer Dashboard Root Layout (`app/employer/layout.tsx`)",
+        "description": "Create the primary layout for the employer section, integrating authentication, the shared header, and the role-aware sidebar.",
+        "details": "Create `authesci-app/app/employer/layout.tsx` as a Server Component. Inside, call `getAuthenticatedUser({ allowedRoles: ['EMPLOYER', 'ADMIN'] })`. Render the `Sidebar` component, passing `profile.role` as a prop. Render the `Header` component, passing the `profile` object as a prop. Wrap the `children` prop within the main content area. Ensure the basic `div` structure for the dashboard shell is in place as shown in the PRD's code example.",
+        "testStrategy": "Log in as an Employer and navigate to `/employer/dashboard`. Verify that the header and sidebar are visible, the correct user data is displayed in the header, and the sidebar shows employer-specific navigation links. Attempt to access `/employer/dashboard` as a Scientist and confirm redirection or access denied.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement Scientist and Collaborator Dashboard Root Layouts",
+        "description": "Create `app/scientist/layout.tsx` and `app/collaborator/layout.tsx` by adapting the pattern established for the employer layout.",
+        "details": "Create `authesci-app/app/scientist/layout.tsx` and `authesci-app/app/collaborator/layout.tsx`. For `scientist/layout.tsx`, use `getAuthenticatedUser({ allowedRoles: ['SCIENTIST', 'ADMIN'] })`. For `collaborator/layout.tsx`, use `getAuthenticatedUser({ allowedRoles: ['COLLABORATOR', 'ADMIN'] })`. Reuse the structural pattern from the employer layout, passing the respective `profile.role` to the `Sidebar` and `profile` to the `Header`.",
+        "testStrategy": "Log in as a Scientist and navigate to `/scientist/dashboard`. Verify the layout, header, and scientist-specific sidebar links. Repeat for a Collaborator at `/collaborator/dashboard`. Attempt cross-role access (e.g., Scientist to `/employer/dashboard`) and confirm redirection.",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Enhance Header Component (`Header.tsx`) Functionality",
+        "description": "Implement user profile display, a functional logout button, and a theme toggle within the `Header.tsx` component.",
+        "details": "Modify `components/modules/Header.tsx` to be a Client Component. It should receive a `user` (profile) object as a prop. Display the user's name and avatar. Integrate the `LogoutButton.tsx` component into a dropdown menu. Include the `ThemeToggle.tsx` component. Ensure the logout button correctly triggers the logout action.",
+        "testStrategy": "Verify that the header displays the logged-in user's name and avatar. Click the logout button and confirm successful logout and redirection to the login page. Test the theme toggle to ensure it switches between light and dark modes correctly.",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Enhance Sidebar Component (`Sidebar.tsx`) Functionality",
+        "description": "Implement conditional rendering of navigation links based on user role and visually highlight the active navigation link.",
+        "details": "Modify `components/modules/Sidebar.tsx` to be a Client Component. It should receive a `role` prop. Use the navigation constants defined in `lib/constants/navigation.ts` to conditionally render links relevant to the passed `role`. Implement active link highlighting using `usePathname` from `next/navigation` to compare the current URL path with link `href`s. Manage the sidebar's open/closed state internally.",
+        "testStrategy": "Log in as different roles (Employer, Scientist, Collaborator) and verify that the sidebar displays only the correct navigation links for each role. Navigate between pages and confirm that the active link is visually highlighted correctly. Test the sidebar's open/closed state management.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Mobile Responsiveness for Dashboard Shell",
+        "description": "Add functionality to toggle sidebar visibility on mobile screens and ensure the overall dashboard layout is responsive.",
+        "details": "In `Header.tsx`, add a button (e.g., a hamburger icon) to toggle the sidebar's visibility on mobile devices. This will require a shared state or context between `Header` and `Sidebar` to manage the sidebar's open/closed state. Implement CSS media queries to adjust the layout for smaller screens, ensuring the sidebar collapses and the main content area adapts.",
+        "testStrategy": "Resize the browser window to mobile dimensions. Verify that the sidebar collapses and a toggle button appears in the header. Click the toggle button to open and close the sidebar. Ensure the main content area reflows correctly and the overall layout remains functional and aesthetically pleasing on mobile.",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Create Employer Dashboard Page Content (`app/employer/dashboard/page.tsx`)",
+        "description": "Populate the employer dashboard page with initial content, including a welcome message and relevant calls-to-action.",
+        "details": "Create `authesci-app/app/employer/dashboard/page.tsx` as a Server Component. Display a 'Welcome, [Employer Name]!' message. Include placeholder `StatWidget` components (e.g., showing 'Active Job Postings', 'New Applicants'). Add a prominent call-to-action, such as 'Post a New Job', linking to `/employer/jobs/new` (or a similar placeholder route).",
+        "testStrategy": "Log in as an Employer and navigate to `/employer/dashboard`. Verify that the welcome message is displayed with the correct user name, placeholder stats are present, and the call-to-action button is visible and correctly linked.",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Create Scientist and Collaborator Dashboard Page Content",
+        "description": "Populate the scientist and collaborator dashboard pages with initial content relevant to their respective roles.",
+        "details": "Create `authesci-app/app/scientist/dashboard/page.tsx` and `authesci-app/app/collaborator/dashboard/page.tsx` as Server Components. For the scientist dashboard, display 'Welcome, [Scientist Name]!', placeholder stats (e.g., 'Applications Submitted', 'Projects Joined'), and a CTA like 'Browse Jobs'. For the collaborator dashboard, display 'Welcome, [Collaborator Name]!', placeholder stats (e.g., 'Active Projects', 'Tasks Assigned'), and a CTA like 'View Projects'.",
+        "testStrategy": "Log in as a Scientist and verify the content on `/scientist/dashboard`. Repeat for a Collaborator at `/collaborator/dashboard`. Ensure welcome messages, placeholder stats, and CTAs are role-appropriate and correctly displayed.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Profile Completion Onboarding Redirection Logic",
+        "description": "Add logic to the role-specific layouts to check for profile completion and redirect users to the profile editing page if their profile is incomplete.",
+        "details": "In `authesci-app/app/employer/layout.tsx`, `authesci-app/app/scientist/layout.tsx`, and `authesci-app/app/collaborator/layout.tsx`, after fetching the `user` and `profile` objects, add a check: `if (!profile.isComplete && !request.nextUrl.pathname.endsWith('/profile/edit')) { redirect('/profile/edit'); }`. This assumes the `Profile` model has an `isComplete` boolean field or similar `completionScore` that can be evaluated. Ensure the redirect only happens if the user is not already on the profile edit page to prevent infinite loops.",
+        "testStrategy": "Simulate a new user with an incomplete profile (e.g., by modifying test data or a mock service). Log in as this user and verify they are automatically redirected to `/profile/edit`. Log in as a user with a complete profile and confirm they are NOT redirected and can access their dashboard normally.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-11-16T23:37:46.841Z",
+      "updated": "2025-11-16T23:37:46.841Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

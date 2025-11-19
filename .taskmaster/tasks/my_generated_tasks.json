@@ -1,0 +1,132 @@
+{
+  "my-auth-tasks": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Supabase Auth and Prisma Profile Schema",
+        "description": "Configure Supabase Auth, install necessary packages, verify client utilities, and define the Prisma Profile model with Role enum.",
+        "details": "Install `@supabase/ssr`. Verify `lib/supabase/server.ts`, `lib/supabase/client.ts`, `lib/supabase/middleware.ts`. Enable Email/Password auth in Supabase dashboard and whitelist redirect URLs. Define `Profile` model in `prisma/schema.prisma` with `id`, `userId`, `email`, `fullName`, `role` (SCIENTIST, EMPLOYER, COLLABORATOR, ADMIN), and other optional fields. Run `npx prisma migrate dev --name auth-profiles` and `npx prisma generate`.",
+        "testStrategy": "Verify Supabase Auth is enabled, SSR clients can get session, redirect URLs are whitelisted. Confirm `Profile` model and `Role` enum are in `schema.prisma`, migration is applied, and TypeScript types are updated.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Implement User Sign Up Flow",
+        "description": "Develop the user registration process including role selection, form validation, Supabase user creation, and Prisma profile creation.",
+        "details": "Create `app/(auth)/signup/page.tsx` (Server Component), `components/auth/SignUpForm.tsx` (Client Component), and `components/auth/RoleSelector.tsx` (Client Component). Implement `signUp()` Server Action in `app/actions/auth.ts` with input validation (email format, password strength, full name, role). Call `Supabase.auth.signUp()` and `Prisma.profile.create()`. Redirect to `/verify-email` and display toast notifications.",
+        "testStrategy": "Test form rendering and validation. Verify Supabase user and Prisma profile creation. Confirm redirection to `/verify-email` and correct toast messages.",
+        "priority": "high",
+        "dependencies": [1],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Implement Email Verification (OTP) Flow",
+        "description": "Enable users to verify their email using an OTP sent by Supabase after signup.",
+        "details": "Create `app/(auth)/verify-email/page.tsx` and `components/auth/VerifyEmailForm.tsx`. Implement `verifyOTP()` Server Action in `app/actions/auth.ts` to handle OTP input, call `Supabase.auth.verifyOtp()`, and redirect to the role-specific dashboard on success. Include 'Resend Code' functionality with a countdown timer and toast notifications.",
+        "testStrategy": "Verify OTP input, Supabase verification, redirection to dashboard, and 'Resend Code' functionality. Check toast messages.",
+        "priority": "high",
+        "dependencies": [2],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement User Login Flow",
+        "description": "Allow existing users to log in, establish a session, and redirect to their role-specific dashboard.",
+        "details": "Create `app/(auth)/login/page.tsx` and `components/auth/LoginForm.tsx`. Implement `login()` Server Action in `app/actions/auth.ts` with email/password validation. Call `Supabase.auth.signInWithPassword()`, fetch `Prisma.profile` for role, and redirect to `/dashboard/[role]`. Include 'Remember Me' checkbox, 'Forgot Password' link, and handle unverified email warnings with toast notifications.",
+        "testStrategy": "Test login with valid/invalid credentials, 'Remember Me', 'Forgot Password' link presence, and unverified email handling. Verify redirection and toast messages.",
+        "priority": "high",
+        "dependencies": [1, 2],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Implement Forgot and Reset Password Flows",
+        "description": "Provide functionality for users to recover accounts via email-based password reset.",
+        "details": "Create `app/(auth)/forgot-password/page.tsx`, `components/auth/ForgotPasswordForm.tsx`, `app/(auth)/reset-password/page.tsx`, and `components/auth/ResetPasswordForm.tsx`. Implement `requestPasswordReset()` and `resetPassword()` Server Actions in `app/actions/auth.ts` using `Supabase.auth.resetPasswordForEmail()` and `Supabase.auth.updateUser()`. Redirect to `/login` after successful reset and display toast notifications.",
+        "testStrategy": "Verify password reset email delivery, reset link functionality, new password update, and successful login with new password. Check toast messages.",
+        "priority": "medium",
+        "dependencies": [1, 4],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Implement Route Protection Middleware",
+        "description": "Secure protected routes by redirecting unauthenticated users to the login page.",
+        "details": "Create/update `middleware.ts` to use `lib/supabase/middleware.ts` client. Check for valid Supabase session on protected routes (`/dashboard/*`, `/profile/*`, `/jobs/*/apply`, `/projects/*`). Redirect to `/login` if no session, otherwise allow access and refresh session if needed. Configure matcher in `middleware.ts`.",
+        "testStrategy": "Attempt to access protected routes as unauthenticated user (should redirect to login). Access protected routes as authenticated user (should grant access). Test session refresh.",
+        "priority": "high",
+        "dependencies": [1, 4],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement User Logout Functionality",
+        "description": "Allow users to sign out, clearing their session and redirecting to the login page.",
+        "details": "Implement `logout()` Server Action in `app/actions/auth.ts` calling `Supabase.auth.signOut()`. Clear cookies and redirect to `/login`. Add a logout button (e.g., in `components/dashboard/UserMenu.tsx`). Display toast notification.",
+        "testStrategy": "Log in, click logout, verify session cleared, redirection to `/login`, and toast confirmation.",
+        "priority": "medium",
+        "dependencies": [1, 4],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Integrate Custom Email Service (Hostinger SMTP)",
+        "description": "Configure Nodemailer with Hostinger SMTP to send custom-branded transactional emails.",
+        "details": "Install `nodemailer` and `@types/nodemailer`. Create `lib/mail.ts` for Nodemailer transport configuration using environment variables. Create `app/api/mail/route.ts` for email sending. Develop custom HTML/text email templates in `emails/` for welcome, OTP, password reset, and password changed. Modify Server Actions to trigger these custom emails.",
+        "testStrategy": "Send test email. Verify custom OTP and password reset emails are received and branded correctly. Confirm emails are not marked as spam.",
+        "priority": "medium",
+        "dependencies": [2, 3, 5],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Implement Toast Notifications for User Feedback",
+        "description": "Integrate Shadcn/UI toast notifications for all authentication-related actions.",
+        "details": "Ensure Shadcn/UI toast components are installed. Add `Toaster` to `app/layout.tsx`. Create a toast helper in `lib/utils.ts`. Integrate toasts into all auth Server Actions (`signUp`, `login`, `verifyOTP`, `requestPasswordReset`, `resetPassword`, `logout`) with auto-dismiss after 5 seconds.",
+        "testStrategy": "Perform all auth flows. Verify toasts appear for success/error, auto-dismiss, and have correct styling. Ensure accessibility.",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Role-Based Dashboard Redirection",
+        "description": "Redirect users to their specific dashboard based on their role after successful login.",
+        "details": "Create placeholder dashboard pages (`app/dashboard/scientist/page.tsx`, `app/dashboard/employer/page.tsx`, `app/dashboard/collaborator/page.tsx`, `app/dashboard/admin/page.tsx`). Update `login()` Server Action to fetch `profile.role` and redirect to the corresponding URL. Display welcome message and profile completion prompt.",
+        "testStrategy": "Log in as different roles. Verify redirection to correct dashboard, display of role, welcome message, and profile completion prompt.",
+        "priority": "high",
+        "dependencies": [4],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "End-to-End Testing and Polish for Auth System",
+        "description": "Conduct comprehensive end-to-end testing, bug fixing, and UX/accessibility polish for all authentication flows.",
+        "details": "Manually test all key user flows: Sign Up → Verify → Dashboard; Login → Dashboard; Forgot Password → Reset → Login; Unverified Email; Route Protection; Logout. Fix bugs, refine error messages, improve loading states, check mobile responsiveness. Conduct accessibility audit (Lighthouse ≥ 90%).",
+        "testStrategy": "Execute all 6 test scenarios. Verify no errors, mobile responsiveness, and high accessibility score. Document and fix any issues.",
+        "priority": "high",
+        "dependencies": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-11-10T11:34:47.707Z",
+      "updated": "2025-11-10T11:34:47.708Z",
+      "description": "Manually generated tasks for auth-batch-2 context"
+    }
+  }
+}

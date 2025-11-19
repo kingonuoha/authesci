@@ -1,9 +1,9 @@
 {
 	"meta": {
-		"generatedAt": "2025-11-07T02:52:29.538Z",
-		"tasksAnalyzed": 19,
-		"totalTasks": 19,
-		"analysisCount": 19,
+		"generatedAt": "2025-11-17T17:51:35.482Z",
+		"tasksAnalyzed": 10,
+		"totalTasks": 10,
+		"analysisCount": 10,
 		"thresholdScore": 5,
 		"projectName": "Taskmaster",
 		"usedResearch": false
@@ -11,155 +11,83 @@
 	"complexityAnalysis": [
 		{
 			"taskId": 1,
-			"taskTitle": "Install Prisma and Prisma Client Dependencies",
-			"complexityScore": 1,
+			"taskTitle": "Define Role-Specific Navigation Constants",
+			"complexityScore": 2,
 			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "This is a very straightforward task involving a single `npm install` command. The effort is minimal, and the technical challenge is negligible. Verification is also quick and simple."
+			"expansionPrompt": "No expansion needed for this task.",
+			"reasoning": "This task involves creating a static data file with a predefined structure. It's a pure data definition task with no complex logic, UI implementation, or external integrations. The structure is clearly outlined, making it a low-effort, low-risk task."
 		},
 		{
 			"taskId": 2,
-			"taskTitle": "Initialize Prisma Configuration",
-			"complexityScore": 3,
-			"recommendedSubtasks": 1,
-			"expansionPrompt": "Break down the initialization process into generating the Prisma directory and then meticulously configuring the `.env.local` file with Supabase-specific connection strings, including `pgbouncer=true` and `connection_limit=1`, and other environment variables.",
-			"reasoning": "While running `npx prisma init` is simple, the detailed configuration of `.env.local` with specific Supabase `DATABASE_URL` and `DIRECT_URL` (including `pgbouncer=true` and `connection_limit=1`) requires careful attention and potential lookup of external Supabase project details. Incorrect configuration here can lead to connection issues later."
+			"taskTitle": "Enhance `getAuthenticatedUser` Service for Role-Based Access",
+			"complexityScore": 7,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the enhancement of `getAuthenticatedUser` into subtasks covering parameter modification, role validation logic, unauthorized access handling (redirection), and comprehensive unit/integration testing.",
+			"reasoning": "This task modifies a core authentication service, introducing role-based access control and redirection logic. It requires careful handling of user sessions, role verification, and error states (unauthorized access). Incorrect implementation could lead to security vulnerabilities or broken user flows. Testing needs to cover various role scenarios and unauthorized attempts."
 		},
 		{
 			"taskId": 3,
-			"taskTitle": "Create Prisma Singleton Client Utility",
-			"complexityScore": 2,
-			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "The task provides a complete and well-established code snippet for implementing a Prisma singleton in a Next.js environment. It primarily involves creating a new file and copying the provided code, requiring minimal implementation effort or technical challenge."
+			"taskTitle": "Implement Employer Dashboard Root Layout (`app/employer/layout.tsx`)",
+			"complexityScore": 7,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Detail the subtasks for creating the employer root layout, including fetching authenticated user data with role checks, rendering shared Header and Sidebar components with appropriate props, structuring the main content area, and initial integration testing.",
+			"reasoning": "This task is crucial as it establishes the main layout for a key user role. It involves integrating the enhanced `getAuthenticatedUser` service, passing data to shared UI components (`Header`, `Sidebar`), and ensuring correct rendering as a Server Component. It also sets the pattern for other role layouts, so getting it right is important. Dependencies on other tasks (auth service, navigation constants) add to its complexity."
 		},
 		{
 			"taskId": 4,
-			"taskTitle": "Add Prisma CLI Scripts to package.json",
-			"complexityScore": 1,
-			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "This is a simple text editing task within `package.json`. The scripts are clearly defined and just need to be added to the existing JSON structure. Minimal effort and no technical challenge."
+			"taskTitle": "Implement Scientist and Collaborator Dashboard Root Layouts",
+			"complexityScore": 6,
+			"recommendedSubtasks": 2,
+			"expansionPrompt": "Outline subtasks for creating the Scientist and Collaborator root layouts, focusing on adapting the `getAuthenticatedUser` call for each role, reusing the structural pattern from the employer layout, and verifying role-specific component rendering.",
+			"reasoning": "This task involves replicating the pattern established in Task 3 for two additional roles. While the pattern is similar, it still requires creating two new files, adapting the `allowedRoles` for `getAuthenticatedUser`, and verifying correct rendering for each. The potential for copy-paste errors or subtle role-specific bugs exists, warranting careful implementation and testing for both."
 		},
 		{
 			"taskId": 5,
-			"taskTitle": "Define Complete Prisma Schema Models",
-			"complexityScore": 8,
+			"taskTitle": "Enhance Header Component (`Header.tsx`) Functionality",
+			"complexityScore": 6,
 			"recommendedSubtasks": 3,
-			"expansionPrompt": "Expand into defining core models and their scalar fields, then establishing all relationships, and finally adding enums, unique constraints, `@@map` directives, and soft-delete fields across the entire schema.",
-			"reasoning": "This is a high-complexity task as it involves translating a comprehensive database design into Prisma's Schema Definition Language. It requires meticulous attention to detail for each model, field type, relationship (`@relation`), enum, unique constraint (`@@unique`), default values, UUIDs, `@@map` directives, and soft-delete implementations. Errors here will impact all subsequent database operations."
+			"expansionPrompt": "Break down the enhancement of the Header component into subtasks for converting to a Client Component, displaying user profile information, integrating the LogoutButton with its functionality, and incorporating the ThemeToggle.",
+			"reasoning": "This task requires converting a component to a Client Component, which implies managing state and client-side interactions. It involves displaying dynamic user data, integrating two other functional components (`LogoutButton`, `ThemeToggle`), and ensuring the logout functionality is correctly wired up. Each of these sub-features has its own implementation and testing considerations."
 		},
 		{
 			"taskId": 6,
-			"taskTitle": "Generate Initial Database Migration",
-			"complexityScore": 4,
-			"recommendedSubtasks": 1,
-			"expansionPrompt": "Break down the task into executing the `prisma migrate dev` command with the appropriate name, and then performing a thorough review of the generated SQL migration file to ensure it accurately reflects the intended schema changes before proceeding.",
-			"reasoning": "While the command `npx prisma migrate dev` is straightforward, the critical aspect is the subsequent review of the generated SQL migration file. This step requires careful inspection to ensure the schema changes match the design from Task 5 and will correctly configure the database. This review can be time-consuming and requires basic SQL understanding."
+			"taskTitle": "Enhance Sidebar Component (`Sidebar.tsx`) Functionality",
+			"complexityScore": 7,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Detail the subtasks for enhancing the Sidebar component, including converting to a Client Component, implementing role-based navigation link rendering using constants, adding active link highlighting with `usePathname`, and managing the sidebar's internal open/closed state.",
+			"reasoning": "This task is complex due to several factors: converting to a Client Component, implementing conditional rendering of navigation links based on the `role` prop using external constants (Task 1), integrating `usePathname` for active link highlighting, and managing the sidebar's internal open/closed state. Each of these aspects requires careful implementation and testing to ensure correct behavior across different roles and navigation states."
 		},
 		{
 			"taskId": 7,
-			"taskTitle": "Verify Applied Migration in Supabase and Generate Prisma Client Types",
-			"complexityScore": 2,
-			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "This task is primarily a verification step. Visually inspecting the Supabase dashboard and confirming TypeScript auto-completion in an IDE are quick checks. Prisma Client types are generated automatically by previous steps, so this task just confirms their success."
+			"taskTitle": "Implement Mobile Responsiveness for Dashboard Shell",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the implementation of mobile responsiveness for the dashboard shell, covering the addition of a sidebar toggle button in the Header, establishing shared state management for sidebar visibility, implementing responsive CSS for layout adjustments, and comprehensive cross-device testing.",
+			"reasoning": "This task introduces significant UI/UX complexity. It requires coordinating state between the `Header` (for the toggle button) and `Sidebar` (for its visibility), likely through a shared context or prop drilling. Extensive CSS media queries are needed to adapt the layout for different screen sizes, which can be time-consuming to implement and test across various devices and orientations. Visual testing and ensuring a smooth user experience add to the complexity."
 		},
 		{
 			"taskId": 8,
-			"taskTitle": "Install Supabase SSR Dependencies",
-			"complexityScore": 1,
-			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "Similar to Task 1, this is a basic package installation using `npm install`. The effort is minimal, and the technical challenge is negligible. Verification involves checking `package.json`."
+			"taskTitle": "Create Employer Dashboard Page Content (`app/employer/dashboard/page.tsx`)",
+			"complexityScore": 4,
+			"recommendedSubtasks": 1,
+			"expansionPrompt": "Outline subtasks for creating the employer dashboard page content, including displaying a welcome message with dynamic user data, integrating placeholder `StatWidget` components, and adding a call-to-action button with correct linking.",
+			"reasoning": "This task involves creating a basic Server Component page. While it's primarily content, it requires fetching and displaying dynamic user data (name), integrating placeholder components (`StatWidget`), and linking to another route. It's not purely static, but the logic is minimal."
 		},
 		{
 			"taskId": 9,
-			"taskTitle": "Create Supabase Server Component Client Utility",
-			"complexityScore": 2,
-			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "The task provides a complete code snippet for a standard Supabase client utility in Next.js Server Components. It involves creating a new file and copying the provided code, with minimal technical challenge."
+			"taskTitle": "Create Scientist and Collaborator Dashboard Page Content",
+			"complexityScore": 5,
+			"recommendedSubtasks": 2,
+			"expansionPrompt": "Detail subtasks for creating the Scientist and Collaborator dashboard page content, focusing on adapting welcome messages, placeholder stats, and calls-to-action for each respective role, and ensuring correct page creation.",
+			"reasoning": "Similar to Task 8, this involves creating two basic Server Component pages. The complexity comes from ensuring the content (welcome message, placeholder stats, CTAs) is correctly tailored for each specific role. It's repetitive but requires attention to detail for each role's unique requirements."
 		},
 		{
 			"taskId": 10,
-			"taskTitle": "Create Supabase Client Component Utility",
-			"complexityScore": 2,
-			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "Similar to Task 9, this involves creating a new file and copying the provided standard code for a Supabase client in Next.js Client Components. Minimal effort and low technical risk."
-		},
-		{
-			"taskId": 11,
-			"taskTitle": "Create Supabase Middleware Client Utility",
-			"complexityScore": 2,
-			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "Again, this task involves creating a new file and copying a provided, standard code snippet for a Supabase client utility specifically for Next.js middleware. Minimal effort and low technical challenge."
-		},
-		{
-			"taskId": 12,
-			"taskTitle": "Update Next.js Middleware for Supabase Session Refresh",
-			"complexityScore": 5,
-			"recommendedSubtasks": 2,
-			"expansionPrompt": "Break down the task into integrating the `createClient` and `supabase.auth.getSession()` logic into the `middleware.ts` file, and then meticulously configuring the `matcher` export to ensure the middleware applies to the correct paths.",
-			"reasoning": "This task involves modifying a critical Next.js file (`middleware.ts`) that affects all requests. While the code is provided, correctly integrating it and especially configuring the `matcher` for optimal performance and behavior requires careful attention. Testing involves observing network behavior for cookie updates, adding to complexity."
-		},
-		{
-			"taskId": 13,
-			"taskTitle": "Remove Old Basic Supabase Client",
-			"complexityScore": 3,
-			"recommendedSubtasks": 1,
-			"expansionPrompt": "Expand into deleting the `lib/supabase.ts` file, and then performing a codebase-wide search to identify and update any lingering imports or references to the old client to point to the new SSR-compatible client utilities.",
-			"reasoning": "Deleting a file is simple, but the complexity lies in ensuring that no other parts of the codebase still import or rely on the old client. This requires a thorough search (Grep tool) and potential refactoring of other files, which can introduce unexpected issues if not handled carefully."
-		},
-		{
-			"taskId": 14,
-			"taskTitle": "Implement Database Error Handling Helpers",
-			"complexityScore": 2,
-			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "The task involves creating a new file and copying the provided code for Prisma error handling. It's a self-contained utility and primarily a copy-paste operation, with clear examples of how to extend it."
-		},
-		{
-			"taskId": 15,
-			"taskTitle": "Export Prisma Type Helpers",
-			"complexityScore": 2,
-			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "This task is about creating a new file and copying the provided code to centralize and re-export Prisma-generated types. It's a straightforward organization task for type safety and code consistency, requiring minimal effort."
-		},
-		{
-			"taskId": 16,
-			"taskTitle": "Create Prisma Seed Script for Test Data",
-			"complexityScore": 5,
-			"recommendedSubtasks": 2,
-			"expansionPrompt": "Break down the task into creating the basic `prisma/seed.ts` structure and implementing seeding for initial core models (e.g., Profile, Job), then expanding it to include comprehensive test data for all defined models, ensuring correct relationships and realistic values.",
-			"reasoning": "While example code is provided, creating a comprehensive seed script that populates all defined models with meaningful and interconnected test data (e.g., profiles, jobs, applications, payments, etc.) can be time-consuming. It requires careful coding to establish relationships correctly and ensure data consistency, building upon the schema defined in Task 5."
-		},
-		{
-			"taskId": 17,
-			"taskTitle": "Configure Seed Script Execution and Add Prisma Studio Script",
-			"complexityScore": 1,
-			"recommendedSubtasks": 0,
-			"expansionPrompt": "No expansion needed.",
-			"reasoning": "This task involves a simple `npm install` command for `tsx` and adding two lines to `package.json`. It's a quick and easy configuration task with minimal impact and straightforward verification."
-		},
-		{
-			"taskId": 18,
-			"taskTitle": "Update Prisma Integration Documentation",
-			"complexityScore": 7,
-			"recommendedSubtasks": 3,
-			"expansionPrompt": "Expand into outlining the document structure, drafting content for Prisma installation, configuration, and schema definition, and then drafting content for Prisma Client usage, Supabase SSR client context, utilities, development scripts, and troubleshooting tips.",
-			"reasoning": "This task requires synthesizing a significant amount of technical information from nearly all preceding tasks into a comprehensive, clear, and accurate documentation. It demands strong writing skills, a deep understanding of the entire integration, and careful organization to be useful for new developers. This is intellectually demanding, even if not coding."
-		},
-		{
-			"taskId": 19,
-			"taskTitle": "Create Database Schema Reference Documentation",
-			"complexityScore": 6,
-			"recommendedSubtasks": 2,
-			"expansionPrompt": "Break down the task into outlining the document's structure and detailing each model's fields and types, then focusing on thoroughly documenting all relationships, enums, unique constraints, and naming conventions within the database schema.",
-			"reasoning": "This task involves creating a detailed reference document directly from `prisma/schema.prisma`. While based on existing definitions, presenting the schema clearly, explaining complex relationships, enums, constraints, and naming conventions in an easily digestible format for developers requires careful writing, formatting, and attention to detail to ensure accuracy and completeness."
+			"taskTitle": "Implement Profile Completion Onboarding Redirection Logic",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the implementation of profile completion onboarding redirection logic into subtasks for modifying each role-specific layout, adding the `profile.isComplete` check, implementing the conditional redirect, ensuring infinite loop prevention, and comprehensive testing for various profile completion states.",
+			"reasoning": "This task is high complexity because it introduces a critical onboarding flow that affects all new users. It requires modifying multiple core layout files (Task 3, 4), implementing conditional redirection logic based on a profile flag, and crucially, preventing infinite redirect loops by checking the current URL path. Thorough testing is essential to ensure users are correctly redirected when their profile is incomplete and not redirected once it's complete, or when they are already on the profile edit page."
 		}
 	]
 }

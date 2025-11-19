@@ -3,10 +3,10 @@
     "tasks": [
       {
         "id": 1,
-        "title": "Setup Component Directory Structure and Barrel Exports",
-        "description": "Establish the foundational directory structure for reusable Next.js components under `components/modules/` and configure barrel exports for easy import.",
-        "details": "Create the following directory structure: `components/modules/auth`, `components/modules/dashboard`, `components/modules/jobs`, `components/modules/profiles`, `components/modules/projects`. Also, create `components/layouts/` for `DashboardLayout`. Implement `components/modules/index.ts` to re-export all components from their respective subdirectories, following the example: `export * from './auth/AuthCard';` This ensures components can be imported like `import { ComponentName } from '@/components/modules';`.",
-        "testStrategy": "Verify that the directory structure is correctly established. Create dummy `.tsx` files in each subdirectory and confirm they can be successfully imported and re-exported via `components/modules/index.ts` in a test page or component. Check for correct path resolution and no import errors.",
+        "title": "Configure Supabase Auth and Prisma Profile Schema",
+        "description": "Set up Supabase Auth for email/password, configure environment variables, and define the Prisma 'Profile' model with 'Role' enum, then apply database migrations.",
+        "details": "1. Install `@supabase/ssr` and ensure `lib/supabase/server.ts`, `lib/supabase/client.ts`, `lib/supabase/middleware.ts` are correctly configured to initialize Supabase clients.\n2. In Supabase dashboard, enable Email/Password authentication and whitelist necessary redirect URLs.\n3. Add environment variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`.\n4. Update `prisma/schema.prisma` to include the `Profile` model with fields: `id`, `userId` (unique, linked to Supabase auth.users.id), `email` (unique), `fullName`, `role` (enum: `SCIENTIST`, `EMPLOYER`, `COLLABORATOR`, `ADMIN`), `bio`, `skills`, `experience`, `cvUrl`, `avatarUrl`, `institution`, `createdAt`, `updatedAt`.\n5. Define the `Role` enum in `schema.prisma`.\n6. Run `npx prisma migrate dev --name auth-profiles` to apply schema changes and `npx prisma generate` to update Prisma Client types.",
+        "testStrategy": "1. Verify Supabase project settings reflect Email/Password auth enabled and redirect URLs configured.\n2. Write a simple test script or manually verify `lib/supabase/server.ts` and `lib/supabase/client.ts` can initialize and connect to Supabase.\n3. Check the database directly to confirm the `profiles` table and `Role` enum are created as per the schema.",
         "priority": "high",
         "dependencies": [],
         "status": "done",
@@ -14,11 +14,11 @@
       },
       {
         "id": 2,
-        "title": "Configure Toast Provider and Global Styling Constants",
-        "description": "Integrate a toast notification provider into the root layout and establish a centralized file for common styling constants to ensure consistency.",
-        "details": "Configure a toast provider (e.g., using `react-hot-toast` or a Shadcn-based solution if available) in the root layout (`app/layout.tsx` or similar) to enable global toast notifications. Additionally, create `lib/constants/styles.ts` to define common Tailwind CSS class strings, such as `CARD_STYLES` as shown in the PRD, to mitigate inconsistent styling. Example: `export const CARD_STYLES = { base: 'rounded-lg border bg-card shadow-sm', hover: 'hover:shadow-md transition-shadow', padding: 'p-4' };`",
-        "testStrategy": "For the toast provider, implement a simple button in a test page that triggers a toast message and verify it appears correctly. For styling constants, apply a defined constant (e.g., `CARD_STYLES.base`) to a simple `div` and visually confirm the styles are applied as expected. Ensure the constants file is accessible and usable across components.",
-        "priority": "medium",
+        "title": "Implement Sign Up Flow with Role Selection",
+        "description": "Develop the user sign-up form, integrate with Supabase for user creation, and create a corresponding Prisma profile with role selection.",
+        "details": "1. Create `app/(auth)/signup/page.tsx` as a Server Component.\n2. Develop `authesci-app/components/modules/auth/SignUpForm.tsx` (Client Component) with fields for name, email, password, institution (optional), and a `authesci-app/components/modules/auth/RoleSelector.tsx` for 'Scientist' or 'Employer'.\n3. Implement client-side form validation: email format, password strength (min 8 chars, 1 uppercase, 1 number, 1 special), full name (min 2 chars), role required.\n4. Create `authesci-app/app/actions/auth.ts` and implement the `signUp()` Server Action.\n5. Inside `signUp()`:\n   a. Call `Supabase.auth.signUp({ email, password })`.\n   b. If successful, call `Prisma.profile.create({ data: { userId: supabaseUser.id, email, fullName, role, institution } })`.\n   c. Redirect the user to `/verify-email`.\n6. Integrate toast notifications (Task 9) for success/error messages.",
+        "testStrategy": "1. Attempt to sign up with valid credentials and verify a new user is created in Supabase `auth.users` and a corresponding profile in Prisma `profiles` with the correct role.\n2. Test all validation rules (invalid email, weak password, missing name/role) and ensure appropriate error messages are displayed.\n3. Verify redirection to `/verify-email` after successful signup.\n4. Check for toast notifications on success and failure.",
+        "priority": "high",
         "dependencies": [
           1
         ],
@@ -27,13 +27,12 @@
       },
       {
         "id": 3,
-        "title": "Implement Tier 1 - Auth Components (`AuthCard`, `FormInput`)",
-        "description": "Develop the core authentication components, `AuthCard` and `FormInput`, with TypeScript interfaces, JSDoc, and accessibility standards.",
-        "details": "Create `components/modules/auth/AuthCard.tsx` and `components/modules/auth/FormInput.tsx`. `FormInput` should be a Client Component (`'use client'`) due to input state and validation. `AuthCard` can be a Server Component wrapping client forms. Define strict TypeScript interfaces (e.g., `AuthCardProps`, `FormInputProps`) with JSDoc comments for all props, including common patterns like `id`, `className`, `children`, and event handlers. Implement form validation display for `FormInput`. Ensure semantic HTML, `aria-label` for icon buttons, and visible focus states for interactive elements. Utilize existing Shadcn components where appropriate.",
-        "testStrategy": "Develop a test page that uses `AuthCard` to wrap a login/signup form, incorporating `FormInput` fields. Verify that `FormInput` displays labels, accepts input, and shows validation messages correctly. Test keyboard navigation and focus states for `FormInput`. Confirm TypeScript prop errors are caught at compile time if incorrect types are passed. Check for 'use client' errors in the console.",
+        "title": "Implement Email Verification (OTP)",
+        "description": "Create the email verification page where users enter a 6-digit OTP sent by Supabase to confirm their account.",
+        "details": "1. Create `app/(auth)/verify-email/page.tsx`.\n2. Develop `authesci-app/components/modules/auth/VerifyEmailForm.tsx` (Client Component) with an input for the 6-digit OTP.\n3. In `authesci-app/app/actions/auth.ts`, implement the `verifyOTP()` Server Action.\n4. Inside `verifyOTP()`:\n   a. Call `Supabase.auth.verifyOtp({ email, token, type: 'email' })`.\n   b. On success, redirect the user to `/dashboard/[role]` (role determined by fetching Prisma profile).\n   c. On failure, display an error message and provide a 'Resend Code' option.\n5. Implement a countdown timer for the 'Resend Code' button.\n6. Integrate toast notifications (Task 9) for success/error messages.",
+        "testStrategy": "1. Sign up a new user (Task 2) and verify an OTP email is received.\n2. Enter a valid OTP and confirm successful verification and redirection to the appropriate dashboard.\n3. Enter an invalid OTP and verify an error message is shown.\n4. Test the 'Resend Code' functionality and ensure a new OTP email is sent.\n5. Verify toast notifications for all scenarios.",
         "priority": "high",
         "dependencies": [
-          1,
           2
         ],
         "status": "done",
@@ -41,10 +40,10 @@
       },
       {
         "id": 4,
-        "title": "Implement Tier 2 - Dashboard Core Components (`Sidebar`, `Navbar`)",
-        "description": "Develop the interactive `Sidebar` and `Navbar` components for the dashboard shell, including role-based menus, user menu, and theme toggle.",
-        "details": "Create `components/modules/dashboard/Sidebar.tsx` and `components/modules/dashboard/Navbar.tsx`. Both must be Client Components (`'use client'`) due to interactivity (collapse/expand state, dropdown menus, theme toggle). Define TypeScript interfaces with JSDoc. Implement role-based menu rendering for `Sidebar`. Integrate user menu and notifications into `Navbar`. Use `next/link` for all navigation links and `next/image` for logos/avatars. Ensure WCAG 2.1 AA compliance with semantic HTML, `aria-label` for icon buttons, keyboard navigation, and visible focus states.",
-        "testStrategy": "Create a test page that renders both `Sidebar` and `Navbar`. Verify `Sidebar` collapse/expand functionality, active route highlighting, and role-based menu visibility. Test `Navbar` dropdown menus, user menu interactions, and theme toggle persistence. Check all links use `next/link` and images use `next/image`. Perform keyboard navigation tests and verify focus states. Confirm no 'use client' errors.",
+        "title": "Implement Login Flow with Role-Based Redirect",
+        "description": "Develop the user login form, authenticate credentials with Supabase, fetch the user's Prisma profile, and redirect to their role-specific dashboard.",
+        "details": "1. Create `app/(auth)/login/page.tsx`.\n2. Develop `authesci-app/components/modules/auth/LoginForm.tsx` (Client Component) with email, password inputs, 'Remember Me' checkbox, and 'Forgot Password' link.\n3. In `authesci-app/app/actions/auth.ts`, implement the `login()` Server Action.\n4. Inside `login()`:\n   a. Call `Supabase.auth.signInWithPassword({ email, password })`.\n   b. If successful, fetch the user's Prisma profile using `Prisma.profile.findUnique({ where: { userId: supabaseUser.id } })` to get their `role`.\n   c. Redirect the user to `/dashboard/${profile.role.toLowerCase()}`.\n   d. Handle cases for unverified email (show warning with resend link).\n5. Implement 'Remember Me' functionality to extend session duration (Supabase handles this via `signInWithPassword` options).\n6. Integrate toast notifications (Task 9) for success/error messages.",
+        "testStrategy": "1. Log in with valid credentials for different roles (Scientist, Employer) and verify redirection to the correct role-specific dashboard.\n2. Attempt to log in with invalid credentials and verify error messages.\n3. Test 'Remember Me' functionality by closing and reopening the browser.\n4. Test login with an unverified email and ensure the warning and resend link appear.\n5. Verify toast notifications for all scenarios.",
         "priority": "high",
         "dependencies": [
           1,
@@ -55,97 +54,84 @@
       },
       {
         "id": 5,
-        "title": "Implement Tier 2 - Dashboard Content Components (`StatWidget`, `EmptyState`)",
-        "description": "Develop the `StatWidget` and `EmptyState` components for displaying dashboard metrics and placeholders.",
-        "details": "Create `components/modules/dashboard/StatWidget.tsx` and `components/modules/dashboard/EmptyState.tsx`. Both should be Server Components as they lack interactivity. Define strict TypeScript interfaces with JSDoc comments for props (e.g., `StatWidgetProps` for title, value, icon; `EmptyStateProps` for message, action button). Ensure semantic HTML and basic accessibility considerations like appropriate headings and descriptive text. Utilize `class-variance-authority` if variants are needed for `StatWidget` (e.g., different colors based on metric status).",
-        "testStrategy": "Render `StatWidget` with various data inputs (e.g., different numbers, titles, icons) and `EmptyState` with different messages and optional action buttons on a test page. Verify correct data display and styling. Confirm these components render without client-side errors and do not require the `'use client'` directive.",
-        "priority": "high",
+        "title": "Implement Forgot/Reset Password Flow",
+        "description": "Create the 'Forgot Password' and 'Reset Password' pages and server actions to allow users to recover their accounts.",
+        "details": "1. Create `app/(auth)/forgot-password/page.tsx` and `authesci-app/components/modules/auth/ForgotPasswordForm.tsx`.\n2. In `authesci-app/app/actions/auth.ts`, implement `requestPasswordReset()` Server Action:\n   a. Call `Supabase.auth.resetPasswordForEmail(email, { redirectTo: `${NEXT_PUBLIC_APP_URL}/auth/reset-password` })`.\n   b. Display a success message indicating an email has been sent.\n3. Create `app/(auth)/reset-password/page.tsx` (which will receive a `token` in URL params) and `authesci-app/components/modules/auth/ResetPasswordForm.tsx`.\n4. In `authesci-app/app/actions/auth.ts`, implement `resetPassword()` Server Action:\n   a. Extract the `token` from the URL.\n   b. Call `Supabase.auth.updateUser({ password: newPassword })`.\n   c. On success, redirect to `/login`.\n5. Configure custom Supabase email template for password reset (if Task 8 is completed, otherwise use default).\n6. Integrate toast notifications (Task 9) for success/error messages.",
+        "testStrategy": "1. Request a password reset for a registered email and verify the reset email is received with a valid link.\n2. Click the reset link, navigate to the reset password page, and successfully set a new password.\n3. Attempt to log in with the new password.\n4. Test with an invalid or expired reset token.\n5. Verify toast notifications for all scenarios.",
+        "priority": "medium",
         "dependencies": [
-          1,
-          2
+          1
         ],
         "status": "done",
         "subtasks": []
       },
       {
         "id": 6,
-        "title": "Implement `DashboardLayout` Component",
-        "description": "Create a reusable `DashboardLayout` component that integrates the `Sidebar` and `Navbar` to provide a consistent layout for dashboard pages.",
-        "details": "Create `components/layouts/DashboardLayout.tsx`. This component will act as a wrapper, taking `children` as a prop. It should render the `Sidebar` and `Navbar` components, positioning them correctly to form the overall dashboard structure. The `DashboardLayout` itself can be a Server Component, as it primarily composes other components. Ensure proper styling using Tailwind CSS to achieve the desired layout, considering responsiveness.",
-        "testStrategy": "Create a simple test page that uses `DashboardLayout` to wrap some content. Verify that the `Sidebar` and `Navbar` render correctly within the layout. Test responsiveness by resizing the browser window. Confirm that the layout provides a stable container for nested content and that interactive elements within `Sidebar` and `Navbar` still function as expected.",
+        "title": "Implement Route Protection Middleware",
+        "description": "Develop a Next.js middleware to protect specified routes, ensuring only authenticated users can access them, and manage session refreshing.",
+        "details": "1. Create or update `authesci-app/middleware.ts`.\n2. Utilize the `lib/supabase/middleware.ts` client to check for a valid Supabase session.\n3. Implement logic within `middleware.ts`:\n   a. If no valid session is found and the request is for a protected route, redirect to `/login`.\n   b. If a session exists, allow the request to continue and refresh the session if it's nearing expiration.\n4. Configure the `matcher` in `middleware.ts` to protect routes: `/dashboard/*`, `/profile/*`, `/jobs/*/apply`, `/projects/*`.\n5. Ensure session refresh logic prevents hydration errors on client-side.",
+        "testStrategy": "1. Attempt to access a protected route (`/dashboard/scientist`, `/profile`) while unauthenticated and verify redirection to `/login`.\n2. Log in and access protected routes, ensuring they load correctly.\n3. Simulate an expired session (e.g., by manually manipulating cookies or waiting) and verify the session is refreshed automatically or the user is redirected to login if refresh fails.\n4. Check console for hydration errors.",
         "priority": "high",
         "dependencies": [
-          4,
-          5
+          1,
+          4
         ],
         "status": "done",
         "subtasks": []
       },
       {
         "id": 7,
-        "title": "Implement Tier 3 - Jobs/Profiles Components (`JobCard`, `ApplicationCard`, `ProfileCard`, `SearchBar`)",
-        "description": "Develop components for displaying job listings, applications, user profiles, and a search bar with filters.",
-        "details": "Create `components/modules/jobs/JobCard.tsx`, `components/modules/jobs/ApplicationCard.tsx`, `components/modules/jobs/SearchBar.tsx`, and `components/modules/profiles/ProfileCard.tsx`. `JobCard` and `SearchBar` must be Client Components (`'use client'`) due to interactive elements (save button, input state, filters). `ProfileCard` should be a Server Component. `ApplicationCard` can be a Server Component unless specific interactivity is required. Define TypeScript interfaces with JSDoc, including `JobType` from `@prisma/client` for `JobCardProps`. Use `next/image` for company logos/user avatars and `next/link` for navigation. Implement skeleton variants for loading states. Ensure full accessibility compliance.",
-        "testStrategy": "For each component, create a test page with sample data. Verify `JobCard` displays data correctly, and its interactive elements (e.g., save button) function. Test `SearchBar` input, filtering logic, and state management. Confirm `ProfileCard` and `ApplicationCard` render data accurately. Test loading skeletons. Perform accessibility checks for all interactive elements and image alt texts. Verify correct Server/Client component classification.",
+        "title": "Implement Logout Functionality",
+        "description": "Add a logout button that clears the user's session and redirects them to the login page.",
+        "details": "1. Add a logout button/link to a relevant component, e.g., `authesci-app/components/modules/dashboard/UserMenu.tsx`.\n2. In `authesci-app/app/actions/auth.ts`, implement the `logout()` Server Action.\n3. Inside `logout()`:\n   a. Call `Supabase.auth.signOut()`.\n   b. Clear any client-side session cookies if necessary (Supabase usually handles this).\n   c. Redirect the user to `/login`.\n4. Integrate toast notifications (Task 9) for logout confirmation.",
+        "testStrategy": "1. Log in, then click the logout button and verify redirection to `/login`.\n2. After logging out, attempt to access a protected route and confirm redirection to `/login`.\n3. Verify that the session is completely cleared (e.g., by checking browser cookies or Supabase session state).\n4. Check for toast notification on successful logout.",
         "priority": "medium",
         "dependencies": [
           1,
-          2
+          4
         ],
         "status": "done",
         "subtasks": []
       },
       {
         "id": 8,
-        "title": "Implement Tier 4 - Projects Components (`ProjectCard`, `TaskCard`, `FileCard`, `CollaboratorAvatar`)",
-        "description": "Develop components for project management, including project previews, drag-and-drop task items, file displays, and collaborator avatars.",
-        "details": "Create `components/modules/projects/ProjectCard.tsx`, `components/modules/projects/TaskCard.tsx`, `components/modules/projects/FileCard.tsx`, and `components/modules/projects/CollaboratorAvatar.tsx`. `TaskCard` must be a Client Component (`'use client'`) to support drag-and-drop functionality using `@dnd-kit` (assuming it's already installed). Other components can be Server Components. Define TypeScript interfaces with JSDoc. Use `next/image` for avatars and `next/link` for project/file links. Implement drag-and-drop for `TaskCard`. Ensure accessibility, including `aria-label` for interactive elements and proper keyboard navigation for `TaskCard`.",
-        "testStrategy": "Create a test page for each component. Verify `ProjectCard` and `FileCard` display data correctly. For `TaskCard`, test drag-and-drop functionality, ensuring items can be reordered or moved. Confirm `CollaboratorAvatar` displays correctly and any associated tooltips work. Check `next/image` and `next/link` usage. Perform accessibility checks, especially for `TaskCard`'s interactive behavior.",
+        "title": "Integrate Custom Email Service (Hostinger SMTP)",
+        "description": "Set up Nodemailer to send transactional emails (verification, password reset, welcome) via Hostinger SMTP with custom templates.",
+        "details": "1. Install `nodemailer` and `@types/nodemailer`.\n2. Add Hostinger SMTP credentials to `.env.local`: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`.\n3. Create `authesci-app/lib/mail.ts` to configure and export a Nodemailer transporter using these SMTP credentials.\n4. Create an `authesci-app/app/api/mail/route.ts` (API Route) to handle sending emails, which can be called from Server Actions.\n5. Develop custom HTML and text email templates in an `authesci-app/emails/` folder for: Welcome Email, OTP Verification, Password Reset, Password Changed.\n6. Modify relevant Server Actions (e.g., `signUp`, `requestPasswordReset`) to trigger these custom emails instead of relying solely on Supabase's default email sending, or use Supabase hooks to trigger custom emails.",
+        "testStrategy": "1. Send a test email using the configured Nodemailer transporter to verify SMTP connection and email delivery.\n2. Trigger signup, password reset, and email verification flows and confirm that custom branded emails are received in the inbox, not spam.\n3. Verify that email templates render correctly with dynamic data.",
         "priority": "medium",
-        "dependencies": [
-          1,
-          2
-        ],
+        "dependencies": [],
         "status": "done",
         "subtasks": []
       },
       {
         "id": 9,
-        "title": "Implement Tier 5 - Utility Components (`Pagination`, `Badge`, `LoadingSkeleton`, `DataTable`)",
-        "description": "Develop general utility components for pagination, badges, loading states, and data tables.",
-        "details": "Create `components/modules/utilities/Pagination.tsx`, `components/modules/utilities/Badge.tsx`, `components/modules/utilities/LoadingSkeleton.tsx`, and `components/modules/utilities/DataTable.tsx`. `Pagination` and `DataTable` will likely be Client Components (`'use client'`) due to internal state and interactivity. `Badge` and `LoadingSkeleton` can be Server Components. Define TypeScript interfaces with JSDoc. For `DataTable`, consider using an existing Shadcn table component as a base. Ensure all components adhere to accessibility standards, including keyboard navigation for `Pagination` and `DataTable`.",
-        "testStrategy": "For each utility component, create a test scenario. Verify `Pagination` controls work and update page state. Test `Badge` with different variants/content. Confirm `LoadingSkeleton` displays correctly. For `DataTable`, verify data rendering, sorting (if implemented), and pagination. Perform accessibility checks for interactive elements and ensure proper Server/Client component classification.",
-        "priority": "low",
-        "dependencies": [
-          1,
-          2
-        ],
+        "title": "Implement Toast Notifications",
+        "description": "Integrate Shadcn/UI toast components to display success, error, and info messages for all authentication actions.",
+        "details": "1. Ensure Shadcn/UI toast components are installed and configured.\n2. Add the `<Toaster />` component to `app/layout.tsx` (root layout).\n3. Create a helper function in `lib/utils.ts` (e.g., `showToast(type, message)`) to simplify displaying toasts.\n4. Integrate toast calls into all authentication Server Actions (e.g., `signUp()`, `login()`, `verifyOTP()`, `requestPasswordReset()`, `resetPassword()`, `logout()`) to provide user feedback.\n5. Configure toasts to auto-dismiss after 5 seconds and support different types (success, error, info, warning).",
+        "testStrategy": "1. Perform all authentication actions (signup, login, verify, forgot password, reset password, logout) and verify that toasts appear for all success and error scenarios.\n2. Test both success and error scenarios for each action.\n3. Ensure toasts auto-dismiss and display correct styling for different types.\n4. Verify accessibility of toast messages.",
+        "priority": "medium",
+        "dependencies": [],
         "status": "done",
         "subtasks": []
       },
       {
         "id": 10,
-        "title": "Comprehensive Accessibility Audit and Refinement",
-        "description": "Conduct a thorough accessibility audit across all newly developed components to ensure WCAG 2.1 AA compliance.",
-        "details": "Perform a comprehensive review of all components (Auth, Dashboard, Jobs/Profiles, Projects, Utilities) against the WCAG 2.1 AA guidelines. Specifically check for: semantic HTML usage (e.g., `button`, `nav`, `aside` instead of `div`), `alt` text on all images, `aria-label` on icon buttons, full keyboard accessibility (`tabIndex`, `onKeyDown` handlers), visible focus states, and WCAG AA color contrast (4.5:1). Utilize tools like Axe DevTools for automated checks and manual keyboard navigation testing.",
-        "testStrategy": "For each component, run Axe DevTools and address all reported issues. Manually test keyboard navigation for all interactive elements (buttons, links, inputs, drag-and-drop items). Verify focus states are clearly visible. Use a color contrast checker to confirm text and interactive element contrasts meet WCAG AA standards. Document findings and implement necessary refinements.",
-        "priority": "high",
+        "title": "Develop Role-Specific Dashboard Placeholders",
+        "description": "Create basic placeholder pages for each user role's dashboard to ensure successful redirection after login and email verification.",
+        "details": "1. Create the following Server Component pages:\n   a. `authesci-app/app/dashboard/scientist/page.tsx`\n   b. `authesci-app/app/dashboard/employer/page.tsx`\n   c. `authesci-app/app/dashboard/collaborator/page.tsx`\n   d. `authesci-app/app/dashboard/admin/page.tsx`\n2. Each page should display a simple 'Welcome, [User Role]!' message and potentially a 'Complete your profile' prompt.\n3. Ensure these pages can fetch the current user's session and profile data to display their specific role and name.",
+        "testStrategy": "1. Log in as a Scientist, Employer, and verify redirection to `/dashboard/scientist` and `/dashboard/employer` respectively.\n2. After email verification, ensure users are redirected to their correct role-based dashboard.\n3. Verify that each dashboard page correctly displays the user's role and a welcome message.",
+        "priority": "medium",
         "dependencies": [
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          4
         ],
         "status": "done",
         "subtasks": []
       }
     ],
     "metadata": {
-      "created": "2025-11-07T21:33:58.814Z",
-      "updated": "2025-11-09T22:24:56.611Z",
+      "created": "2025-11-12T10:34:09.618Z",
+      "updated": "2025-11-12T13:21:44.911Z",
       "description": "Tasks for master context"
     }
   }

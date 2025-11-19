@@ -1,0 +1,152 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Component Directory Structure and Barrel Exports",
+        "description": "Establish the foundational directory structure for reusable Next.js components under `components/modules/` and configure barrel exports for easy import.",
+        "details": "Create the following directory structure: `components/modules/auth`, `components/modules/dashboard`, `components/modules/jobs`, `components/modules/profiles`, `components/modules/projects`. Also, create `components/layouts/` for `DashboardLayout`. Implement `components/modules/index.ts` to re-export all components from their respective subdirectories, following the example: `export * from './auth/AuthCard';` This ensures components can be imported like `import { ComponentName } from '@/components/modules';`.",
+        "testStrategy": "Verify that the directory structure is correctly established. Create dummy `.tsx` files in each subdirectory and confirm they can be successfully imported and re-exported via `components/modules/index.ts` in a test page or component. Check for correct path resolution and no import errors.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Configure Toast Provider and Global Styling Constants",
+        "description": "Integrate a toast notification provider into the root layout and establish a centralized file for common styling constants to ensure consistency.",
+        "details": "Configure a toast provider (e.g., using `react-hot-toast` or a Shadcn-based solution if available) in the root layout (`app/layout.tsx` or similar) to enable global toast notifications. Additionally, create `lib/constants/styles.ts` to define common Tailwind CSS class strings, such as `CARD_STYLES` as shown in the PRD, to mitigate inconsistent styling. Example: `export const CARD_STYLES = { base: 'rounded-lg border bg-card shadow-sm', hover: 'hover:shadow-md transition-shadow', padding: 'p-4' };`",
+        "testStrategy": "For the toast provider, implement a simple button in a test page that triggers a toast message and verify it appears correctly. For styling constants, apply a defined constant (e.g., `CARD_STYLES.base`) to a simple `div` and visually confirm the styles are applied as expected. Ensure the constants file is accessible and usable across components.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Implement Tier 1 - Auth Components (`AuthCard`, `FormInput`)",
+        "description": "Develop the core authentication components, `AuthCard` and `FormInput`, with TypeScript interfaces, JSDoc, and accessibility standards.",
+        "details": "Create `components/modules/auth/AuthCard.tsx` and `components/modules/auth/FormInput.tsx`. `FormInput` should be a Client Component (`'use client'`) due to input state and validation. `AuthCard` can be a Server Component wrapping client forms. Define strict TypeScript interfaces (e.g., `AuthCardProps`, `FormInputProps`) with JSDoc comments for all props, including common patterns like `id`, `className`, `children`, and event handlers. Implement form validation display for `FormInput`. Ensure semantic HTML, `aria-label` for icon buttons, and visible focus states for interactive elements. Utilize existing Shadcn components where appropriate.",
+        "testStrategy": "Develop a test page that uses `AuthCard` to wrap a login/signup form, incorporating `FormInput` fields. Verify that `FormInput` displays labels, accepts input, and shows validation messages correctly. Test keyboard navigation and focus states for `FormInput`. Confirm TypeScript prop errors are caught at compile time if incorrect types are passed. Check for 'use client' errors in the console.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement Tier 2 - Dashboard Core Components (`Sidebar`, `Navbar`)",
+        "description": "Develop the interactive `Sidebar` and `Navbar` components for the dashboard shell, including role-based menus, user menu, and theme toggle.",
+        "details": "Create `components/modules/dashboard/Sidebar.tsx` and `components/modules/dashboard/Navbar.tsx`. Both must be Client Components (`'use client'`) due to interactivity (collapse/expand state, dropdown menus, theme toggle). Define TypeScript interfaces with JSDoc. Implement role-based menu rendering for `Sidebar`. Integrate user menu and notifications into `Navbar`. Use `next/link` for all navigation links and `next/image` for logos/avatars. Ensure WCAG 2.1 AA compliance with semantic HTML, `aria-label` for icon buttons, keyboard navigation, and visible focus states.",
+        "testStrategy": "Create a test page that renders both `Sidebar` and `Navbar`. Verify `Sidebar` collapse/expand functionality, active route highlighting, and role-based menu visibility. Test `Navbar` dropdown menus, user menu interactions, and theme toggle persistence. Check all links use `next/link` and images use `next/image`. Perform keyboard navigation tests and verify focus states. Confirm no 'use client' errors.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Implement Tier 2 - Dashboard Content Components (`StatWidget`, `EmptyState`)",
+        "description": "Develop the `StatWidget` and `EmptyState` components for displaying dashboard metrics and placeholders.",
+        "details": "Create `components/modules/dashboard/StatWidget.tsx` and `components/modules/dashboard/EmptyState.tsx`. Both should be Server Components as they lack interactivity. Define strict TypeScript interfaces with JSDoc comments for props (e.g., `StatWidgetProps` for title, value, icon; `EmptyStateProps` for message, action button). Ensure semantic HTML and basic accessibility considerations like appropriate headings and descriptive text. Utilize `class-variance-authority` if variants are needed for `StatWidget` (e.g., different colors based on metric status).",
+        "testStrategy": "Render `StatWidget` with various data inputs (e.g., different numbers, titles, icons) and `EmptyState` with different messages and optional action buttons on a test page. Verify correct data display and styling. Confirm these components render without client-side errors and do not require the `'use client'` directive.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Implement `DashboardLayout` Component",
+        "description": "Create a reusable `DashboardLayout` component that integrates the `Sidebar` and `Navbar` to provide a consistent layout for dashboard pages.",
+        "details": "Create `components/layouts/DashboardLayout.tsx`. This component will act as a wrapper, taking `children` as a prop. It should render the `Sidebar` and `Navbar` components, positioning them correctly to form the overall dashboard structure. The `DashboardLayout` itself can be a Server Component, as it primarily composes other components. Ensure proper styling using Tailwind CSS to achieve the desired layout, considering responsiveness.",
+        "testStrategy": "Create a simple test page that uses `DashboardLayout` to wrap some content. Verify that the `Sidebar` and `Navbar` render correctly within the layout. Test responsiveness by resizing the browser window. Confirm that the layout provides a stable container for nested content and that interactive elements within `Sidebar` and `Navbar` still function as expected.",
+        "priority": "high",
+        "dependencies": [
+          4,
+          5
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Tier 3 - Jobs/Profiles Components (`JobCard`, `ApplicationCard`, `ProfileCard`, `SearchBar`)",
+        "description": "Develop components for displaying job listings, applications, user profiles, and a search bar with filters.",
+        "details": "Create `components/modules/jobs/JobCard.tsx`, `components/modules/jobs/ApplicationCard.tsx`, `components/modules/jobs/SearchBar.tsx`, and `components/modules/profiles/ProfileCard.tsx`. `JobCard` and `SearchBar` must be Client Components (`'use client'`) due to interactive elements (save button, input state, filters). `ProfileCard` should be a Server Component. `ApplicationCard` can be a Server Component unless specific interactivity is required. Define TypeScript interfaces with JSDoc, including `JobType` from `@prisma/client` for `JobCardProps`. Use `next/image` for company logos/user avatars and `next/link` for navigation. Implement skeleton variants for loading states. Ensure full accessibility compliance.",
+        "testStrategy": "For each component, create a test page with sample data. Verify `JobCard` displays data correctly, and its interactive elements (e.g., save button) function. Test `SearchBar` input, filtering logic, and state management. Confirm `ProfileCard` and `ApplicationCard` render data accurately. Test loading skeletons. Perform accessibility checks for all interactive elements and image alt texts. Verify correct Server/Client component classification.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Tier 4 - Projects Components (`ProjectCard`, `TaskCard`, `FileCard`, `CollaboratorAvatar`)",
+        "description": "Develop components for project management, including project previews, drag-and-drop task items, file displays, and collaborator avatars.",
+        "details": "Create `components/modules/projects/ProjectCard.tsx`, `components/modules/projects/TaskCard.tsx`, `components/modules/projects/FileCard.tsx`, and `components/modules/projects/CollaboratorAvatar.tsx`. `TaskCard` must be a Client Component (`'use client'`) to support drag-and-drop functionality using `@dnd-kit` (assuming it's already installed). Other components can be Server Components. Define TypeScript interfaces with JSDoc. Use `next/image` for avatars and `next/link` for project/file links. Implement drag-and-drop for `TaskCard`. Ensure accessibility, including `aria-label` for interactive elements and proper keyboard navigation for `TaskCard`.",
+        "testStrategy": "Create a test page for each component. Verify `ProjectCard` and `FileCard` display data correctly. For `TaskCard`, test drag-and-drop functionality, ensuring items can be reordered or moved. Confirm `CollaboratorAvatar` displays correctly and any associated tooltips work. Check `next/image` and `next/link` usage. Perform accessibility checks, especially for `TaskCard`'s interactive behavior.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Implement Tier 5 - Utility Components (`Pagination`, `Badge`, `LoadingSkeleton`, `DataTable`)",
+        "description": "Develop general utility components for pagination, badges, loading states, and data tables.",
+        "details": "Create `components/modules/utilities/Pagination.tsx`, `components/modules/utilities/Badge.tsx`, `components/modules/utilities/LoadingSkeleton.tsx`, and `components/modules/utilities/DataTable.tsx`. `Pagination` and `DataTable` will likely be Client Components (`'use client'`) due to internal state and interactivity. `Badge` and `LoadingSkeleton` can be Server Components. Define TypeScript interfaces with JSDoc. For `DataTable`, consider using an existing Shadcn table component as a base. Ensure all components adhere to accessibility standards, including keyboard navigation for `Pagination` and `DataTable`.",
+        "testStrategy": "For each utility component, create a test scenario. Verify `Pagination` controls work and update page state. Test `Badge` with different variants/content. Confirm `LoadingSkeleton` displays correctly. For `DataTable`, verify data rendering, sorting (if implemented), and pagination. Perform accessibility checks for interactive elements and ensure proper Server/Client component classification.",
+        "priority": "low",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Comprehensive Accessibility Audit and Refinement",
+        "description": "Conduct a thorough accessibility audit across all newly developed components to ensure WCAG 2.1 AA compliance.",
+        "details": "Perform a comprehensive review of all components (Auth, Dashboard, Jobs/Profiles, Projects, Utilities) against the WCAG 2.1 AA guidelines. Specifically check for: semantic HTML usage (e.g., `button`, `nav`, `aside` instead of `div`), `alt` text on all images, `aria-label` on icon buttons, full keyboard accessibility (`tabIndex`, `onKeyDown` handlers), visible focus states, and WCAG AA color contrast (4.5:1). Utilize tools like Axe DevTools for automated checks and manual keyboard navigation testing.",
+        "testStrategy": "For each component, run Axe DevTools and address all reported issues. Manually test keyboard navigation for all interactive elements (buttons, links, inputs, drag-and-drop items). Verify focus states are clearly visible. Use a color contrast checker to confirm text and interactive element contrasts meet WCAG AA standards. Document findings and implement necessary refinements.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "status": "done",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-11-07T21:33:58.814Z",
+      "updated": "2025-11-09T22:24:56.611Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

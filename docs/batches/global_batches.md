@@ -146,21 +146,26 @@ Use useRouter from next/navigation for programmatic navigation
 Dependencies: Batch 1
 Duration: 1 day
 
-🔐 Batch 2: Authentication & Session Management
+🔐 Batch 2: Authentication & Session Management ✅ (Completed)
 Goal: Implement secure, role-based authentication with Supabase Auth + Prisma.
+Status: Completed. The implementation details below reflect the final architecture.
+
+Key Architectural Decisions:
+- Centralized UI: A single `AuthCard.tsx` component is used for all auth forms to ensure consistency.
+- JWT Role Management: The user's `role` is stored in the Supabase JWT `app_metadata` for performant role checks in the middleware without needing a database query.
+- Middleware Enforcement: The middleware at `authesci-app/proxy.ts` is the single source of truth for protecting routes and enforcing role-based access.
+- Session Refresh Pattern: A redirect to `/auth/session-refresh` after login ensures the client-side session is immediately updated with the new JWT containing the user's role.
+
 Sub-modules:
 Supabase Auth Setup:
-
-Configure Supabase Auth in Next.js App Router (@supabase/ssr)
-Create auth utilities:
-
-lib/supabase/server.ts (Server Component auth)
-lib/supabase/client.ts (Client Component auth)
-lib/supabase/middleware.ts (Route protection)
-
-
+- Configured using `@supabase/ssr` for the Next.js App Router.
+- Utilities created in:
+  - `lib/supabase/server.ts` (for Server Components)
+  - `lib/supabase/client.ts` (for Client Components)
+  - `lib/supabase/admin.ts` (for admin-level actions like updating JWT metadata)
 
 Prisma Schema for Auth:
+- The `Profile` model links to Supabase's `auth.users` table and includes a `Role` enum.
 prisma// prisma/schema.prisma
 model Profile {
   id          String   @id @default(uuid())
@@ -168,20 +173,7 @@ model Profile {
   email       String   @unique
   fullName    String
   role        Role     @default(SCIENTIST)
-  bio         String?
-  skills      String[]
-  experience  String?
-  cvUrl       String?
-  avatarUrl   String?
-  institution String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  jobs         Job[]         @relation("EmployerJobs")
-  applications Application[]
-  projects     Project[]     @relation("ProjectCreator")
-  collaborations Collaborator[]
+  // ... other fields
 }
 
 enum Role {
@@ -190,97 +182,43 @@ enum Role {
   COLLABORATOR
   ADMIN
 }
-Auth Pages (App Router):
 
-app/(auth)/login/page.tsx - Server Component with Client form
-app/(auth)/signup/page.tsx - Server Component with Client form
-app/(auth)/forgot-password/page.tsx
-app/(auth)/reset-password/page.tsx
-app/(auth)/verify-email/page.tsx
+Auth Pages (App Router):
+- All auth pages are located under `app/(auth)/` and use a shared layout.
+  - `app/(auth)/login/page.tsx`
+  - `app/(auth)/signup/page.tsx`
+  - `app/(auth)/forgot-password/page.tsx`
+  - `app/(auth)/reset-password/page.tsx`
+  - `app/(auth)/verify-email/page.tsx`
+  - `app/auth/session-refresh/page.tsx` (Handles post-login session update)
 
 Auth Components (Client Components):
-
-components/auth/LoginForm.tsx ("use client")
-components/auth/SignUpForm.tsx ("use client")
-components/auth/RoleSelector.tsx ("use client")
+- `components/modules/auth/AuthCard.tsx`: Central UI for all auth forms.
+- `components/modules/auth/FormInput.tsx`: Standardized input field with error display.
+- `components/modules/auth/LogoutButton.tsx`: Client component to trigger the logout server action.
 
 Server Actions for Auth:
-typescript// app/actions/auth.ts
-"use server";
+- All core logic is in `app/actions/auth.ts`.
+- Actions return structured errors for inline form validation.
+- The `login` action backfills the `role` into the JWT for existing users.
 
-import { createServerClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
-
-export async function signUp(formData: FormData) {
-  const supabase = createServerClient();
-  
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const fullName = formData.get("fullName") as string;
-  const role = formData.get("role") as "SCIENTIST" | "EMPLOYER";
-  
-  // Create Supabase user
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-  
-  if (error) throw error;
-  
-  // Create Prisma profile
-  await prisma.profile.create({
-    data: {
-      userId: data.user!.id,
-      email,
-      fullName,
-      role,
-    },
-  });
-  
-  redirect("/dashboard");
-}
 Middleware for Route Protection:
-typescript// middleware.ts
-import { createServerClient } from "@/lib/supabase/middleware";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+- The main middleware file is `authesci-app/proxy.ts`.
+- It protects routes based on authentication status and user role (read from the JWT).
+- Redirects unauthenticated users to `/login`.
+- Redirects authenticated users away from auth pages.
+- Enforces role-specific dashboard access (e.g., a 'SCIENTIST' cannot access `/employer/dashboard`).
 
-export async function middleware(request: NextRequest) {
-  const { supabase, response } = createServerClient(request);
-  
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  
-  // Protect dashboard routes
-  if (request.nextUrl.pathname.startsWith("/dashboard") && !session) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-  
-  return response;
-}
+Email Integration (Hostinger SMTP):
+- Nodemailer is configured in `lib/mail.ts` and used via an API route at `app/api/mail/route.ts`.
+- Custom email templates are in the `emails/` directory.
+- Note: Password reset emails are sent directly by Supabase to ensure security.
 
-export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*"],
-};
-```
+Toast Notifications:
+- Uses Shadcn/UI `toast` component, with the `<Toaster />` in the root layout.
 
-**Email Integration (Hostinger SMTP):**
-- Create API route: `app/api/mail/route.ts`
-- Use Nodemailer with Hostinger SMTP
-- Email templates for:
-  - Welcome email
-  - Password reset
-  - Email verification
-
-**Toast Notifications:**
-- Use Shadcn/UI `toast` component
-- Global toast provider in `app/layout.tsx`
-
-**Dependencies:** Batch 1
-
-**Duration:** 2 days
+Dependencies: Batch 1
+Duration: 2 days
 
 ---
 
@@ -291,55 +229,41 @@ export const config = {
 **Sub-modules:**
 
 **Layout Structure (App Router):**
+- Each role gets its own top-level directory containing its layout and pages.
 ```
 app/
-├── (auth)/
-│   ├── login/
-│   └── signup/
-└── (dashboard)/
-    ├── layout.tsx (Dashboard layout with Sidebar + Navbar)
-    ├── scientist/
-    │   └── page.tsx (Scientist dashboard)
-    ├── employer/
-    │   └── page.tsx (Employer dashboard)
-    └── collaborator/
-        └── page.tsx (Collaborator dashboard)
-Dashboard Layout (Server Component):
-typescript// app/(dashboard)/layout.tsx
-import { createServerClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
-import { Sidebar } from "@/components/dashboard/Sidebar";
-import { Navbar } from "@/components/dashboard/Navbar";
+├── employer/
+│   ├── layout.tsx  // Main layout for the employer section
+│   └── dashboard/
+│       └── page.tsx  // The employer's main dashboard page
+├── scientist/
+│   ├── layout.tsx
+│   └── dashboard/
+│       └── page.tsx
+└── collaborator/
+    ├── layout.tsx
+    └── dashboard/
+        └── page.tsx
+```
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const supabase = createServerClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+**Dashboard Layout (Server Component Example):**
+- The layout file within each role's directory (`app/employer/layout.tsx`) will be responsible for fetching user data and protecting the routes within that section.
+```typescript// app/employer/layout.tsx
+import { getAuthenticatedUser } from "@/lib/services/auth-service";
+import { Sidebar } from "@/components/modules/Sidebar";
+import { Header } from "@/components/modules/Header";
 
-  if (!session) {
-    redirect("/login");
-  }
-
-  // Fetch user profile with Prisma
-  const profile = await prisma.profile.findUnique({
-    where: { userId: session.user.id },
+export default async function EmployerLayout({ children }: { children: React.ReactNode }) {
+  // Centralized service handles auth check, profile fetching, and redirects
+  const { user, profile } = await getAuthenticatedUser({
+    allowedRoles: ["EMPLOYER", "ADMIN"], // Protects this entire section
   });
-
-  if (!profile) {
-    redirect("/onboarding");
-  }
 
   return (
     <div className="flex h-screen">
       <Sidebar role={profile.role} />
       <div className="flex-1 flex flex-col">
-        <Navbar user={profile} />
+        <Header user={profile} />
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
@@ -347,224 +271,101 @@ export default async function DashboardLayout({
     </div>
   );
 }
-Dashboard Components:
+```
 
-Sidebar.tsx (Client Component - navigation state)
-Navbar.tsx (Client Component - user menu, theme toggle)
-StatWidget.tsx (Server Component - fetches data)
-RecentActivity.tsx (Server Component)
-EmptyDashboard.tsx (Server Component)
+**Dashboard Components:**
+- `Sidebar.tsx` (Client Component - handles navigation state)
+- `Header.tsx` (Client Component - user menu, theme toggle)
+- `StatWidget.tsx` (Server Component - fetches and displays data)
+- `RecentActivity.tsx` (Server Component)
 
-Role-Based Routing:
+**Onboarding Flow:**
+- The layout will check for profile completion and can redirect to an onboarding page if necessary (e.g., `/profile/edit`).
 
-Use Prisma to check user role
-Redirect to appropriate dashboard
-Role switcher for users with multiple roles (Client Component)
+**Dependencies:** Batch 1.5, Batch 2
+**Duration:** 1.5 days
 
-Theme Toggle (Client Component):
-typescript// components/dashboard/ThemeToggle.tsx
-"use client";
+---
 
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
+### 👤 **Batch 4: Profile Setup & Management**
 
-export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+**Goal:** Enable users to create and manage their profiles using Server Actions.
 
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-    >
-      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
-  );
-}
-Onboarding Flow:
-
-Check profile completion status
-Redirect incomplete profiles to /onboarding
-Multi-step onboarding form (Client Component)
-
-Dependencies: Batch 1.5, Batch 2
-Duration: 1.5 days
-
-👤 Batch 4: Profile Setup & Management
-Goal: Enable users to complete profiles using Server Actions + Prisma.
-Prisma Schema Extension:
-prismamodel Profile {
+**Prisma Schema Extension:**
+```prisma
+model Profile {
   // ... existing fields
-  publications String[]
-  certifications String[]
-  completionScore Int @default(0)
+  publications    String[]
+  certifications  String[]
+  completionScore Int      @default(0)
 }
-Server Actions for Profile:
-typescript// app/actions/profile.ts
+```
+
+**Server Actions for Profile:**
+- A robust `updateProfile` server action will handle form data and file uploads.
+```typescript// app/actions/profile.ts
 "use server";
-
-import { prisma } from "@/lib/prisma";
-import { createServerClient } from "@/lib/supabase/server";
-import { revalidatePath } from "next/cache";
-
+// ...
 export async function updateProfile(formData: FormData) {
-  const supabase = createServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (!session) throw new Error("Unauthorized");
-  
-  const profile = await prisma.profile.update({
-    where: { userId: session.user.id },
-    data: {
-      bio: formData.get("bio") as string,
-      skills: (formData.get("skills") as string).split(","),
-      experience: formData.get("experience") as string,
-      institution: formData.get("institution") as string,
-    },
-  });
-  
+  // ... logic to update profile in Prisma
   revalidatePath("/profile");
-  return profile;
 }
-File Upload (Cloudflare R2 via API Route):
-typescript// app/api/upload/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { createServerClient } from "@/lib/supabase/server";
+```
 
-const s3 = new S3Client({
-  region: "auto",
-  endpoint: process.env.R2_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-  },
-});
+**File Upload (CVs, Avatars):**
+- Use a server action that uploads files to a storage provider (like Supabase Storage or Cloudflare R2) and updates the `cvUrl` or `avatarUrl` field in the `Profile` model.
 
-export async function POST(request: NextRequest) {
-  const supabase = createServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  
-  const formData = await request.formData();
-  const file = formData.get("file") as File;
-  
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const key = `cv/${session.user.id}/${Date.now()}-${file.name}`;
-  
-  await s3.send(
-    new PutObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME,
-      Key: key,
-      Body: buffer,
-      ContentType: file.type,
-    })
-  );
-  
-  const url = `${process.env.R2_PUBLIC_URL}/${key}`;
-  return NextResponse.json({ url });
+**Profile Pages:**
+- These pages are not role-specific and live in a general authenticated area.
+- `app/(template)/profile/page.tsx` (Server Component to display the user's own profile)
+- `app/(template)/profile/edit/page.tsx` (Server Component rendering a Client form for editing)
+
+**Profile Components:**
+- `ProfileForm.tsx` (Client Component with validation)
+- `SkillsInput.tsx` (Client Component for tag-style input)
+- `FileUploader.tsx` (Client Component for drag-and-drop uploads)
+
+**Dependencies:** Batch 3
+**Duration:** 1.5 days
+
+---
+
+### 💼 **Batch 5: Job Marketplace (Full Loop)**
+
+**Goal:** Implement the complete job lifecycle: posting, browsing, applying, and managing applications.
+
+**Prisma Schema:**
+```prisma
+model Job {
+  // ... fields
 }
-Profile Pages:
-
-app/(dashboard)/profile/page.tsx (Server Component - displays profile)
-app/(dashboard)/profile/edit/page.tsx (Server Component with Client form)
-
-Profile Components:
-
-ProfileForm.tsx (Client Component - form with validation)
-SkillsInput.tsx (Client Component - taggable input)
-FileUploader.tsx (Client Component - drag & drop)
-ProfileProgress.tsx (Client Component - progress bar)
-
-Dependencies: Batch 3
-Duration: 1.5 days
-
-Week 2: Core Features + Polish
-💼 Batch 5: Job Marketplace (Full Loop) ⭐ MERGED
-Prisma Schema:
-prismamodel Job {
-  id            String   @id @default(uuid())
-  employerId    String
-  employer      Profile  @relation("EmployerJobs", fields: [employerId], references: [id])
-  title         String
-  description   String
-  requirements  String[]
-  category      String?
-  jobType       JobType
-  location      String?
-  salaryRange   String?
-  status        JobStatus @default(DRAFT)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  applications Application[]
-}
-
-enum JobType {
-  REMOTE
-  HYBRID
-  ON_SITE
-  CONTRACT
-}
-
-enum JobStatus {
-  DRAFT
-  PENDING_PAYMENT
-  ACTIVE
-  CLOSED
-}
-
 model Application {
-  id            String   @id @default(uuid())
-  jobId         String
-  job           Job      @relation(fields: [jobId], references: [id])
-  applicantId   String
-  applicant     Profile  @relation(fields: [applicantId], references: [id])
-  coverLetter   String?
-  resumeUrl     String?
-  status        ApplicationStatus @default(PENDING)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  // ... fields
 }
+```
 
-enum ApplicationStatus {
-  PENDING
-  SHORTLISTED
-  REJECTED
-  ACCEPTED
-}
-Server Actions:
-typescript// app/actions/jobs.ts
-"use server";
+**Server Actions:**
+- `app/actions/jobs.ts`: `createJob`, `updateJob`, `deleteJob`.
+- `app/actions/applications.ts`: `applyForJob`, `updateApplicationStatus`.
 
-import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+**Page Structure (Role-First):**
 
-export async function createJob(formData: FormData) {
-  // ... create job logic with Prisma
-  revalidatePath("/employer/jobs");
-}
+- **Public Job Board:**
+  - `app/jobs/page.tsx` (Job listings for everyone)
+  - `app/jobs/[id]/page.tsx` (Public view of a single job)
+  - `app/jobs/[id]/apply/page.tsx` (Page for a scientist to apply)
 
-export async function applyForJob(jobId: string, formData: FormData) {
-  // ... application logic with Prisma
-  revalidatePath(`/jobs/${jobId}`);
-}
-Pages:
+- **Employer-Specific Pages:**
+  - `app/employer/jobs/page.tsx` (List of jobs posted by the employer)
+  - `app/employer/jobs/new/page.tsx` (Form to create a new job posting)
+  - `app/employer/jobs/[id]/edit/page.tsx` (Form to edit an existing job)
+  - `app/employer/jobs/[id]/applicants/page.tsx` (View applicants for a specific job)
 
-app/(dashboard)/jobs/page.tsx (Server Component - job listings)
-app/(dashboard)/jobs/[id]/page.tsx (Server Component - job details)
-app/(dashboard)/jobs/[id]/apply/page.tsx (Client form)
-app/(dashboard)/employer/jobs/new/page.tsx (Client form)
-app/(dashboard)/employer/applicants/page.tsx (Server Component)
+- **Scientist-Specific Pages:**
+  - `app/scientist/applications/page.tsx` (View all jobs the scientist has applied to)
 
-Dependencies: Batch 4
-Duration: 2.5 days
+**Dependencies:** Batch 4
+**Duration:** 2.5 days
 
 🧪 Batch 6: Project Workspace
 Prisma Schema:
