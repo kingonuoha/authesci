@@ -6127,7 +6127,7 @@ h6, .h6 {
 }
 
 .sidebar.active{
-  width: auto;
+  width: 80px; /* Changed from auto to 80px for collapsed state */
 }
 
 @media (min-width: 1200px){

@@ -1,10 +1,18 @@
 'use client'
 
 import React, { useState } from 'react';
-import Sidebar from '@/components/modules/dashboard/Sidebar';
-import Navbar from '@/components/modules/dashboard/Navbar';
+import Sidebar  from '@/components/modules/Sidebar';
+import Header  from '@/components/modules/Header';
+import Breadcrumb from '@/components/modules/Breadcrumb';
+import Footer from '@/components/modules/Footer'; // Import Footer
+import { Profile } from '@prisma/client';
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+  profile: Profile;
+}
+
+const DashboardLayout = ({ children, profile }: DashboardLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -17,13 +25,25 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className={`flex ${isMobileSidebarOpen ? 'overlay-active' : ''}`}>
-      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar} />
-      <main className="dashboard-main">
-        <Navbar toggleSidebar={toggleSidebar} toggleMobileSidebar={toggleMobileSidebar} />
+    <div >
+      <Sidebar
+        role={profile.role}
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        isMobileSidebarOpen={isMobileSidebarOpen}
+        toggleMobileSidebar={toggleMobileSidebar}
+      />
+      <main className={`dashboard-main ${!isSidebarOpen ? 'active' : ''}`}>
+        <Header
+          user={profile}
+          toggleSidebar={toggleSidebar}
+          toggleMobileSidebar={toggleMobileSidebar}
+        />
         <div className="dashboard-main-body">
+          <Breadcrumb pageTitle="Dashboard" activePage="AI" />
           {children}
         </div>
+        <Footer /> {/* Include Footer here */}
       </main>
     </div>
   );

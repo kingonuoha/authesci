@@ -1,15 +1,28 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, ArrowRight, Search, Mail, Bell, Sun, Moon, ChevronDown, User, Settings, LogOut, Globe, MessageSquare, CheckCircle, XCircle, Info, Plus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useActionState } from 'react';
+import { showToast } from '@/lib/utils';
+import { logout } from '@/app/actions/auth';
 
 const Navbar = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => void, toggleMobileSidebar: () => void }) => {
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isMessageDropdownOpen, setIsMessageDropdownOpen] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+
+  const [logoutState, logoutAction] = useActionState(logout, null);
+
+  useEffect(() => {
+    if (logoutState?.status === 'error') {
+      showToast('error', logoutState.message, logoutState.error);
+    } else if (logoutState?.status === 'success') {
+      showToast('success', logoutState.message);
+    }
+  }, [logoutState]);
 
   return (
     <div className="navbar-header border-b border-neutral-200 dark:border-neutral-600">
@@ -248,10 +261,12 @@ const Navbar = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                         </Link>
                       </li>
                       <li>
-                        <button type="button" className="flex items-center gap-4 px-0 py-2 text-black hover:text-danger-600">
-                          <LogOut className="icon text-xl" />
-                          Log Out
-                        </button>
+                        <form action="/auth/logout" method="post">
+                          <button type="submit" className="flex items-center gap-4 px-0 py-2 text-black hover:text-danger-600">
+                            <LogOut className="icon text-xl" />
+                            Log Out
+                          </button>
+                        </form>
                       </li>
                     </ul>
                   </div>
