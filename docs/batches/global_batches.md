@@ -1,4 +1,4 @@
-REVISED Authesci — Project Batches Overview (Next.js + Supabase + Prisma Stack)
+﻿REVISED Authesci — Project Batches Overview (Next.js + Supabase + Prisma Stack)
 Tech Stack Confirmation:
 
 Frontend: Next.js 16 (App Router) + TypeScript
@@ -12,32 +12,9 @@ Deployment: Vercel
 
 
 Week 1: Foundation + Core Loops
-🧩 Batch 1: Project Setup & Template Integration ✅ (Current - In Progress)
+### 🧩 **Batch 1: Project Setup & Template Integration** ✅ (Current - In Progress)
 Goal: Establish clean codebase, environments, and UI foundation.
 Sub-modules:
-
-✅ Next.js 16 + TypeScript + Tailwind + Shadcn/UI setup
-✅ WowDash template integration (dist/ and html/)
-✅ Static asset management (public/assets)
-✅ Supabase client configuration (@supabase/ssr for App Router)
-✅ Design token extraction and Tailwind theme customization
-⏳ Prisma setup:
-
-Install Prisma (npm install prisma @prisma/client)
-Initialize Prisma (npx prisma init)
-Configure DATABASE_URL (Supabase connection string)
-Generate initial Prisma schema (profiles, jobs, applications tables)
-Run first migration (npx prisma migrate dev)
-
-
-⏳ Component conversion workflow documentation
-⏳ ESLint + Prettier configuration
-⏳ Git repository initialization
-
-Next.js Specific Dependencies:
-json{
-  "dependencies": {
-    "next": "^16.0.0",
     "@supabase/ssr": "^0.5.0",
     "@supabase/supabase-js": "^2.45.0",
     "@prisma/client": "^5.20.0",
@@ -58,39 +35,40 @@ json{
 Status: ~85% complete (per your task JSON)
 Remaining Tasks:
 
-Add Prisma integration
-Complete template prototype pages
-Finalize documentation
+- Add Prisma integration
+- Complete template prototype pages
+- Finalize documentation
 
 
-🎨 Batch 1.5: Template Component Library ⭐ NEW
+### 🎨 **Batch 1.5: Template Component Library** ⭐ NEW
 Goal: Convert WowDash html/ snippets into reusable Next.js Server/Client Components.
 Sub-modules:
 
 Extract and convert core UI components:
 
-JobCard.tsx (Client Component - has onClick handlers)
-ProjectCard.tsx (Client Component - interactive)
-StatWidget.tsx (Server Component - displays stats)
-Sidebar.tsx (Client Component - navigation state)
-Navbar.tsx (Client Component - user menu, notifications)
-ApplicationCard.tsx (Client Component - status actions)
-TaskCard.tsx (Client Component - drag & drop)
-EmptyState.tsx (Server Component - static placeholder)
-LoadingSkeleton.tsx (Server Component - loading states)
+- JobCard.tsx (Client Component - has onClick handlers)
+- ProjectCard.tsx (Client Component - interactive)
+- StatWidget.tsx (Server Component - displays stats)
+- Sidebar.tsx (Client Component - navigation state)
+- Navbar.tsx (Client Component - user menu, notifications)
+- ApplicationCard.tsx (Client Component - status actions)
+- TaskCard.tsx (Client Component - drag & drop)
+- EmptyState.tsx (Server Component - static placeholder)
+- LoadingSkeleton.tsx (Server Component - loading states)
 
 
 
 Next.js Specific Considerations:
 
-Use "use client" directive for interactive components
-Keep Server Components as default for static content
-Use Next.js <Image> component for optimized images
-Use Next.js <Link> for internal navigation
-Implement proper TypeScript interfaces for all props
+- Use "use client" directive for interactive components
+- Keep Server Components as default for static content
+- Use Next.js <Image> component for optimized images
+- Use Next.js <Link> for internal navigation
+- Implement proper TypeScript interfaces for all props
 
 Component Structure Example:
-typescript// components/modules/JobCard.tsx
+```typescript
+// components/modules/JobCard.tsx
 "use client"; // Only if component has interactivity
 
 import Image from "next/image";
@@ -128,15 +106,17 @@ export function JobCard({ id, title, company, location, salary, jobType, onSave 
     </Card>
   );
 }
+```
+
 UI Behaviors (Next.js Compatible):
 
 Use Shadcn/UI components for complex interactions:
 
-DropdownMenu for user menus
-Dialog for modals
-Sheet for mobile sidebars
-Tabs for tabbed interfaces
-Select for dropdowns
+- DropdownMenu for user menus
+- Dialog for modals
+- Sheet for mobile sidebars
+- Tabs for tabbed interfaces
+- Select for dropdowns
 
 
 Avoid any jQuery or vanilla DOM manipulation
@@ -146,12 +126,11 @@ Use useRouter from next/navigation for programmatic navigation
 Dependencies: Batch 1
 Duration: 1 day
 
-🔐 Batch 2: Authentication & Session Management ✅ (Completed)
+### 🔐 **Batch 2: Authentication & Session Management** ✅ (Completed)
 Goal: Implement secure, role-based authentication with Supabase Auth + Prisma.
 Status: Completed. The implementation details below reflect the final architecture.
 
 Key Architectural Decisions:
-- Centralized UI: A single `AuthCard.tsx` component is used for all auth forms to ensure consistency.
 - JWT Role Management: The user's `role` is stored in the Supabase JWT `app_metadata` for performant role checks in the middleware without needing a database query.
 - Middleware Enforcement: The middleware at `authesci-app/proxy.ts` is the single source of truth for protecting routes and enforcing role-based access.
 - Session Refresh Pattern: A redirect to `/auth/session-refresh` after login ensures the client-side session is immediately updated with the new JWT containing the user's role.
@@ -367,141 +346,427 @@ model Application {
 **Dependencies:** Batch 4
 **Duration:** 2.5 days
 
-🧪 Batch 6: Project Workspace
-Prisma Schema:
-prismamodel Project {
-  id              String   @id @default(uuid())
-  creatorId       String
-  creator         Profile  @relation("ProjectCreator", fields: [creatorId], references: [id])
-  title           String
-  description     String
-  budget          Decimal?
-  status          ProjectStatus @default(ACTIVE)
-  hasQuestions    Boolean @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+🧪 Batch 6: Project Workspace (Kanban & Collaboration)
+Goal: Implement the private workspace where actual work happens after a Scientist is hired.
 
-  collaborators   Collaborator[]
-  files           ProjectFile[]
-  tasks           Task[]
-  questions       ProjectQuestion[]
-  activities      ProjectActivity[]
-}
 
-model Task {
-  id          String   @id @default(uuid())
-  projectId   String
-  project     Project  @relation(fields: [projectId], references: [id])
-  assignedTo  String?
-  title       String
-  description String?
-  status      TaskStatus @default(OPEN)
-  dueDate     DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
+Context: This covers the Week 4 requirement for "Project Foundation" and "Task Management," aligning with the defined Project Workspace User Flow.
 
-enum TaskStatus {
-  OPEN
-  IN_PROGRESS
-  DONE
-}
-File Upload with Server Actions:
-typescript// app/actions/files.ts
-"use server";
+Key Features:
 
-import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+Job-to-Project Transition:
 
-export async function createProjectFile(projectId: string, fileUrl: string, fileName: string) {
-  const file = await prisma.projectFile.create({
-    data: {
-      projectId,
-      fileName,
-      fileUrl,
-      fileType: fileName.split(".").pop() || "unknown",
-      uploadedBy: "user-id", // Get from session
-    },
-  });
-  
-  revalidatePath(`/projects/${projectId}`);
-  return file;
-}
-Components:
+Logic to auto-create a Project when a Job Application is marked as "Hired".
 
-Use @dnd-kit/core for Kanban board (Next.js compatible)
-Server Components for data fetching
-Client Components for drag & drop
+Populate Project Members (Scientist + Employer) automatically.
 
-Dependencies: Batch 5
-Duration: 2 days
+Kanban Board (WowDash Integration):
+
+UI: Port the WowDash Kanban HTML to React.
+
+Tech: Use @dnd-kit/core for drag-and-drop functionality.
+
+
+Columns: Implement "To Do | In Progress | Done" as specified in the user flow.
+
+
+Task Details: Include Task Title, Due Date, and Priority.
+
+
+
+Realtime: Sync card movements instantly using Supabase Realtime.
+
+File Management (Cloudflare R2):
+
+Uploads: Implement the presigned URL flow (/api/upload) to send files directly to Cloudflare R2.
+
+
+UI: A "Documents" tab in the workspace to list files by type (PDF, CSV, etc.).
+
+
+Dependencies: Batch 5 Duration: 3 days
 
 💰 Batch 7: Payment & Escrow
-Paystack Integration (API Route):
-typescript// app/api/payments/initialize/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+Goal: Monetize the platform and handle secure project payments. Context: Covers Week 4 (Friday) "Escrow Flow" and Week 3 "Job Posting Fees."
 
-export async function POST(request: NextRequest) {
-  const { amount, email, projectId } = await request.json();
-  
-  const response = await fetch("https://api.paystack.co/transaction/initialize", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      amount: amount * 100, // Convert to kobo
-      metadata: { projectId },
-    }),
-  });
-  
-  const data = await response.json();
-  return NextResponse.json(data);
+Key Features:
+
+Job Posting Fee (Employer):
+
+Paystack Checkout integration for publishing a job.
+
+Webhook listener to change Job Status from DRAFT → ACTIVE upon payment success.
+
+Project Escrow System (MVP):
+
+Fund Project: Employer deposits funds via Paystack.
+
+Hold Funds: Database status updates to ESCROW_HELD.
+
+Release Funds: "Release Payment" button in the Project Workspace (Employer only) when the project tasks has been completed, and the scientist has marked as work completed( new column might need to be created or added to the project model).
+
+Payout: Logic to mark funds as RELEASED (Actual Payouts are confirmed by admin, so the funds are marked as RELEASED, and the employer is paid via Paystack).
+a dedicated admin page to handle all payouts, admin can see list of pending payouts and processed payouts
+on successful payout, the job status should be updated to COMPLETED
+
+
+Dependencies: Batch 6 Duration: 2 days
+
+### 🔔 BATCH 8 — NOTIFICATIONS + AI SYSTEM (FINAL PRD UPDATE)
+(Concise, precise, only new/changed models)
+1. DATABASE MODEL UPDATES
+
+Only showing models that change:
+
+🔹 Model: Profile (UPDATED)
+Added
+
+cvUrls: String[]
+
+cvIntel: Json?
+
+aiFeatureVector: Vector? (for hybrid matching — skills embeddings)
+
+isPremium: Boolean @default(false) (for AI gating)
+
+🔹 Model: Job (UPDATED)
+Added
+
+aiFeatureVector: Vector?
+
+aiIntel: Json? (summary of job for employer insights)
+
+aiRecommendedScientists: Json? (cached ranked scientist IDs)
+
+🔹 Model: JobApplication (UPDATED)
+Added
+
+aiMatchScore: Float?
+
+aiIntel: Json? (why they are a match — used for employer view)
+
+🔹 Model: Notification (NEW)
+model Notification {
+  id             String    @id @default(cuid())
+  userId         String
+  title          String
+  message        String
+  type           String // "job_recommendation" | "application_status" | "system" | "ai_insight"
+  isRead         Boolean   @default(false)
+  link           String?   // URL to open on click
+  createdAt      DateTime  @default(now())
+
+  user           Profile   @relation(fields: [userId], references: [id])
 }
-Dependencies: Batch 5, Batch 6
-Duration: 1.5 days
 
-🧠 Batch 8: Notifications & AI
-Supabase Realtime (Server Component):
-typescript// app/(dashboard)/notifications/page.tsx
-import { createServerClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
+2. AI FEATURES FOR THIS BATCH
+🔹 2.1 CV Parsing & Intel Refresh
 
-export default async function NotificationsPage() {
-  const supabase = createServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  const notifications = await prisma.notification.findMany({
-    where: { userId: session!.user.id },
-    orderBy: { createdAt: "desc" },
-  });
-  
-  return <NotificationList notifications={notifications} />;
+Triggered when:
+
+A CV is uploaded
+
+A CV is deleted
+
+Pipeline
+
+Upload to Cloudinary
+
+Function extract_cv_text()
+
+Gemini generates:
+
+skills
+
+experience timeline
+
+certificates
+
+keywords
+
+embeddings (64D vector)
+
+Save:
+
+cvIntel
+
+aiFeatureVector
+
+🔹 2.2 AI Job Recommendations (Hybrid Mode)
+Backend Steps
+
+User profile → aiFeatureVector
+
+Jobs table → each job has aiFeatureVector
+
+Supabase Postgres similarity search:
+
+cosine_similarity(aiFeatureVector)
+
+AI refinement: Gemini creates human-readable ranking explanation
+
+Cache the output → Profile.recommendedJobsCache (optional)
+
+Notification:
+
+“New jobs recommended for you”
+
+🔹 2.3 Cover Letter Auto-Generate (Fill with AI)
+
+Given:
+
+User profile
+
+CV intel
+
+Job intel
+
+Job description
+
+Gemini produces:
+
+Professional, personalized cover letter
+
+Context-aware tone
+
+Uses CV keywords + job requirements
+
+Gated by:
+FREE_TIER_AI=on OR user.isPremium = true
+
+🔹 2.4 Employer Applicant Ranking
+
+Triggered when people apply:
+
+For each application:
+
+Compare applicant aiFeatureVector to job aiFeatureVector
+
+Save aiMatchScore
+
+Save aiIntel (why they are a match)
+
+Job table stores sorted list:
+
+aiRecommendedScientists
+
+Employer sees ranked candidates.
+
+Gated by environment variable.
+
+3. NOTIFICATION SYSTEM
+
+Notifications are created in three situations:
+
+1. Job Recommended
+
+When hybrid scoring refreshes.
+
+Notification.create({
+  userId,
+  type: "job_recommendation",
+  title: "New job match found",
+  message: "We found new roles that align with your profile."
+})
+
+2. Job Application Status
+
+Employer accepts/rejects → send notification.
+
+3. AI Events
+
+CV intel updated
+
+New ranked candidates
+
+Cover letter generated (optional)
+
+4. ENVIRONMENT VARIABLE GATING
+process.env.FREE_TIER_AI === "on"
+
+
+If:
+
+on → all users can use AI
+
+off → only user.isPremium === true
+
+Central helper:
+export function canUseAI(user) {
+  const free = process.env.FREE_TIER_AI === "on";
+  if (free) return true;
+  return user.isPremium === true;
 }
-Dependencies: Batch 7
-Duration: 1.5 days
 
-🎨 Batch 9: UI/UX Polish
-Next.js Specific:
 
-Use <Suspense> for loading states
-Implement loading.tsx files
-Use error.tsx for error boundaries
-Optimize images with next/image
+Used in:
 
-Dependencies: Batch 8
-Duration: 1.5 days
+Cover letter generator
 
-🚀 Batch 10: Deployment
-Deployment Checklist:
+CV intel generator
 
-Prisma migrations on production database
-Supabase production project setup
-Vercel environment variables
-Cloudflare R2 production bucket
+Job recommendations
 
-Dependencies: Batch 9
-Duration: 1 day
+Applicant ranking
+
+5. FRONTEND LOGIC
+Recommended Jobs Page
+
+You call:
+
+/api/recommendations/jobs
+
+Returns:
+
+sorted job IDs
+
+match scores
+
+short AI reasons
+
+Frontend simply lists jobs in that order.
+
+Employer Applicants Page
+
+You call:
+
+/api/job/{id}/ai-candidates
+
+Returns:
+
+ranked applicants
+
+aiMatchScore
+
+aiIntel
+
+Frontend displays:
+
+“Best fit ★”
+
+Reasoning summary
+
+Cover Letter Page
+
+Button: Fill with AI
+Call:
+
+POST /api/cover-letter/generate
+
+Returns:
+
+Generated letter text
+
+Frontend inserts into textarea.
+
+6. CACHING STRATEGY (REQUIRED)
+Stored only when needed
+
+AI re-runs ONLY when:
+
+CV changes
+
+Job changes
+
+Application created
+
+So page refresh does NOT re-trigger AI.
+
+Cache locations
+
+Profile: aiFeatureVector, cvIntel
+
+Job: aiFeatureVector, aiIntel, aiRecommendedScientists
+
+Application: aiMatchScore, aiIntel
+
+Everything else is database-driven.
+
+7. FILE STORAGE
+
+No changes:
+
+Cloudinary receives PDFs, Docx, images
+
+AI pipeline reads via URL
+
+Returns cleaned text + embeddings
+
+In-App: Supabase Realtime bell icon for alerts (e.g., "Application Received", "Job about to expire").
+
+
+
+Email (Transactional): Hostinger SMTP trigger for "Application Submitted" confirmations.
+
+Dependencies: Batch 7 Duration: 2.5 days
+
+📊 Batch 9: Admin Dashboard & Analytics
+Goal: Platform oversight and Employer data insights. Context: Addresses "Dashboard Widgets" from Week 2 and general platform management.
+
+Key Features:
+
+Employer Analytics:
+
+Stats widgets: "Total Active Jobs", "Total Applicants", "Pending Applications".
+
+Super Admin Panel:
+
+Table view of all Users and Jobs.
+
+Ability to "Ban User" or "Delete Job" (Content Moderation).
+
+System Health:
+
+Basic error logging view.
+
+Dependencies: Batch 8 Duration: 2 days
+
+🎨 Batch 10: UI Polish & Static Pages
+Goal: Finalize the "Premium" look and add missing static pages. Context: Covers Week 5 "In-Lab Mode Preview" and "UI Responsiveness."
+
+Key Features:
+
+In-Lab Mode (Preview Page):
+
+Create a static "Coming Soon" landing page for the In-Lab feature.
+
+Add a "Notify Me" subscription form (saves to leads table) or a basic request form.
+
+Loading & Error States:
+
+Add Skeleton loaders (Shimmer effect) for the Kanban board and Job lists.
+
+Custom 404 and 500 Error pages.
+
+Mobile Responsiveness:
+
+Fix Sidebar behavior on mobile (Sheet/Drawer).
+
+Ensure tables scroll horizontally on small screens.
+
+Dependencies: Batch 9 Duration: 2 days
+
+🚀 Batch 11: Testing, Docs & Deployment
+Goal: Go live. Context: Covers Week 5 "End-to-End Testing" and "Deployment."
+
+Key Features:
+
+End-to-End (E2E) Smoke Test:
+
+Manual run-through: New User Signup → Post Job → Apply → Hire → Create Project → Release Payment.
+
+Documentation:
+
+Write README.md (Setup instructions).
+
+Record a Loom walkthrough of the core flows (for handoff).
+
+Production Launch:
+
+Deploy to Vercel (Production Branch).
+
+Switch Paystack keys to LIVE mode.
+
+Point Custom Domain (DNS Setup).
+
+Dependencies: Batch 10 Duration: 1.5 days

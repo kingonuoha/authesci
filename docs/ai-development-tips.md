@@ -94,3 +94,25 @@ This document contains a summary of observations and guardrails for AI-driven de
 -   **Role Switching for Development:** For development environments, a role-switching mechanism can be implemented using an environment variable (e.g., `NEXT_PUBLIC_ENABLE_ROLE_SWITCHING`). This feature allows developers to easily switch user roles (e.g., Scientist, Employer, Admin) from the UI (e.g., in the header dropdown). It requires a Server Action to update the user's role in both the Prisma profile and Supabase `app_metadata`, followed by a `revalidatePath` to refresh the UI. The `RoleSwitcher` component should conditionally render based on the environment variable to prevent it from appearing in production.
 
 By following these guidelines, we can ensure a more efficient, secure, and consistent development process.
+
+## 7. Recent Lessons Learned (UI/UX & Build Stability)
+
+### 7.1. Styling & Tailwind CSS
+-   **Global vs. Minified CSS:** The project uses a pre-compiled `style.css` which may miss standard Tailwind utilities (e.g., `animate-spin`, `input-error`). Always check `globals.css` and manually add missing utility classes there if they are not working out of the box.
+-   **Gradient Visibility:** When using `bg-gradient`, ensure you don't over-complicate `bg-size` (e.g., `bg-[length:200%_auto]`) unless necessary, as it can sometimes cause the gradient to appear invisible on certain elements. Simple `bg-gradient-to-r` often suffices.
+-   **Z-Index Context:** For overlapping elements (like avatars on cards), explicitly set `z-index` and `position: relative` to ensure they stack correctly against backgrounds and borders.
+
+### 7.2. Component Architecture
+-   **Client-Side Interactivity:** Any component that uses hooks (`useState`, `useEffect`) or event handlers (`onClick`) **MUST** have `"use client";` at the very top of the file. This is a common source of build failures.
+-   **Shadcn UI Integration:** When adding new Shadcn components (e.g., `dialog`, `avatar`), ensure `tsconfig.json` paths (`@/components/ui/*`) are correctly mapped. You may need to restart the TS server or build process if "Cannot find module" errors persist.
+-   **Granular Components:** Break down complex UIs into smaller, focused components (e.g., `AiFillButton`, `ApplicantAvatarGroup`). This makes styling and debugging much easier than monolithic files.
+
+### 7.3. Build & Layout Stability
+-   **Layout Rendering Errors:** Persistent "rendering error" messages during `npm run build` often originate from high-level Layout components (`AppLayout`, `DashboardLayout`). Check for:
+    -   Prop mismatches (e.g., passing `undefined` where a boolean is expected).
+    -   Client/Server boundary violations (importing a Server Component into a Client Component without proper composition).
+-   **Clean Build Environment:** If build errors persist despite code fixes, try clearing the `.next` cache and `node_modules` to ensure a clean slate.
+
+### 7.4. Visual Consistency
+-   **Template Reference:** Always cross-reference new UI components with the `wowdash` HTML templates (e.g., `users-grid.html`, `list.html`) to ensure they match the intended premium aesthetic.
+-   **Icons:** Use `lucide-react` as the standard icon library. Avoid mixing with other icon sets unless absolutely necessary.

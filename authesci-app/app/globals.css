@@ -1,12 +1,12 @@
 /* @import "tailwindcss"; */
+/* import template css */
+@import '../public/assets/css/style.css';
+@import '../public/assets/css/remixicon.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* import template css */
-@import '../public/assets/css/style.css';
-@import '../public/assets/css/remixicon.css';
 
 @layer base {
   :root {
@@ -71,4 +71,20 @@
   /* body {
     @apply bg-background text-foreground;
   } */
+}
+
+@layer utilities {
+  .input-error {
+    /* @apply border-danger-500 focus:border-danger-500 focus:ring-danger-500; */
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }

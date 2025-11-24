@@ -10,9 +10,10 @@ import { Profile } from '@prisma/client';
 interface DashboardLayoutProps {
   children: React.ReactNode;
   profile: Profile;
+  activeProjectCount?: number;
 }
 
-const DashboardLayout = ({ children, profile }: DashboardLayoutProps) => {
+const DashboardLayout = ({ children, profile, activeProjectCount }: DashboardLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -32,6 +33,7 @@ const DashboardLayout = ({ children, profile }: DashboardLayoutProps) => {
         toggleSidebar={toggleSidebar}
         isMobileSidebarOpen={isMobileSidebarOpen}
         toggleMobileSidebar={toggleMobileSidebar}
+        activeProjectCount={activeProjectCount}
       />
       <main className={`dashboard-main ${!isSidebarOpen ? 'active' : ''}`}>
         <Header

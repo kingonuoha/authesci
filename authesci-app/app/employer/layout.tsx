@@ -1,22 +1,21 @@
 import { getAuthenticatedUser } from "@/lib/services/auth-service";
 import { Role } from "@prisma/client";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-// Removed `headers` import
-// Removed `URL` import
+import { getActiveProjectCount } from "@/lib/services/project";
 
 export default async function EmployerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Removed headers() call and pathname extraction
   const { profile } = await getAuthenticatedUser({
     allowedRoles: [Role.EMPLOYER, Role.ADMIN],
-    // Removed pathname argument
   });
 
+  const activeProjectCount = await getActiveProjectCount(profile.id);
+
   return (
-    <DashboardLayout profile={profile}>
+    <DashboardLayout profile={profile} activeProjectCount={activeProjectCount}>
       {children}
     </DashboardLayout>
   );

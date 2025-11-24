@@ -3,15 +3,23 @@ import { Role } from "@prisma/client";
 import StatWidget from "@/components/modules/dashboard/StatWidget";
 import Link from "next/link";
 import { Briefcase, Users } from "lucide-react";
+import { ProfileCompletionCard } from "@/components/modules/profile/ProfileCompletionCard";
+import { getProfileCompletion } from "@/lib/helpers/getProfileCompletion";
 
 export default async function EmployerDashboardPage() {
   const { profile } = await getAuthenticatedUser({
     allowedRoles: [Role.EMPLOYER, Role.ADMIN],
   });
 
+  const { percentage, missingFields } = getProfileCompletion(profile);
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6">Welcome, {profile.fullName}!</h1>
+
+      <div className="mb-8">
+        <ProfileCompletionCard percentage={percentage} missingFields={missingFields} role={profile.role} />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <StatWidget

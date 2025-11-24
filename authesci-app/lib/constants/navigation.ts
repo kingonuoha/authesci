@@ -15,15 +15,13 @@ import {
 export const NAV_LINKS = {
   EMPLOYER: [
     { href: '/employer/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/employer/jobs', label: 'Jobs', icon: Briefcase },
-    { href: '/employer/applicants', label: 'Applicants', icon: Users },
+    { href: '/employer/jobs', label: 'Manage Jobs', icon: Briefcase },
     { href: '/employer/profile', label: 'Company Profile', icon: Building },
     { href: '/employer/settings', label: 'Settings', icon: Settings },
   ],
   SCIENTIST: [
     { href: '/scientist/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/scientist/jobs', label: 'Browse Jobs', icon: Briefcase },
-    { href: '/scientist/applications', label: 'My Applications', icon: FileText },
+    { href: '/jobs', label: 'Browse Jobs', icon: Briefcase },
     { href: '/scientist/profile', label: 'My Profile', icon: User },
     { href: '/scientist/settings', label: 'Settings', icon: Settings },
   ],

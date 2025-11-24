@@ -1,4 +1,4 @@
-import { toast } from "@/hooks/use-toast";
+import { toast } from "react-hot-toast";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-type ToastType = "default" | "success" | "error" | "info";
+type ToastType = "default" | "success" | "error" | "info" | "warning";
 
 export function showToast(type: ToastType, title: string, description?: string | object | any[]) {
   let formattedDescription: string | undefined = undefined;
@@ -21,20 +21,23 @@ export function showToast(type: ToastType, title: string, description?: string |
     }
   }
 
-  let variant: "default" | "destructive" | "success" | "warning" | "info" = "default";
-  if (type === "error") {
-    variant = "destructive";
-  } else if (type === "success") {
-    variant = "success";
-  } else if (type === "warning") {
-    variant = "warning";
-  } else if (type === "info") {
-    variant = "info";
-  }
+  const message = formattedDescription ? `${title}: ${formattedDescription}` : title;
 
-  toast({
-    variant: variant,
-    title,
-    description: formattedDescription,
-  });
+  switch (type) {
+    case "success":
+      toast.success(message);
+      break;
+    case "error":
+      toast.error(message);
+      break;
+    case "warning":
+      toast(message, { icon: '⚠️' });
+      break;
+    case "info":
+      toast(message, { icon: 'ℹ️' });
+      break;
+    default:
+      toast(message);
+      break;
+  }
 }

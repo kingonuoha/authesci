@@ -246,7 +246,7 @@ export async function login(
   redirect("/auth/session-refresh");
 }
 
-export async function requestPasswordReset(formData: FormData) {
+export async function requestPasswordReset(formData: FormData): Promise<ActionResult> {
   console.log("Received formData in requestPasswordReset:", formData);
   if (!(formData instanceof FormData)) {
     console.error("formData is not an instance of FormData:", formData);

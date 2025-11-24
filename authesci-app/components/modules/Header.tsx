@@ -7,7 +7,9 @@ import Link from 'next/link';
 import { Profile } from '@prisma/client';
 import { ThemeToggle } from './ThemeToggle';
 import { LogoutButton } from './auth/LogoutButton';
-import RoleSwitcher from './RoleSwitcher'; // Import RoleSwitcher
+import { VerifiedBadge } from './profile/VerifiedBadge';
+import { getProfileCompletion } from '@/lib/helpers/getProfileCompletion';
+import RoleSwitcher from './RoleSwitcher';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -18,6 +20,7 @@ interface HeaderProps {
 const Header = ({ toggleSidebar, toggleMobileSidebar, user }: HeaderProps) => {
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const { isVerified } = getProfileCompletion(user);
 
   return (
     <div className="navbar-header border-b border-neutral-200 dark:border-neutral-600">
@@ -86,7 +89,8 @@ const Header = ({ toggleSidebar, toggleMobileSidebar, user }: HeaderProps) => {
             </div>
             {/* Notification End  */}
 
-            <div className="relative">
+            <div className="relative flex items-center gap-2">
+              {isVerified && <VerifiedBadge />}
               <button
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                 className="flex items-center justify-center rounded-full"

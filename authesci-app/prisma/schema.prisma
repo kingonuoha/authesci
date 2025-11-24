@@ -48,6 +48,13 @@ enum TaskStatus {
   DONE
 }
 
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
 enum PaymentStatus {
   PENDING
   FUNDED
@@ -76,6 +83,10 @@ model Profile {
   publications     String[]        @default([])
   certifications   String[]        @default([])
   completionScore  Int             @default(0) @map("completion_score")
+  bankName         String?         @map("bank_name")
+  accountNumber    String?         @map("account_number")
+  accountName      String?         @map("account_name")
+  recipientCode    String?         @map("recipient_code")
   createdAt        DateTime        @default(now()) @map("created_at")
   updatedAt        DateTime        @updatedAt @map("updated_at")
   jobsPosted       Job[]           @relation("JobsPosted")
@@ -101,6 +112,7 @@ model Job {
   jobType      JobType       @map("job_type")
   location     String?
   salaryRange  String?       @map("salary_range")
+  finalPrice   Decimal?      @db.Decimal(10, 2) @map("final_price")
   status       JobStatus     @default(DRAFT)
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
@@ -183,17 +195,19 @@ model ProjectFile {
 }
 
 model Task {
-  id          String     @id @default(uuid())
-  projectId   String     @map("project_id")
-  assignedTo  String?    @map("assigned_to")
+  id          String       @id @default(uuid())
+  projectId   String       @map("project_id")
+  assignedTo  String?      @map("assigned_to")
   title       String
   description String?
-  status      TaskStatus @default(OPEN)
-  dueDate     DateTime?  @map("due_date")
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
-  project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assignee    Profile?   @relation("Tasks", fields: [assignedTo], references: [id])
+  status      TaskStatus   @default(OPEN)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?    @map("due_date")
+  imageUrl    String?      @map("image_url")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee    Profile?     @relation("Tasks", fields: [assignedTo], references: [id])
 
   @@map("tasks")
 }
@@ -227,7 +241,9 @@ model Payment {
   projectId   String        @map("project_id")
   employerId  String        @map("employer_id")
   scientistId String        @map("scientist_id")
-  amount      Decimal       @db.Decimal(10, 2)
+  amount          Decimal       @db.Decimal(10, 2)
+  platformFee     Decimal       @default(0) @db.Decimal(10, 2) @map("platform_fee")
+  scientistAmount Decimal       @default(0) @db.Decimal(10, 2) @map("scientist_amount")
   status      PaymentStatus @default(PENDING)
   reference   String?       @unique
   createdAt   DateTime      @default(now()) @map("created_at")

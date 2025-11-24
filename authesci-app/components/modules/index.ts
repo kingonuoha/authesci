@@ -4,7 +4,7 @@ import Sidebar from './dashboard/Sidebar';
 import Navbar from './dashboard/Navbar';
 import StatWidget from './dashboard/StatWidget';
 import EmptyState from './dashboard/EmptyState';
-import JobCard from './jobs/JobCard';
+import JobCard from './JobCard';
 import ApplicationCard from './jobs/ApplicationCard';
 import SearchBar from './jobs/SearchBar';
 import ProfileCard from './profiles/ProfileCard';

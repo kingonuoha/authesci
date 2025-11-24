@@ -1,6 +1,7 @@
 "use client";
 
 import { Role } from "@prisma/client";
+import { Icon, Users } from "lucide-react";
 
 interface RoleSelectorProps {
   role: Role;
@@ -11,7 +12,8 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({ role, setRole }) => {
   return (
     <div className="icon-field mb-4 relative">
       <span className="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
-        <iconify-icon icon="clarity:users-line"></iconify-icon>
+        {/* <iconify-icon icon="clarity:users-line"></iconify-icon> */}
+        <Users />
       </span>
       <select
         id="role"
