@@ -8,15 +8,16 @@ import { Calendar, Tag, Edit, Trash2, User } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface KanbanCardProps {
-  task: Task & { 
+  task: Task & {
     assignee?: { fullName: string | null; avatarUrl: string | null; email: string } | null;
   };
   onEdit?: (task: Task) => void;
   onDelete?: (taskId: string) => void;
   onClick?: (task: Task) => void;
+  readOnly?: boolean;
 }
 
-export function KanbanCard({ task, onEdit, onDelete, onClick }: KanbanCardProps) {
+export function KanbanCard({ task, onEdit, onDelete, onClick, readOnly }: KanbanCardProps) {
   const {
     attributes,
     listeners,
@@ -24,7 +25,7 @@ export function KanbanCard({ task, onEdit, onDelete, onClick }: KanbanCardProps)
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: task.id });
+  } = useSortable({ id: task.id, disabled: readOnly });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -48,7 +49,7 @@ export function KanbanCard({ task, onEdit, onDelete, onClick }: KanbanCardProps)
       style={style}
       {...attributes}
       {...listeners}
-      className="kanban-card bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg mb-6 cursor-grab active:cursor-grabbing shadow-sm border border-neutral-200 dark:border-neutral-700"
+      className={`kanban-card bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg mb-6 shadow-sm border border-neutral-200 dark:border-neutral-700 ${readOnly ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'}`}
       onClick={() => onClick?.(task)}
     >
       <div className="flex justify-between items-start mb-2">
@@ -56,15 +57,15 @@ export function KanbanCard({ task, onEdit, onDelete, onClick }: KanbanCardProps)
           {task.title}
         </h6>
         {task.priority && (
-            <span className={`text-xs px-2 py-0.5 rounded border ${getPriorityColor(task.priority)}`}>
-                {task.priority}
-            </span>
+          <span className={`text-xs px-2 py-0.5 rounded border ${getPriorityColor(task.priority)}`}>
+            {task.priority}
+          </span>
         )}
       </div>
-      
+
       {task.imageUrl && (
         <div className="mb-3 rounded-lg overflow-hidden h-32 w-full">
-            <img src={task.imageUrl} alt={task.title} className="w-full h-full object-cover" />
+          <img src={task.imageUrl} alt={task.title} className="w-full h-full object-cover" />
         </div>
       )}
 
@@ -76,54 +77,56 @@ export function KanbanCard({ task, onEdit, onDelete, onClick }: KanbanCardProps)
 
       <div className="flex items-center justify-between mt-3">
         <div className="flex items-center gap-2">
-             {task.assignee ? (
-                <div className="flex items-center gap-2" title={task.assignee.fullName || task.assignee.email}>
-                    {task.assignee.avatarUrl ? (
-                        <img src={task.assignee.avatarUrl} alt="Assignee" className="w-6 h-6 rounded-full object-cover" />
-                    ) : (
-                        <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-bold">
-                            {(task.assignee.fullName || task.assignee.email).charAt(0).toUpperCase()}
-                        </div>
-                    )}
+          {task.assignee ? (
+            <div className="flex items-center gap-2" title={task.assignee.fullName || task.assignee.email}>
+              {task.assignee.avatarUrl ? (
+                <img src={task.assignee.avatarUrl} alt="Assignee" className="w-6 h-6 rounded-full object-cover" />
+              ) : (
+                <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-bold">
+                  {(task.assignee.fullName || task.assignee.email).charAt(0).toUpperCase()}
                 </div>
-             ) : (
-                 <div className="w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center" title="Unassigned">
-                     <User className="w-3 h-3" />
-                 </div>
-             )}
+              )}
+            </div>
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center" title="Unassigned">
+              <User className="w-3 h-3" />
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center gap-3">
+        {!readOnly && (
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 text-neutral-500 dark:text-neutral-400 text-xs">
-                <Calendar className="w-3 h-3" />
-                <span>{task.dueDate ? format(new Date(task.dueDate), 'MMM d') : '-'}</span>
+              <Calendar className="w-3 h-3" />
+              <span>{task.dueDate ? format(new Date(task.dueDate), 'MMM d') : '-'}</span>
             </div>
-            
+
             <div className="flex items-center gap-1">
-                <button 
-                    type="button" 
-                    className="p-1 text-neutral-400 hover:text-green-600 transition-colors"
-                    onClick={(e) => {
-                    e.stopPropagation(); 
-                    onEdit?.(task);
-                    }}
-                    onPointerDown={(e) => e.stopPropagation()}
-                >
-                    <Edit className="w-3.5 h-3.5" />
-                </button>
-                <button 
-                    type="button" 
-                    className="p-1 text-neutral-400 hover:text-red-600 transition-colors"
-                    onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete?.(task.id);
-                    }}
-                    onPointerDown={(e) => e.stopPropagation()}
-                >
-                    <Trash2 className="w-3.5 h-3.5" />
-                </button>
+              <button
+                type="button"
+                className="p-1 text-neutral-400 hover:text-green-600 transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit?.(task);
+                }}
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                <Edit className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                className="p-1 text-neutral-400 hover:text-red-600 transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete?.(task.id);
+                }}
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
             </div>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

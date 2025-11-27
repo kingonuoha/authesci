@@ -38,6 +38,7 @@ enum ApplicationStatus {
 
 enum ProjectStatus {
   ACTIVE
+  PENDING_COMPLETION
   COMPLETED
   ARCHIVED
 }
@@ -79,6 +80,7 @@ model Profile {
   experience       String?
   cvUrl            String?         @map("cv_url")
   avatarUrl        String?         @map("avatar_url")
+  companyLogoUrl   String?         @map("company_logo_url")
   institution      String?
   publications     String[]        @default([])
   certifications   String[]        @default([])
@@ -100,6 +102,12 @@ model Profile {
   paymentsAsEmployer Payment[]       @relation("PaymentsAsEmployer")
   paymentsAsScientist Payment[]       @relation("PaymentsAsScientist")
 
+  // Batch 8: AI & Notifications
+  cvUrls          String[]        @default([])
+  cvIntel         Json?
+  aiFeatureVector Unsupported("vector")?
+  isPremium       Boolean         @default(false)
+
   @@map("profiles")
 }
 
@@ -120,6 +128,11 @@ model Job {
   employer     Profile       @relation("JobsPosted", fields: [employerId], references: [id], onDelete: Cascade)
   applications Application[]
 
+  // Batch 8: AI Features
+  aiFeatureVector         Unsupported("vector")?
+  aiIntel                 Json?
+  aiRecommendedScientists Json?
+
   @@map("jobs")
 }
 
@@ -137,6 +150,10 @@ model Application {
   updatedAt     DateTime          @updatedAt @map("updated_at")
   job           Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
   applicant     Profile           @relation("Applications", fields: [applicantId], references: [id], onDelete: Cascade)
+
+  // Batch 8: AI Features
+  aiMatchScore Float?
+  aiIntel      Json?
 
   @@unique([jobId, applicantId])
   @@map("applications")
@@ -263,6 +280,11 @@ model Notification {
   read      Boolean  @default(false)
   metadata  Json?    @db.JsonB
   createdAt DateTime @default(now()) @map("created_at")
+  
+  // Batch 8: Enhanced Notifications
+  title     String?
+  link      String?
+  
   user      Profile  @relation("Notifications", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")

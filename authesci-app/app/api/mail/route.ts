@@ -4,7 +4,7 @@ import { sendEmail } from '@/lib/mail';
 export async function POST(request: Request) {
   try {
     const { to, subject, html, text } = await request.json();
-    await sendEmail(to, subject, html, text);
+    await sendEmail({ to, subject, html, text });
     return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
   } catch (error) {
     console.error('Failed to send email:', error);

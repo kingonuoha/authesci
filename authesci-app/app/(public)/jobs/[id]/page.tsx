@@ -1,16 +1,17 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MapPin, Briefcase, DollarSign, Clock, ArrowLeft } from "lucide-react";
+import { MapPin, Briefcase, DollarSign, Clock, ArrowLeft, Building2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { ApplicantAvatarGroup } from "@/components/modules/jobs/ApplicantAvatarGroup";
+import Image from "next/image";
 
 export default async function JobDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const job = await prisma.job.findUnique({
     where: { id },
-    include: { 
+    include: {
       employer: true,
       applications: {
         include: {
@@ -26,7 +27,7 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  
+
   // Check if user has already applied
   let hasApplied = false;
   if (user) {
@@ -57,13 +58,28 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
           <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-10 shadow-sm">
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-start">
-                <div>
-                  <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-3">{job.title}</h1>
-                  <p className="text-lg text-neutral-500 dark:text-neutral-400 font-medium">{job.employer.institution}</p>
+                <div className="flex items-start gap-4">
+                  {(job.employer as any).companyLogoUrl ? (
+                    <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 flex-shrink-0 bg-white dark:bg-neutral-800">
+                      <Image
+                        src={(job.employer as any).companyLogoUrl}
+                        alt={job.employer.institution || "Company Logo"}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg border border-neutral-200 dark:border-neutral-700 flex items-center justify-center bg-neutral-50 dark:bg-neutral-800 flex-shrink-0">
+                      <Building2 className="w-8 h-8 text-neutral-400" />
+                    </div>
+                  )}
+                  <div>
+                    <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-3">{job.title}</h1>
+                    <p className="text-lg text-neutral-500 dark:text-neutral-400 font-medium">{job.employer.institution}</p>
+                  </div>
                 </div>
-                <span className={`badge px-4 py-1.5 rounded-full text-sm font-medium ${
-                  job.status === "ACTIVE" ? "bg-success-100 text-success-700" : "bg-neutral-100 text-neutral-700"
-                }`}>
+                <span className={`badge px-4 py-1.5 rounded-full text-sm font-medium ${job.status === "ACTIVE" ? "bg-success-100 text-success-700" : "bg-neutral-100 text-neutral-700"
+                  }`}>
                   {job.status}
                 </span>
               </div>
@@ -122,13 +138,13 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
         <div className="lg:col-span-4">
           <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-6 shadow-sm sticky top-24">
             <h3 className="text-lg font-semibold mb-4">Interested in this job?</h3>
-            
+
             {job.applications.length > 0 && (
               <div className="mb-6">
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3">
                   {job.applications.length} people have applied
                 </p>
-                <ApplicantAvatarGroup 
+                <ApplicantAvatarGroup
                   applicants={job.applications.map(app => ({
                     id: app.id,
                     user: {
@@ -147,7 +163,7 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
 
             <div className="space-y-4">
               {job.status === "ACTIVE" && !hasApplied && (
-                <Link 
+                <Link
                   href={`/jobs/${job.id}/apply`}
                   className="btn btn-primary w-full py-3 rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 transition-all shadow-lg hover:shadow-xl flex items-center justify-center font-medium"
                 >
@@ -159,7 +175,7 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
                   Application Sent
                 </div>
               )}
-              
+
               <div className="text-xs text-neutral-400 text-center mt-4">
                 Please ensure your profile is up to date before applying.
               </div>

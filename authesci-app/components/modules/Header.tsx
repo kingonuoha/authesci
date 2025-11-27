@@ -10,6 +10,7 @@ import { LogoutButton } from './auth/LogoutButton';
 import { VerifiedBadge } from './profile/VerifiedBadge';
 import { getProfileCompletion } from '@/lib/helpers/getProfileCompletion';
 import RoleSwitcher from './RoleSwitcher';
+import { NotificationBell } from './NotificationBell';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -18,7 +19,7 @@ interface HeaderProps {
 }
 
 const Header = ({ toggleSidebar, toggleMobileSidebar, user }: HeaderProps) => {
-  const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
+  // const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false); // Moved to NotificationBell
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const { isVerified } = getProfileCompletion(user);
 
@@ -45,48 +46,7 @@ const Header = ({ toggleSidebar, toggleMobileSidebar, user }: HeaderProps) => {
             <ThemeToggle />
 
             {/* Notification Start  */}
-            <div className="relative">
-              <button
-                onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
-                className="has-indicator flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700"
-                type="button"
-              >
-                <Bell className="text-xl text-neutral-900 dark:text-white" />
-              </button>
-              {isNotificationDropdownOpen && (
-                <div
-                  id="dropdownNotification"
-                  className="z-10 absolute right-0 mt-2 w-full max-w-[394px] overflow-hidden rounded-2xl bg-white shadow-lg dark:bg-neutral-700"
-                >
-                  {/* Notification Dropdown content here */}
-                  <div className="m-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
-                    <h6 className="mb-0 text-lg font-semibold text-neutral-900">Notification</h6>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-primary-600 dark:bg-neutral-600 dark:text-white">05</span>
-                  </div>
-                  <div className="scroll-sm !border-t-0">
-                    <div className="max-h-[400px] overflow-y-auto">
-                      <a href="#" className="flex justify-between gap-1 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600">
-                        <div className="flex items-center gap-3">
-                          <div className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-success-200 text-success-600 dark:bg-success-600/25">
-                            {/* <CheckCircle className="text-2xl" /> */}
-                          </div>
-                          <div>
-                            <h6 className="fw-semibold mb-1 text-sm">Congratulations</h6>
-                            <p className="mb-0 line-clamp-1 text-sm">Your profile has been Verified. Your profile has been Verified</p>
-                          </div>
-                        </div>
-                        <div className="shrink-0">
-                          <span className="text-sm text-neutral-500">23 Mins ago</span>
-                        </div>
-                      </a>
-                    </div>
-                    <div className="px-4 py-3 text-center">
-                      <a href="#" className="text-center font-semibold text-primary-600 hover:underline dark:text-primary-600">See All Notification</a>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <NotificationBell />
             {/* Notification End  */}
 
             <div className="relative flex items-center gap-2">

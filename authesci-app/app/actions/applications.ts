@@ -7,6 +7,10 @@ import { z } from "zod";
 import { ApplicationStatus } from "@prisma/client";
 import cloudinary from "@/lib/cloudinary";
 import { createProjectFromApplication } from "@/lib/services/project";
+import { calculateMatchScore } from "@/lib/ai/service";
+import { sendEmail } from "@/lib/mail";
+import { applicationReceivedEmail, newApplicantEmail, applicationStatusUpdateEmail, applicationRejectedEmail } from "@/lib/email/templates";
+import { createNotification } from "@/lib/notifications/service";
 
 const applicationSchema = z.object({
   jobId: z.string(),
@@ -42,9 +46,19 @@ export async function submitApplication(prevState: ApplicationState, formData: F
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
+      const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+      const resourceType = isPdf ? "raw" : "auto";
+
       const uploadResult = await new Promise<any>((resolve, reject) => {
         cloudinary.uploader.upload_stream(
-          { folder: "authesci/resumes", resource_type: "auto", access_mode: "public" },
+          { 
+            folder: "authesci/resumes", 
+            resource_type: resourceType, 
+            access_mode: "public",
+            use_filename: true,
+            unique_filename: true,
+            filename_override: file.name
+          },
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
@@ -65,47 +79,102 @@ export async function submitApplication(prevState: ApplicationState, formData: F
     return { status: "error", message: "Resume is required. Please upload one or add it to your profile." };
   }
 
-  try{
-  const rawData = {
-    jobId: formData.get("jobId"),
-    coverLetter: formData.get("coverLetter"),
-  };
-
-  const validatedFields = applicationSchema.safeParse(rawData);
-
-  if (!validatedFields.success) {
-    return {
-      status: "error",
-      message: "Validation failed",
-      errors: validatedFields.error.flatten().fieldErrors,
+  try {
+    const rawData = {
+      jobId: formData.get("jobId"),
+      coverLetter: formData.get("coverLetter"),
     };
-  }
 
-  const { jobId, coverLetter } = validatedFields.data;
+    const validatedFields = applicationSchema.safeParse(rawData);
 
-  // Check if already applied
-  const existingApplication = await prisma.application.findUnique({
-    where: {
-      jobId_applicantId: {
-        jobId,
-        applicantId: profile.id,
+    if (!validatedFields.success) {
+      return {
+        status: "error",
+        message: "Validation failed",
+        errors: validatedFields.error.flatten().fieldErrors,
+      };
+    }
+
+    const { jobId, coverLetter } = validatedFields.data;
+
+    // Check if already applied
+    const existingApplication = await prisma.application.findUnique({
+      where: {
+        jobId_applicantId: {
+          jobId,
+          applicantId: profile.id,
+        },
       },
-    },
-  });
+    });
 
-  if (existingApplication) {
-    return { status: "error", message: "You have already applied for this job." };
-  }
+    if (existingApplication) {
+      return { status: "error", message: "You have already applied for this job." };
+    }
 
-    await prisma.application.create({
+    // Fetch job for AI matching AND employer email
+    const job = await prisma.job.findUnique({ 
+      where: { id: jobId },
+      include: { employer: true } 
+    });
+    if (!job) {
+        return { status: "error", message: "Job not found." };
+    }
+
+    // Calculate AI Match Score
+    let aiMatchScore = null;
+    let aiIntel = null;
+    
+    try {
+        const matchResult = await calculateMatchScore(profile, job.description);
+        if (matchResult) {
+            aiMatchScore = matchResult.matchScore;
+            aiIntel = matchResult;
+        }
+    } catch (e) {
+        console.error("AI Match failed", e);
+    }
+
+    const application = await prisma.application.create({
       data: {
         jobId,
         applicantId: profile.id,
         coverLetter,
         resumeUrl: resumeUrl!, // We know it's not null because of the check above
         status: ApplicationStatus.PENDING,
+        aiMatchScore,
+        aiIntel,
       },
     });
+
+    // Send Emails & Notifications
+    try {
+      // 1. Email to Applicant
+      await sendEmail({
+        to: profile.email,
+        subject: `Application Received: ${job.title}`,
+        html: applicationReceivedEmail(profile.fullName, job.title, job.id),
+      });
+
+      // 2. Email to Employer
+      await sendEmail({
+        to: job.employer.email,
+        subject: `New Applicant for ${job.title}`,
+        html: newApplicantEmail(job.employer.fullName, job.title, profile.fullName, job.id, aiMatchScore || undefined),
+      });
+
+      // 3. In-App Notification to Employer
+      await createNotification(
+        job.employerId,
+        "NEW_APPLICANT",
+        `${profile.fullName} applied for ${job.title}`,
+        "New Applicant",
+        `/employer/jobs/${job.id}/applicants`
+      );
+
+    } catch (emailError) {
+      console.error("Failed to send email notifications:", emailError);
+      // Don't fail the request if email fails
+    }
 
     revalidatePath(`/jobs/${jobId}`);
     return { status: "success", message: "Application submitted successfully!" };
@@ -128,7 +197,10 @@ export async function updateApplicationStatus(applicationId: string, newStatus: 
     // Verify ownership of the job
     const application = await prisma.application.findUnique({
         where: { id: applicationId },
-        include: { job: true }
+        include: { 
+          job: true,
+          applicant: true 
+        }
     });
 
     if (!application || application.job.employerId !== profile.id) {
@@ -140,11 +212,64 @@ export async function updateApplicationStatus(applicationId: string, newStatus: 
         data: { status: newStatus }
     });
 
+    // Send Email & Notification to Applicant
+    try {
+      await sendEmail({
+        to: application.applicant.email,
+        subject: `Application Update: ${application.job.title}`,
+        html: applicationStatusUpdateEmail(application.applicant.fullName, application.job.title, newStatus, application.job.id),
+      });
+
+      await createNotification(
+        application.applicantId,
+        "STATUS_UPDATE",
+        `Your application for ${application.job.title} is now ${newStatus}`,
+        "Application Update",
+        `/dashboard` // Or wherever applicants view their status
+      );
+    } catch (emailError) {
+      console.error("Failed to send status update notification:", emailError);
+    }
+
     if (newStatus === ApplicationStatus.ACCEPTED) {
       try {
         await createProjectFromApplication(applicationId);
+
+        // Notify other applicants
+        const otherApplications = await prisma.application.findMany({
+            where: {
+                jobId: application.jobId,
+                id: { not: applicationId },
+                status: "PENDING"
+            },
+            include: { applicant: true }
+        });
+
+        for (const app of otherApplications) {
+            await prisma.application.update({
+                where: { id: app.id },
+                data: { status: "REJECTED", rejectedAt: new Date() }
+            });
+
+            await createNotification(
+                app.applicantId,
+                "APPLICATION_UPDATE",
+                `Someone else has been selected for ${application.job.title}. Check out other opportunities!`,
+                "Application Update",
+                "/jobs"
+            );
+
+            try {
+                await sendEmail({
+                    to: app.applicant.email,
+                    subject: `Update on your application for ${application.job.title}`,
+                    html: applicationRejectedEmail(app.applicant.fullName, application.job.title)
+                });
+            } catch (e) { console.error("Failed to send rejection email", e); }
+        }
+
       } catch (error) {
-        console.error("Failed to create project:", error);
+        console.error("Failed to create project or notify others:", error);
         // Note: We might want to revert the application status if project creation fails,
         // but for now we just log it. The user can try again or we can handle it manually.
         return { error: "Application accepted but failed to create project workspace." };

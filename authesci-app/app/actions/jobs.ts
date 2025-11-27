@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { JobType, JobStatus } from "@prisma/client";
+import { createNotification } from "@/lib/notifications/service";
 
 const jobSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -128,6 +129,34 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
       throw new Error("Paystack initialization failed: " + paystackData.message);
     }
 
+    // Notify employer about pending payment
+    await createNotification(
+        profile.id,
+        "SYSTEM_ALERT",
+        `Job "${job.title}" created. Please complete payment to activate.`,
+        "Job Created",
+        `/employer/jobs/${job.id}/verify-payment`
+    );
+
+    // Generate and store embedding
+    if (process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES) {
+        try {
+            const { generateEmbeddings } = await import("@/lib/ai/service");
+            const textToEmbed = `${title} ${description} ${requirementsArray.join(" ")}`;
+            const embedding = await generateEmbeddings(textToEmbed);
+            
+            if (embedding) {
+                await prisma.$executeRaw`
+                    UPDATE jobs
+                    SET "aiFeatureVector" = ${embedding}::vector
+                    WHERE id = ${job.id}
+                `;
+            }
+        } catch (e) {
+            console.error("Failed to generate/store embedding:", e);
+        }
+    }
+
     return {
       status: "success",
       message: "Job created. Redirecting to payment...",
@@ -209,6 +238,35 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
     });
 
     revalidatePath("/employer/jobs");
+
+    // Notify employer about update
+    await createNotification(
+        profile.id,
+        "SYSTEM_ALERT",
+        `Job "${title}" updated successfully.`,
+        "Job Updated",
+        `/employer/jobs/${jobId}`
+    );
+
+    // Generate and store embedding
+    if (process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES === "true") {
+        try {
+            const { generateEmbeddings } = await import("@/lib/ai/service");
+            const textToEmbed = `${title} ${description} ${requirementsArray.join(" ")}`;
+            const embedding = await generateEmbeddings(textToEmbed);
+            
+            if (embedding) {
+                await prisma.$executeRaw`
+                    UPDATE jobs
+                    SET "aiFeatureVector" = ${embedding}::vector
+                    WHERE id = ${jobId}
+                `;
+            }
+        } catch (e) {
+            console.error("Failed to generate/store embedding:", e);
+        }
+    }
+
     return { status: "success", message: "Job updated successfully!", jobId };
   } catch (error) {
     console.error("Update job error:", error);
@@ -232,6 +290,19 @@ export async function verifyJobPayment(reference: string, jobId: string) {
                 where: { id: jobId },
                 data: { status: JobStatus.ACTIVE }
             });
+            
+            // Fetch job to get employer ID
+            const job = await prisma.job.findUnique({ where: { id: jobId } });
+            if (job) {
+                await createNotification(
+                    job.employerId,
+                    "PAYMENT_SUCCESS",
+                    `Payment verified for job "${job.title}". It is now active.`,
+                    "Payment Successful",
+                    `/employer/jobs/${jobId}`
+                );
+            }
+
             revalidatePath("/jobs");
             revalidatePath("/employer/jobs");
             return { success: true };

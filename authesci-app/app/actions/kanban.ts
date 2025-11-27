@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { TaskStatus, TaskPriority } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { createNotification } from "@/lib/notifications/service";
 
 // Define TaskPriority locally to avoid import errors if Prisma client is outdated
 // type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
@@ -55,6 +56,20 @@ export async function createTask(
     });
 
     revalidatePath(`/project/${projectId}/kanban`);
+    
+    // Notify assignee if assigned
+    if (assignedTo) {
+        // We need to fetch the project title for context
+        const project = await prisma.project.findUnique({ where: { id: projectId }, select: { title: true } });
+        await createNotification(
+            assignedTo,
+            "TASK_ASSIGNED",
+            `You have been assigned a new task: "${title}" in project "${project?.title || 'Unknown'}"`,
+            "New Task Assigned",
+            `/project/${projectId}/kanban`
+        );
+    }
+
     return { success: true, task };
   } catch (error) {
     console.error("Failed to create task:", error);
@@ -72,6 +87,21 @@ export async function updateTaskStatus(taskId: string, projectId: string, status
     });
 
     revalidatePath(`/project/${projectId}/kanban`);
+
+    // Notify project owner if task is completed
+    if (status === TaskStatus.DONE) {
+        const project = await prisma.project.findUnique({ where: { id: projectId }, select: { title: true, creatorId: true } });
+        if (project) {
+             await createNotification(
+                project.creatorId,
+                "TASK_COMPLETED",
+                `Task "${task.title}" in "${project.title}" has been marked as DONE.`,
+                "Task Completed",
+                `/project/${projectId}/kanban`
+            );
+        }
+    }
+
     return { success: true, task };
   } catch (error) {
     console.error("Failed to update task status:", error);

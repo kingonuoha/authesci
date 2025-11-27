@@ -73,11 +73,7 @@
   } */
 }
 
-@layer utilities {
-  .input-error {
-    /* @apply border-danger-500 focus:border-danger-500 focus:ring-danger-500; */
-  }
-}
+
 
 @keyframes spin {
   to {
@@ -87,4 +83,27 @@
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Custom Layout Fixes */
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.dashboard-main-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sidebar Z-Index Fixes */
+.sidebar {
+  z-index: 1050 !important;
+}
+
+/* Ensure footer doesn't overlap content */
+.d-footer {
+  margin-top: auto;
 }

@@ -7,8 +7,9 @@ import { z } from "zod";
 import { submitApplication } from "@/app/actions/applications";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Sparkles, UserCheck, Info } from "lucide-react";
+import { Sparkles, UserCheck, Info, Loader2 } from "lucide-react";
 import { AiFillButton } from "@/components/ui/AiFillButton";
+import { generateCoverLetterAction } from "@/app/actions/ai";
 import {
   Tooltip,
   TooltipContent,
@@ -37,6 +38,7 @@ export function ApplicationForm({ jobId, userProfile }: ApplicationFormProps) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [useProfileResume, setUseProfileResume] = useState(!!userProfile?.cvUrl);
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
 
   const {
     register,
@@ -50,10 +52,21 @@ export function ApplicationForm({ jobId, userProfile }: ApplicationFormProps) {
     },
   });
 
-  const handleAiFill = () => {
-    // Placeholder for AI functionality
-    toast.success("AI Cover Letter generation coming soon!");
-    setValue("coverLetter", `Dear Hiring Manager,\n\nI am writing to express my strong interest in this position. With my background in ${userProfile?.role || 'this field'} and passion for scientific innovation, I believe I would be a valuable asset to your team.\n\n[AI will generate more personalized content here based on your profile]\n\nSincerely,\n${userProfile?.fullName || 'Applicant'}`);
+  const handleAiFill = async () => {
+    setIsGeneratingAi(true);
+    try {
+      const result = await generateCoverLetterAction(jobId);
+      if (result.error) {
+        toast.error(result.error);
+      } else if (result.coverLetter) {
+        setValue("coverLetter", result.coverLetter);
+        toast.success("Cover letter generated successfully!");
+      }
+    } catch (error) {
+      toast.error("Something went wrong while generating the cover letter.");
+    } finally {
+      setIsGeneratingAi(false);
+    }
   };
 
   async function onSubmit(data: ApplicationFormValues) {
@@ -113,7 +126,10 @@ export function ApplicationForm({ jobId, userProfile }: ApplicationFormProps) {
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="form-label mb-0">Cover Letter</label>
-              <AiFillButton onClick={handleAiFill} />
+              <div className="flex items-center gap-2">
+                {isGeneratingAi && <span className="text-xs text-neutral-500 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Generating...</span>}
+                <AiFillButton onClick={handleAiFill} disabled={isGeneratingAi} />
+              </div>
             </div>
             <textarea
               className="form-control min-h-[200px]"
@@ -139,7 +155,7 @@ export function ApplicationForm({ jobId, userProfile }: ApplicationFormProps) {
                 </button>
               )}
             </label>
-            
+
             {useProfileResume && userProfile?.cvUrl ? (
               <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-100 rounded-lg text-sm text-green-700">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
@@ -151,8 +167,8 @@ export function ApplicationForm({ jobId, userProfile }: ApplicationFormProps) {
                     View current resume
                   </a>
                 </div>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setUseProfileResume(false)}
                   className="text-xs bg-white border border-green-200 px-2 py-1 rounded hover:bg-green-50 transition-colors"
                 >

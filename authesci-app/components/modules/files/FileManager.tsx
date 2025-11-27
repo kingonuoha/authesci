@@ -13,9 +13,10 @@ import { Progress } from '@/components/ui/progress';
 interface FileManagerProps {
   projectId: string;
   initialFiles: ProjectFile[];
+  readOnly?: boolean;
 }
 
-export default function FileManager({ projectId, initialFiles }: FileManagerProps) {
+export default function FileManager({ projectId, initialFiles, readOnly }: FileManagerProps) {
   const [files, setFiles] = useState<ProjectFile[]>(initialFiles);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -47,7 +48,7 @@ export default function FileManager({ projectId, initialFiles }: FileManagerProp
       formData.append('folder', folder);
 
       const xhr = new XMLHttpRequest();
-      
+
       const uploadPromise = new Promise<any>((resolve, reject) => {
         xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`);
 
@@ -104,22 +105,24 @@ export default function FileManager({ projectId, initialFiles }: FileManagerProp
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Documents</h2>
-        <div className="relative">
+        {!readOnly && (
+          <div className="relative">
             <input
-                type="file"
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                onChange={handleFileSelect}
-                disabled={isUploading}
+              type="file"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              onChange={handleFileSelect}
+              disabled={isUploading}
             />
             <Button disabled={isUploading}>
-                <Upload className="mr-2 h-4 w-4" />
-                {isUploading ? 'Uploading...' : 'Upload File'}
+              <Upload className="mr-2 h-4 w-4" />
+              {isUploading ? 'Uploading...' : 'Upload File'}
             </Button>
-        </div>
+          </div>
+        )}
       </div>
 
       {isUploading && (
-          <Progress value={uploadProgress} className="w-full" />
+        <Progress value={uploadProgress} className="w-full" />
       )}
 
       <div className="border rounded-md">

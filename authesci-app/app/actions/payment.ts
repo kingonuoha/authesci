@@ -4,8 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { createNotification } from "@/lib/notifications/service";
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
+
+import { sendEmail } from "@/lib/mail";
+import { projectFundedEmail, projectFundingConfirmedEmail } from "@/lib/email/templates";
 
 export type PaymentState = {
   status: "success" | "error" | "idle";
@@ -123,7 +127,7 @@ export async function saveBankDetails(
         }
     }
 
-    await prisma.profile.update({
+    const profile = await prisma.profile.update({
       where: { userId: user.id },
       data: {
         bankName,
@@ -134,6 +138,14 @@ export async function saveBankDetails(
     });
 
     revalidatePath("/scientist/wallet");
+    
+    await createNotification(
+        profile.id,
+        "SYSTEM_ALERT",
+        "Your bank details have been updated successfully.",
+        "Bank Details Updated",
+        "/scientist/wallet"
+    );
 
     return {
       status: "success",
@@ -365,6 +377,11 @@ export async function verifyPayment(reference: string) {
     // 2. Update Payment Record
     const payment = await prisma.payment.findUnique({
       where: { id: paymentId },
+      include: { 
+        project: true,
+        employer: true,
+        scientist: true
+      }
     });
 
     if (!payment) {
@@ -401,6 +418,46 @@ export async function verifyPayment(reference: string) {
             where: { id: jobId },
             data: { status: "CLOSED" }
         });
+    }
+
+    // 5. Notify Scientist about funding
+    await createNotification(
+        payment.scientistId,
+        "PAYMENT_SUCCESS",
+        `Project "${payment.project.title}" has been funded! You can now start working.`,
+        "Project Funded",
+        `/project/${projectId}`
+    );
+
+    // Send Email to Scientist
+    try {
+        await sendEmail({
+            to: payment.scientist.email,
+            subject: `Project Funded: ${payment.project.title}`,
+            html: projectFundedEmail(payment.scientist.fullName, payment.project.title, projectId),
+        });
+    } catch (e) {
+        console.error("Failed to send email", e);
+    }
+
+    // 6. Notify Employer
+    await createNotification(
+        payment.employerId,
+        "PAYMENT_SUCCESS",
+        `Funding for "${payment.project.title}" was successful.`,
+        "Payment Confirmed",
+        `/project/${projectId}`
+    );
+
+    // Send Email to Employer
+    try {
+        await sendEmail({
+            to: payment.employer.email,
+            subject: `Payment Confirmed: ${payment.project.title}`,
+            html: projectFundingConfirmedEmail(payment.employer.fullName, payment.project.title, projectId),
+        });
+    } catch (e) {
+        console.error("Failed to send email", e);
     }
 
     return { success: true, message: "Payment verified successfully", projectId };

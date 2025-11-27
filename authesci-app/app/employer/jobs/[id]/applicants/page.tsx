@@ -60,7 +60,7 @@ export default async function JobApplicantsPage({ params }: { params: Promise<{ 
       </div>
 
       <div className="mt-6">
-        <ApplicantGrid 
+        <ApplicantGrid
           applicants={job.applications.map(app => ({
             id: app.id,
             user: {
@@ -73,7 +73,8 @@ export default async function JobApplicantsPage({ params }: { params: Promise<{ 
             status: app.status,
             appliedAt: app.createdAt,
             coverLetter: app.coverLetter,
-          }))} 
+            aiMatchScore: app.aiMatchScore,
+          }))}
         />
       </div>
     </div>

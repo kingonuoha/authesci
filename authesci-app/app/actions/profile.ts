@@ -16,6 +16,7 @@ const profileSchema = z.object({
   publications: z.string().optional(), // JSON string or newline-separated
   certifications: z.string().optional(), // JSON string or newline-separated
   avatarUrl: z.string().optional(),
+  companyLogoUrl: z.string().optional(),
   cvUrl: z.string().optional(),
 });
 
@@ -37,9 +38,19 @@ export async function uploadFile(formData: FormData): Promise<{ url?: string; er
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
+    const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+    const resourceType = isPdf ? "raw" : "auto";
+
     return new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        { folder, resource_type: "auto" },
+        { 
+          folder, 
+          resource_type: resourceType,
+          access_mode: "public",
+          use_filename: true,
+          unique_filename: true,
+          filename_override: file.name
+        },
         (error, result) => {
           if (error) {
             console.error("Cloudinary upload error:", error);
@@ -81,6 +92,7 @@ export async function updateProfile(
     publications: formData.get("publications") || undefined,
     certifications: formData.get("certifications") || undefined,
     avatarUrl: formData.get("avatarUrl") || undefined,
+    companyLogoUrl: formData.get("companyLogoUrl") || undefined,
     cvUrl: formData.get("cvUrl") || undefined,
   };
 
@@ -100,7 +112,7 @@ export async function updateProfile(
     };
   }
 
-  const { fullName, bio, institution, experience, skills, publications, certifications, avatarUrl, cvUrl } = validatedFields.data;
+  const { fullName, bio, institution, experience, skills, publications, certifications, avatarUrl, companyLogoUrl, cvUrl } = validatedFields.data;
 
   // Helper to parse arrays
   const parseArray = (input?: string) => {
@@ -129,6 +141,7 @@ export async function updateProfile(
         publications: publicationsArray,
         certifications: certificationsArray,
         avatarUrl: avatarUrl || undefined, // Only update if provided
+        companyLogoUrl: companyLogoUrl || undefined, // Only update if provided
         cvUrl: cvUrl || undefined, // Only update if provided
       },
     });
@@ -139,6 +152,25 @@ export async function updateProfile(
       where: { userId: user.id },
       data: { completionScore: percentage },
     });
+
+    // Generate and store embedding
+    if (process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES) {
+        try {
+            const { generateEmbeddings } = await import("@/lib/ai/service");
+            const textToEmbed = `${skillsArray.join(" ")} ${bio || ""} ${experience || ""}`;
+            const embedding = await generateEmbeddings(textToEmbed);
+            
+            if (embedding) {
+                await prisma.$executeRaw`
+                    UPDATE profiles
+                    SET "aiFeatureVector" = ${embedding}::vector
+                    WHERE id = ${updatedProfile.id}
+                `;
+            }
+        } catch (e) {
+            console.error("Failed to generate/store profile embedding:", e);
+        }
+    }
 
     revalidatePath("/profile");
     revalidatePath("/scientist/profile");

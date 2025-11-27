@@ -32,9 +32,21 @@ export default async function KanbanPage({ params }: { params: Promise<{ project
     }
   });
 
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { status: true }
+  });
+
+  const isCompleted = project?.status === 'COMPLETED';
+
   return (
     <div className="h-[calc(100vh-140px)]">
-      <KanbanBoard projectId={projectId} initialTasks={tasks as any} collaborators={collaborators} />
+      <KanbanBoard
+        projectId={projectId}
+        initialTasks={tasks as any}
+        collaborators={collaborators}
+        readOnly={isCompleted}
+      />
     </div>
   );
 }

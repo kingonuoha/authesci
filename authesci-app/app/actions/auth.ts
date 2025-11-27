@@ -7,11 +7,10 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/mail";
-import { generateWelcomeEmail } from "@/emails/welcome";
-import { generatePasswordResetEmail } from "@/emails/password-reset";
-import { generatePasswordChangedEmail } from "@/emails/password-changed";
+import { getPasswordChangedEmail } from "@/lib/email/templates";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache"; // Import revalidatePath
+import { createNotification } from "@/lib/notifications/service";
 
 const signUpSchema = z.object({
   email: z.string().email(),
@@ -139,7 +138,7 @@ export async function signUp(
   }
 
   try {
-    await prisma.profile.create({
+    const profile = await prisma.profile.create({
       data: {
         userId: user.id,
         email,
@@ -148,6 +147,15 @@ export async function signUp(
         institution,
       },
     });
+
+    // Notify user about successful signup
+    await createNotification(
+        profile.id,
+        "SYSTEM_ALERT",
+        "Welcome to Authesci! Please verify your email to get started.",
+        "Welcome!",
+        "/dashboard"
+    );
   } catch (e: any) {
     console.error(e);
     await supabaseAdmin.auth.admin.deleteUser(user.id);
@@ -335,16 +343,12 @@ export async function resetPassword(
       const fullName = profile?.fullName || "User";
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-      const { html, text } = generatePasswordChangedEmail({
-        name: fullName,
-        appUrl,
-      });
-      await sendEmail(
-        user.email,
-        "Your Authesci Password Has Been Changed",
+      const html = getPasswordChangedEmail(fullName);
+      await sendEmail({
+        to: user.email,
+        subject: "Your Authesci Password Has Been Changed",
         html,
-        text
-      );
+      });
     }
 
     // 3. Sign the user out
@@ -424,6 +428,18 @@ export async function updateRole(newRole: Role): Promise<ActionResult> {
     // Revalidate the current path to reflect the role change
     // This will trigger a re-render of server components that depend on the user's role
     revalidatePath('/', 'layout'); // Revalidate all layouts and pages
+
+    const profile = await prisma.profile.findUnique({ where: { userId: user.id }, select: { id: true } });
+    
+    if (profile) {
+        await createNotification(
+            profile.id,
+            "SYSTEM_ALERT",
+            `Your role has been updated to ${newRole}.`,
+            "Role Updated",
+            "/dashboard"
+        );
+    }
 
     return {
       status: "success",

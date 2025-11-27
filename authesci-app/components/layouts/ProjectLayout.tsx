@@ -47,11 +47,11 @@ const ProjectLayout = ({ children, profile, project }: ProjectLayoutProps) => {
         </div>
         <Footer />
       </main>
-      
+
       {/* Mobile Overlay */}
       {isMobileSidebarOpen && (
-        <div 
-          className="fixed inset-0 z-[998] bg-black/50 lg:hidden"
+        <div
+          className="fixed inset-0 z-[1040] bg-black/50 lg:hidden mobile-overlay"
           onClick={toggleMobileSidebar}
         />
       )}

@@ -18,7 +18,7 @@ export default async function ScientistDashboardPage() {
       <div className="mb-6 space-y-6">
         <ProfileCompletionCard percentage={percentage} missingFields={missingFields} role={profile.role} />
         
-        {(!profile.bankName || !profile.accountNumber || profile.bankName === "" || profile.accountNumber === "") && (
+        {((!profile.bankName || !profile.accountNumber || profile.bankName === "" || profile.accountNumber === "") && percentage > 80) && (
           <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-primary-600 dark:text-primary-400">
@@ -61,7 +61,7 @@ export default async function ScientistDashboardPage() {
 
       <div className="text-center mt-6"> {/* Added mt-6 for spacing, similar to template's second grid */}
         <Link
-          href="/scientist/jobs"
+          href="/jobs"
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Browse Jobs

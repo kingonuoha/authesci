@@ -58,10 +58,12 @@ export async function updateSession(request: NextRequest) {
     const role = user.app_metadata.role as string | undefined;
     const pathname = request.nextUrl.pathname;
 
-    // Fetch profile from Prisma
-    const profile = await prisma.profile.findUnique({
-      where: { userId: user.id },
-    });
+    // Fetch profile from Supabase (REST) to avoid P1001 connection errors in middleware
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('userId', user.id)
+      .single();
 
     if (!profile) {
       // This indicates a data inconsistency issue.

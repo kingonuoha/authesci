@@ -31,7 +31,8 @@ const MySwal = withReactContent(Swal);
 interface KanbanBoardProps {
   projectId: string;
   initialTasks: (Task & { assignee?: { fullName: string | null; avatarUrl: string | null; email: string } | null })[];
-  collaborators: any[]; 
+  collaborators: any[];
+  readOnly?: boolean;
 }
 
 const COLUMNS: { id: TaskStatus; title: string }[] = [
@@ -40,7 +41,7 @@ const COLUMNS: { id: TaskStatus; title: string }[] = [
   { id: 'DONE', title: 'Done' },
 ];
 
-export default function KanbanBoard({ projectId, initialTasks, collaborators }: KanbanBoardProps) {
+export default function KanbanBoard({ projectId, initialTasks, collaborators, readOnly }: KanbanBoardProps) {
   const [tasks, setTasks] = useState<(Task & { assignee?: { fullName: string | null; avatarUrl: string | null; email: string } | null })[]>(initialTasks);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,9 +73,9 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
     };
 
     const resolveAssignee = (assignedToId: string | null) => {
-        if (!assignedToId) return null;
-        const collaborator = collaborators.find(c => c.user.id === assignedToId);
-        return collaborator ? collaborator.user : null;
+      if (!assignedToId) return null;
+      const collaborator = collaborators.find(c => c.user.id === assignedToId);
+      return collaborator ? collaborator.user : null;
     };
 
     const channel = supabase
@@ -138,22 +139,22 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
         if (status === 'SUBSCRIBED') {
           const { data: { user } } = await supabase.auth.getUser();
           if (user) {
-             // Match by email since we don't have userId in collaborators selection yet
-             const myProfile = collaborators.find(c => c.user.email === user.email)?.user;
-             
-             setCurrentUser({
-                 id: user.id,
-                 name: myProfile?.fullName || user.email?.split('@')[0] || 'Anonymous',
-                 color: getRandomColor(user.id)
-             });
+            // Match by email since we don't have userId in collaborators selection yet
+            const myProfile = collaborators.find(c => c.user.email === user.email)?.user;
 
-             await channel.track({
-               user_id: user.id,
-               online_at: new Date().toISOString(),
-               fullName: myProfile?.fullName || user.email, // Fallback
-               avatarUrl: myProfile?.avatarUrl,
-               email: user.email
-             });
+            setCurrentUser({
+              id: user.id,
+              name: myProfile?.fullName || user.email?.split('@')[0] || 'Anonymous',
+              color: getRandomColor(user.id)
+            });
+
+            await channel.track({
+              user_id: user.id,
+              online_at: new Date().toISOString(),
+              fullName: myProfile?.fullName || user.email, // Fallback
+              avatarUrl: myProfile?.avatarUrl,
+              email: user.email
+            });
           }
         }
       });
@@ -171,9 +172,9 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ projectId }),
       });
-      
+
       if (!response.ok) throw new Error('Failed to get upload signature');
-      
+
       const { signature, timestamp, cloudName, apiKey, folder } = await response.json();
 
       // 2. Upload to Cloudinary
@@ -204,39 +205,39 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
     let imageUrl = (editingTask as any)?.imageUrl;
 
     if (data.image) {
-        const uploadedUrl = await uploadImage(data.image);
-        if (uploadedUrl) {
-            imageUrl = uploadedUrl;
-        } else {
-            // If upload fails, stop saving? Or continue without image?
-            // For now, let's stop to avoid saving incomplete data if image was important
-            return; 
-        }
+      const uploadedUrl = await uploadImage(data.image);
+      if (uploadedUrl) {
+        imageUrl = uploadedUrl;
+      } else {
+        // If upload fails, stop saving? Or continue without image?
+        // For now, let's stop to avoid saving incomplete data if image was important
+        return;
+      }
     }
 
     if (editingTask) {
-        // Update existing task
-        const result = await updateTask(editingTask.id, projectId, {
-            title: data.title,
-            description: data.description,
-            dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
-            assignedTo: data.assignedTo,
-            priority: data.priority,
-            imageUrl: imageUrl || undefined
-        });
-        if (result.success) {
-            toast.success("Task updated");
-        } else {
-            toast.error("Failed to update task");
-        }
+      // Update existing task
+      const result = await updateTask(editingTask.id, projectId, {
+        title: data.title,
+        description: data.description,
+        dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+        assignedTo: data.assignedTo,
+        priority: data.priority,
+        imageUrl: imageUrl || undefined
+      });
+      if (result.success) {
+        toast.success("Task updated");
+      } else {
+        toast.error("Failed to update task");
+      }
     } else {
-        // Create new task
-        const result = await createTask(projectId, data.title, data.description, data.dueDate ? new Date(data.dueDate) : undefined, data.assignedTo, data.priority, imageUrl || undefined);
-        if (result.success) {
-            toast.success("Task created");
-        } else {
-            toast.error("Failed to create task");
-        }
+      // Create new task
+      const result = await createTask(projectId, data.title, data.description, data.dueDate ? new Date(data.dueDate) : undefined, data.assignedTo, data.priority, imageUrl || undefined);
+      if (result.success) {
+        toast.success("Task created");
+      } else {
+        toast.error("Failed to create task");
+      }
     }
     setIsModalOpen(false);
     setEditingTask(undefined);
@@ -247,7 +248,7 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
   const handleDragStart = (event: DragStartEvent) => {
     const task = tasks.find(t => t.id === event.active.id);
     if (task) {
-        setOriginalStatus(task.status);
+      setOriginalStatus(task.status);
     }
     setActiveId(event.active.id as string);
   };
@@ -262,15 +263,15 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
     // Find the containers
     const activeTask = tasks.find((t) => t.id === activeId);
     const overTask = tasks.find((t) => t.id === overId);
-    
+
     if (!activeTask) return;
 
     const activeContainer = activeTask.status;
     // If over a column, the id is the column id (TaskStatus)
     // If over a task, the id is the task id, so we need to find its status
-    const overContainer = COLUMNS.some(c => c.id === overId) 
-        ? overId as TaskStatus 
-        : overTask?.status;
+    const overContainer = COLUMNS.some(c => c.id === overId)
+      ? overId as TaskStatus
+      : overTask?.status;
 
     if (!overContainer || activeContainer === overContainer) {
       return;
@@ -280,7 +281,7 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
     setTasks((prev) => {
       const activeItems = prev.filter((t) => t.status === activeContainer);
       const overItems = prev.filter((t) => t.status === overContainer);
-      
+
       const activeIndex = activeItems.findIndex((t) => t.id === activeId);
       const overIndex = overItems.findIndex((t) => t.id === overId);
 
@@ -299,7 +300,7 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
 
       return prev.map((t) => {
         if (t.id === activeId) {
-            return { ...t, status: overContainer };
+          return { ...t, status: overContainer };
         }
         return t;
       });
@@ -312,26 +313,26 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
     const overId = over ? (over.id as string) : null;
 
     if (!overId) {
-        setActiveId(null);
-        setOriginalStatus(null);
-        return;
+      setActiveId(null);
+      setOriginalStatus(null);
+      return;
     }
 
     const activeTask = tasks.find((t) => t.id === activeId);
     if (!activeTask) {
-        setActiveId(null);
-        setOriginalStatus(null);
-        return;
+      setActiveId(null);
+      setOriginalStatus(null);
+      return;
     }
 
-    const overContainer = COLUMNS.some(c => c.id === overId) 
-        ? overId as TaskStatus 
-        : tasks.find((t) => t.id === overId)?.status;
+    const overContainer = COLUMNS.some(c => c.id === overId)
+      ? overId as TaskStatus
+      : tasks.find((t) => t.id === overId)?.status;
 
     if (overContainer && originalStatus !== overContainer) {
-        // Update status in DB
-        await updateTaskStatus(activeId, projectId, overContainer);
-        toast.success(`Task moved to ${COLUMNS.find(c => c.id === overContainer)?.title}`);
+      // Update status in DB
+      await updateTaskStatus(activeId, projectId, overContainer);
+      toast.success(`Task moved to ${COLUMNS.find(c => c.id === overContainer)?.title}`);
     }
 
     setActiveId(null);
@@ -345,22 +346,22 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
 
   const handleDeleteTask = async (taskId: string) => {
     MySwal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
     }).then(async (result) => {
-        if (result.isConfirmed) {
-            const res = await deleteTask(taskId, projectId);
-            if (res.success) {
-                toast.success("Task deleted");
-            } else {
-                toast.error("Failed to delete task");
-            }
+      if (result.isConfirmed) {
+        const res = await deleteTask(taskId, projectId);
+        if (res.success) {
+          toast.success("Task deleted");
+        } else {
+          toast.error("Failed to delete task");
         }
+      }
     });
   };
 
@@ -376,9 +377,9 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-        activationConstraint: {
-            distance: 5, // Add distance constraint to prevent accidental drags during clicks
-        },
+      activationConstraint: {
+        distance: 5, // Add distance constraint to prevent accidental drags during clicks
+      },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -390,70 +391,71 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators }: 
       <div className="flex items-center gap-2 px-6 mb-4 flex-shrink-0">
         <span className="text-sm text-neutral-500 font-medium">Online:</span>
         <div className="flex -space-x-2">
-            {onlineUsers.map((u: any) => (
-                <div key={u.user_id} className="relative group" title={u.fullName || u.email}>
-                    {u.avatarUrl ? (
-                        <img src={u.avatarUrl} alt={u.fullName} className="w-8 h-8 rounded-full border-2 border-white dark:border-neutral-900 object-cover" />
-                    ) : (
-                        <div className="w-8 h-8 rounded-full border-2 border-white dark:border-neutral-900 bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-bold">
-                            {(u.fullName || u.email || '?').charAt(0).toUpperCase()}
-                        </div>
-                    )}
-                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-neutral-900 rounded-full"></span>
+          {onlineUsers.map((u: any) => (
+            <div key={u.user_id} className="relative group" title={u.fullName || u.email}>
+              {u.avatarUrl ? (
+                <img src={u.avatarUrl} alt={u.fullName} className="w-8 h-8 rounded-full border-2 border-white dark:border-neutral-900 object-cover" />
+              ) : (
+                <div className="w-8 h-8 rounded-full border-2 border-white dark:border-neutral-900 bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-bold">
+                  {(u.fullName || u.email || '?').charAt(0).toUpperCase()}
                 </div>
-            ))}
+              )}
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-neutral-900 rounded-full"></span>
+            </div>
+          ))}
         </div>
       </div>
 
       <div className="overflow-x-auto scroll-sm pb-8 h-full">
-        <div className="kanban-wrapper min-w-[1000px] lg:min-w-0 lg:w-full relative"> 
-            {currentUser && (
-                <RealtimeCursors
-                    projectId={projectId}
-                    userId={currentUser.id}
-                    userName={currentUser.name}
-                    userColor={currentUser.color}
+        <div className="kanban-wrapper min-w-[1000px] lg:min-w-0 lg:w-full relative">
+          {currentUser && (
+            <RealtimeCursors
+              projectId={projectId}
+              userId={currentUser.id}
+              userName={currentUser.name}
+              userColor={currentUser.color}
+            />
+          )}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="flex items-start gap-6 pb-4" id="sortable-wrapper">
+              {COLUMNS.map((col) => (
+                <KanbanColumn
+                  key={col.id}
+                  id={col.id}
+                  title={col.title}
+                  tasks={tasks.filter((t) => t.status === col.id)}
+                  onAddTask={openNewTaskModal}
+                  onEditTask={handleEditTask}
+                  onDeleteTask={handleDeleteTask}
+                  onTaskClick={handleTaskClick}
+                  onDuplicateColumn={(colId) => {
+                    toast('Column duplication coming soon!', {
+                      icon: '🚧',
+                    });
+                  }}
+                  readOnly={readOnly}
                 />
-            )}
-            <DndContext
-                sensors={sensors}
-                collisionDetection={closestCorners}
-                onDragStart={handleDragStart}
-                onDragOver={handleDragOver}
-                onDragEnd={handleDragEnd}
-            >
-                <div className="flex items-start gap-6 pb-4" id="sortable-wrapper">
-                {COLUMNS.map((col) => (
-                    <KanbanColumn
-                        key={col.id}
-                        id={col.id}
-                        title={col.title}
-                        tasks={tasks.filter((t) => t.status === col.id)}
-                        onAddTask={openNewTaskModal}
-                        onEditTask={handleEditTask}
-                        onDeleteTask={handleDeleteTask}
-                        onTaskClick={handleTaskClick}
-                        onDuplicateColumn={(colId) => {
-                            toast('Column duplication coming soon!', {
-                                icon: '🚧',
-                            });
-                        }}
-                    />
-                ))}
-                </div>
+              ))}
+            </div>
 
-                <DragOverlay>
-                {activeId ? (
-                    <KanbanCard task={tasks.find((t) => t.id === activeId)!} />
-                ) : null}
-                </DragOverlay>
-            </DndContext>
+            <DragOverlay>
+              {activeId ? (
+                <KanbanCard task={tasks.find((t) => t.id === activeId)!} />
+              ) : null}
+            </DragOverlay>
+          </DndContext>
         </div>
       </div>
 
-      <KanbanModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <KanbanModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         onSave={handleSaveTask}
         initialData={editingTask}
         collaborators={collaborators}
