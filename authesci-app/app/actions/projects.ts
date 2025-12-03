@@ -1,5 +1,7 @@
 "use server";
 
+import { logActivity } from "@/lib/logger";
+
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -79,6 +81,7 @@ export async function markProjectAsComplete(projectId: string) {
 
     revalidatePath(`/scientist/projects/${projectId}`);
     revalidatePath(`/employer/projects/${projectId}`);
+    await logActivity(profile.id, "MARK_PROJECT_COMPLETE", "SUCCESS", `Project ${projectId} marked as complete`);
     return { success: true };
   } catch (error) {
     console.error("Error marking project complete:", error);
@@ -127,13 +130,64 @@ export async function confirmProjectCompletion(projectId: string) {
     });
 
     // 2. Release Payment
-    // Find the pending/funded payment
+    // 2. Release Payment or Create if missing
     const payment = project.payments.find(p => p.status === "FUNDED");
+    
     if (payment) {
         await prisma.payment.update({
             where: { id: payment.id },
             data: { status: "RELEASED" }
         });
+
+        // Create Transaction Record (Pending Payout)
+        await prisma.transaction.create({
+            data: {
+                userId: payment.scientistId,
+                type: "PAYOUT",
+                amount: payment.scientistAmount,
+                status: "PENDING",
+                description: `Payout pending for project: ${project.title}`,
+                metadata: { projectId: project.id, paymentId: payment.id }
+            }
+        });
+
+    } else {
+        // Create a new payment record if none exists (e.g. legacy projects or manual setup)
+        // We assume the budget is the total amount
+        const amount = Number(project.budget) || 0;
+        if (amount > 0) {
+            const platformFee = amount * 0.20;
+            const scientistAmount = amount - platformFee;
+            
+            // Find scientist
+            const scientistId = project.collaborators.find(c => c.role === "SCIENTIST")?.userId;
+            
+            if (scientistId) {
+                const newPayment = await prisma.payment.create({
+                    data: {
+                        projectId: project.id,
+                        employerId: project.creatorId,
+                        scientistId: scientistId,
+                        amount: amount,
+                        platformFee: platformFee,
+                        scientistAmount: scientistAmount,
+                        status: "RELEASED", // Immediately released as we are completing the project
+                    }
+                });
+
+                // Create Transaction Record (Pending Payout)
+                await prisma.transaction.create({
+                    data: {
+                        userId: scientistId,
+                        type: "PAYOUT",
+                        amount: scientistAmount,
+                        status: "PENDING",
+                        description: `Payout pending for project: ${project.title}`,
+                        metadata: { projectId: project.id, paymentId: newPayment.id }
+                    }
+                });
+            }
+        }
     }
 
     // 3. Notify Scientist
@@ -181,10 +235,90 @@ export async function confirmProjectCompletion(projectId: string) {
 
     revalidatePath(`/scientist/projects/${projectId}`);
     revalidatePath(`/employer/projects/${projectId}`);
+    await logActivity(profile.id, "CONFIRM_PROJECT_COMPLETION", "SUCCESS", `Project ${projectId} completion confirmed`);
     return { success: true };
 
   } catch (error) {
     console.error("Error confirming project completion:", error);
     return { error: "Failed to confirm completion." };
   }
+}
+
+export async function inviteCollaborator(projectId: string, email: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
+  if (!profile) return { error: "Profile not found" };
+
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { collaborators: true }
+  });
+
+  if (!project) return { error: "Project not found" };
+
+  // Check if user is a collaborator on this project or admin
+  const isMember = project.collaborators.some(c => c.userId === profile.id);
+  const isAdmin = profile.role === "ADMIN";
+
+  if (!isMember && !isAdmin) {
+    return { error: "You must be a member of this project to invite collaborators." };
+  }
+
+  // Find user to invite
+  const invitee = await prisma.profile.findUnique({ where: { email } });
+  if (!invitee) {
+    return { error: "User with this email not found on the platform." };
+  }
+
+  // Check if already a collaborator
+  const existing = project.collaborators.find(c => c.userId === invitee.id);
+  if (existing) {
+    return { error: "User is already a collaborator." };
+  }
+
+  try {
+    await prisma.collaborator.create({
+      data: {
+        projectId,
+        userId: invitee.id,
+        role: "COLLABORATOR",
+        joinedAt: new Date()
+      }
+    });
+
+    await createNotification(
+      invitee.id,
+      "PROJECT_INVITATION",
+      `You have been added as a collaborator to "${project.title}".`,
+      "New Project Invitation",
+      `/collaborator/projects/${projectId}` // Assuming collaborator view
+    );
+
+    revalidatePath(`/project/${projectId}`);
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to invite collaborator:", error);
+    return { error: "Failed to add collaborator." };
+  }
+}
+
+export async function getProjectActivity(projectId: string) {
+   try {
+       const logs = await prisma.projectActivity.findMany({
+           where: {
+               projectId: projectId
+           },
+           orderBy: { createdAt: 'desc' },
+           take: 10,
+           include: { user: { select: { fullName: true, avatarUrl: true } } }
+       });
+       return { success: true, data: logs };
+   } catch (error) {
+       console.error("Failed to fetch activity:", error);
+       return { success: false, error: "Failed to fetch activity" };
+   }
 }

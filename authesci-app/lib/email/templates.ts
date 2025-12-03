@@ -402,3 +402,18 @@ export const applicationRejectedEmail = (applicantName: string, jobTitle: string
       false
     );
   };
+
+export const newJobAlertEmail = (scientistName: string, jobTitle: string, jobId: string) => {
+  const content = `
+    <p>Hi ${scientistName},</p>
+    <p>A new job matching your interests has just been posted: <strong>${jobTitle}</strong>.</p>
+    <p>Be among the first to apply!</p>
+  `;
+  return getTransactionalEmail(
+    "New Job Alert",
+    content,
+    "View Job",
+    `${APP_URL}/jobs/${jobId}`,
+    true
+  );
+};

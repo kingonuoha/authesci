@@ -19,6 +19,7 @@ import {
 
 const applicationSchema = z.object({
   coverLetter: z.string().min(50, "Cover letter must be at least 50 characters"),
+  screeningAnswers: z.record(z.string()).optional(),
 });
 
 type ApplicationFormValues = z.infer<typeof applicationSchema>;
@@ -31,9 +32,10 @@ interface ApplicationFormProps {
     cvUrl?: string | null;
     avatarUrl?: string | null;
   } | null;
+  screeningQuestions?: string[];
 }
 
-export function ApplicationForm({ jobId, userProfile }: ApplicationFormProps) {
+export function ApplicationForm({ jobId, userProfile, screeningQuestions = [] }: ApplicationFormProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
@@ -49,6 +51,7 @@ export function ApplicationForm({ jobId, userProfile }: ApplicationFormProps) {
     resolver: zodResolver(applicationSchema),
     defaultValues: {
       coverLetter: "",
+      screeningAnswers: {},
     },
   });
 
@@ -75,11 +78,30 @@ export function ApplicationForm({ jobId, userProfile }: ApplicationFormProps) {
       return;
     }
 
+    // Validate screening answers if questions exist
+    if (screeningQuestions.length > 0) {
+      const answers = data.screeningAnswers || {};
+      const missingAnswers = screeningQuestions.some((_, index) => !answers[index] || answers[index].trim() === "");
+      if (missingAnswers) {
+        toast.error("Please answer all screening questions.");
+        return;
+      }
+    }
+
     const formData = new FormData();
     formData.append("jobId", jobId);
     formData.append("coverLetter", data.coverLetter);
     if (file) {
       formData.append("resume", file);
+    }
+
+    if (data.screeningAnswers) {
+      // Map answers to questions for better context
+      const formattedAnswers = screeningQuestions.map((q, i) => ({
+        question: q,
+        answer: data.screeningAnswers?.[i] || ""
+      }));
+      formData.append("screeningAnswers", JSON.stringify(formattedAnswers));
     }
 
     startTransition(async () => {
@@ -123,6 +145,24 @@ export function ApplicationForm({ jobId, userProfile }: ApplicationFormProps) {
       </div>
       <div className="card-body p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-6">
+
+          {screeningQuestions?.length > 0 && (
+            <div className="space-y-4 border-b border-neutral-200 dark:border-neutral-700 pb-6">
+              <h3 className="font-semibold text-neutral-900 dark:text-white">Screening Questions</h3>
+              {screeningQuestions.map((question, index) => (
+                <div key={index}>
+                  <label className="form-label">{question} <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Your answer..."
+                    {...register(`screeningAnswers.${index}`)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="form-label mb-0">Cover Letter</label>

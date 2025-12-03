@@ -11,6 +11,7 @@ import { VerifiedBadge } from './profile/VerifiedBadge';
 import { getProfileCompletion } from '@/lib/helpers/getProfileCompletion';
 import RoleSwitcher from './RoleSwitcher';
 import { NotificationBell } from './NotificationBell';
+import { MessageDropdown } from './MessageDropdown';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -44,6 +45,10 @@ const Header = ({ toggleSidebar, toggleMobileSidebar, user }: HeaderProps) => {
         <div className="col-auto">
           <div className="flex flex-wrap items-center gap-3">
             <ThemeToggle />
+
+            {/* Message Dropdown Start  */}
+            <MessageDropdown />
+            {/* Message Dropdown End  */}
 
             {/* Notification Start  */}
             <NotificationBell />

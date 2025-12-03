@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import { MapPin, Briefcase, DollarSign, Clock, Copy, ExternalLink, Sparkles, Info, Building2 } from "lucide-react";
+import { MapPin, Briefcase, DollarSign, Clock, Copy, ExternalLink, Sparkles, Info, Building2, Users } from "lucide-react";
 import { Job, Profile } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -17,11 +17,18 @@ import {
 import { ApplicantAvatarGroup } from "@/components/modules/jobs/ApplicantAvatarGroup";
 import Image from "next/image";
 import { MatchReasoning } from "./MatchReasoning";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 type JobWithEmployer = Job & {
   employer: Profile;
   matchScore?: number; // Added for AI recommendations
   aiReasoning?: any; // JSON object from AI
+  _count?: {
+    applications: number;
+  };
 };
 
 interface JobCardProps {
@@ -111,6 +118,12 @@ export function JobCard({ job, isEmployer = false, applications = [] }: JobCardP
             <Clock className="w-4 h-4" />
             <span>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</span>
           </div>
+          {job._count?.applications !== undefined && (
+            <div className="flex items-center gap-1 text-purple-600 dark:text-purple-400 font-medium">
+              <Users className="w-4 h-4" />
+              <span>{job._count.applications} Applicants</span>
+            </div>
+          )}
         </div>
         <p className="text-sm text-neutral-600 dark:text-neutral-300 line-clamp-2 mb-4">{job.description}</p>
 
@@ -136,7 +149,7 @@ export function JobCard({ job, isEmployer = false, applications = [] }: JobCardP
                       if (result.status === "success" && result.paystackUrl) {
                         window.location.href = result.paystackUrl;
                       } else {
-                        alert(result.message || "Payment initialization failed");
+                        toast.error(result.message || "Payment initialization failed");
                       }
                     }}
                     className="btn btn-primary text-sm px-4 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 transition-colors"
@@ -185,7 +198,22 @@ function RemixButton({ jobId }: { jobId: string }) {
   const router = useRouter();
 
   const handleRemix = async () => {
-    if (!confirm("This will create a draft copy of this job. Continue?")) return;
+    const result = await MySwal.fire({
+      title: 'Remix Job?',
+      text: "This will create a draft copy of this job.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, remix it!',
+      customClass: {
+        popup: 'dark:bg-neutral-800 dark:text-white',
+        title: 'dark:text-white',
+        htmlContainer: 'dark:text-neutral-300'
+      }
+    });
+
+    if (!result.isConfirmed) return;
     setLoading(true);
     try {
       const { remixJob } = await import("@/app/actions/jobs");

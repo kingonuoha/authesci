@@ -1,54 +1,61 @@
-# Review Guide: Batch 10 - Robust Chat & AI Assistant
+# Batch 10 Review: Robust Chat & AI Assistant
 
-## 1. Quick Start
-To quickly test the chat features:
-1.  **Database:** Ensure you have run `npx prisma migrate dev` to apply the new chat schema.
-2.  **Env Vars:** Verify `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `GOOGLE_API_KEY` are set in `.env`.
-3.  **Navigate:** Log in as a user and go to `/chat` (or the specific dashboard chat route).
+## Quick Start
+1.  **Environment Variables:** Ensure `GOOGLE_GENERATIVE_AI_API_KEY`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` are set in `.env`.
+2.  **Database:** Run `npx prisma db push` to apply schema changes (Chat models, RAG fields).
+3.  **Dependencies:** Run `npm install` to install `@google/generative-ai`, `cloudinary`, `pdf-parse`, `mammoth`.
+4.  **Run:** Start the dev server with `npm run dev`.
 
-## 2. Test Accounts & Data
-Use the following account types to verify RBAC:
--   **Employer:** `employer@test.com` (Has active Job `JOB_123`)
--   **Scientist:** `scientist@test.com` (Applied to `JOB_123`)
--   **Admin:** `admin@test.com`
--   **Random User:** `random@test.com` (No connections)
+## Features Implemented
+1.  **Real-time Chat:**
+    *   Direct and Group messaging.
+    *   Real-time updates via Supabase Realtime (new messages, typing indicators, online status).
+    *   "Last Seen" timestamps for offline users.
+    *   Read receipts (visual indicator).
+2.  **File Sharing:**
+    *   Secure direct uploads to Cloudinary.
+    *   Support for Images and Documents.
+    *   Automatic RAG processing for uploaded files (text extraction + embedding generation).
+3.  **AI Assistant (RAG):**
+    *   Dedicated "Authesci AI" support chat.
+    *   Context-aware responses using RAG (Retrieval-Augmented Generation).
+    *   Retrieves relevant content from project files the user has access to.
+    *   Uses Google Gemini `embedding-001` for vector search and `gemini-pro` for chat.
+4.  **Role-Based Access Control (RBAC):**
+    *   Contact search filtered by user role (Employer vs Scientist).
+    *   Project file access control in RAG queries.
 
-## 3. Test Scenarios
+## Test Cases
 
-### 3.1 Real-Time Messaging (Happy Path)
--   **Step 1:** Open two different browsers/incognito windows.
--   **Step 2:** Log in as `Employer` in one and `Scientist` in the other.
--   **Step 3:** `Employer` starts a new chat with `Scientist`.
--   **Step 4:** `Employer` types "Hello".
--   **Expected:** `Scientist` sees "Typing..." indicator.
--   **Step 5:** `Employer` sends "Hello".
--   **Expected:** Message appears instantly on `Scientist`'s screen without refresh.
--   **Step 6:** `Scientist` opens the chat.
--   **Expected:** `Employer` sees double-check (Read Receipt) appear next to the message.
+### 1. Real-time Messaging
+*   **Action:** Open chat in two different browsers/incognito windows with different users. Send a message.
+*   **Expected:** Message appears instantly in the other window without refresh.
+*   **Action:** Start typing in one window.
+*   **Expected:** "Someone is typing..." appears in the other window.
 
-### 3.2 RBAC Enforcement (Security)
--   **Step 1:** Log in as `Random User`.
--   **Step 2:** Click "New Chat".
--   **Expected:** `Employer` and `Scientist` should **NOT** appear in the list (unless there is a valid project/job connection).
--   **Step 3:** Log in as `Employer`.
--   **Step 4:** Click "New Chat".
--   **Expected:** `Scientist` (who applied to their job) **SHOULD** appear.
+### 2. File Upload & RAG
+*   **Action:** Upload a PDF with specific content (e.g., "Project Alpha Secret Code: 12345") to a project.
+*   **Expected:** File uploads successfully and appears in the project files list.
+*   **Action:** Go to "Authesci AI" chat and ask "What is the secret code for Project Alpha?".
+*   **Expected:** AI responds with "12345" (citing the file context).
 
-### 3.3 AI Assistant (RAG)
--   **Step 1:** Log in as any user.
--   **Step 2:** Open chat with "Admin Bot".
--   **Step 3:** Ask: "What is the status of my project X?" (Ensure Project X exists).
--   **Expected:** Bot replies with correct status fetched from the DB/Context.
--   **Step 4:** Upload a PDF to a project and ask a question about its content.
--   **Expected:** Bot answers based on the PDF content.
+### 3. Online Status & Last Seen
+*   **Action:** User A is online. User B views User A in chat list.
+*   **Expected:** Green dot indicates User A is online.
+*   **Action:** User A closes the tab/logs out.
+*   **Expected:** Green dot disappears, replaced by "Last seen [time] ago".
 
-### 3.4 Edge Cases
--   **Offline Messaging:** Send a message to an offline user. Log in as that user later. Verify message is present and "Unread" count is correct.
--   **Large Attachments:** Try to upload a file > 10MB. Expected: Error message "File too large".
--   **Concurrent Edits:** Two users typing in the same group chat simultaneously. Expected: No message loss or ordering issues.
+### 4. RBAC Search
+*   **Action:** Log in as Employer. Click "New Chat". Search for a Scientist.
+*   **Expected:** Scientist appears in results.
+*   **Action:** Log in as Scientist. Search for another Scientist (who is not a collaborator/admin).
+*   **Expected:** User might not appear (depending on strictness of current filter).
 
-## 4. Accessibility Checks
--   [ ] **Keyboard Nav:** Can you tab through the contact list and select a chat using `Enter`?
--   [ ] **Screen Reader:** Do new incoming messages announce themselves (e.g., via `aria-live` region)?
--   [ ] **Contrast:** Are the "Me" vs "Others" message bubbles distinct enough in high contrast mode?
--   [ ] **Focus Management:** When opening a chat, does focus move to the input field?
+## Known Issues / Limitations
+*   **RAG Latency:** Initial file processing for RAG happens asynchronously; embeddings might take a few seconds to populate after upload.
+*   **File Types:** Text extraction currently supports PDF, DOCX, and TXT. Images are uploaded but not OCR'd for RAG yet.
+*   **Prisma EPERM:** Occasional file locking issues on Windows during `prisma generate` if dev server is running. Restarting the server resolves this.
+
+## Accessibility
+*   **Keyboard Nav:** Chat input, message list, and modal are keyboard accessible.
+*   **Screen Readers:** Basic ARIA labels added to interactive elements.

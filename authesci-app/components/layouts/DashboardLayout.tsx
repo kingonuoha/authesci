@@ -1,11 +1,12 @@
 'use client'
 
 import React, { useState } from 'react';
-import Sidebar  from '@/components/modules/Sidebar';
-import Header  from '@/components/modules/Header';
+import Sidebar from '@/components/modules/Sidebar';
+import Header from '@/components/modules/Header';
 import Breadcrumb from '@/components/modules/Breadcrumb';
 import Footer from '@/components/modules/Footer'; // Import Footer
 import { Profile } from '@prisma/client';
+import { RealtimeProvider } from '@/components/chat/realtime-provider';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -26,28 +27,30 @@ const DashboardLayout = ({ children, profile, activeProjectCount }: DashboardLay
   };
 
   return (
-    <div >
-      <Sidebar
-        role={profile.role}
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-        isMobileSidebarOpen={isMobileSidebarOpen}
-        toggleMobileSidebar={toggleMobileSidebar}
-        activeProjectCount={activeProjectCount}
-      />
-      <main className={`dashboard-main ${!isSidebarOpen ? 'active' : ''}`}>
-        <Header
-          user={profile}
+    <RealtimeProvider userId={profile.id}>
+      <div >
+        <Sidebar
+          role={profile.role}
+          isSidebarOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
+          isMobileSidebarOpen={isMobileSidebarOpen}
           toggleMobileSidebar={toggleMobileSidebar}
+          activeProjectCount={activeProjectCount}
         />
-        <div className="dashboard-main-body">
-          <Breadcrumb pageTitle="Dashboard" activePage="AI" />
-          {children}
-        </div>
-        <Footer /> {/* Include Footer here */}
-      </main>
-    </div>
+        <main className={`dashboard-main ${!isSidebarOpen ? 'active' : ''}`}>
+          <Header
+            user={profile}
+            toggleSidebar={toggleSidebar}
+            toggleMobileSidebar={toggleMobileSidebar}
+          />
+          <div className="dashboard-main-body">
+            <Breadcrumb pageTitle="Dashboard" activePage="AI" />
+            {children}
+          </div>
+          <Footer /> {/* Include Footer here */}
+        </main>
+      </div>
+    </RealtimeProvider>
   );
 };
 

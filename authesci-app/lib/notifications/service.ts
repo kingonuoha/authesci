@@ -9,9 +9,17 @@ export async function createNotification(
   message: string, 
   title?: string, 
   link?: string, 
-  metadata?: any
+  metadata?: any,
+  visualType?: 'image' | 'icon',
+  visualResource?: string
 ) {
   try {
+    const finalMetadata = {
+      ...(metadata || {}),
+      visual_type: visualType,
+      visual_resource: visualResource
+    };
+
     const notification = await prisma.notification.create({
       data: {
         userId,
@@ -19,7 +27,7 @@ export async function createNotification(
         message,
         title,
         link,
-        metadata: metadata || {},
+        metadata: finalMetadata,
       },
     });
     return notification;

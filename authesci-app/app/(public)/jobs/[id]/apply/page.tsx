@@ -54,7 +54,7 @@ export default async function ApplyPage({ params }: { params: Promise<{ id: stri
       </div>
 
       <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-6 shadow-sm">
-        <ApplicationForm jobId={job.id} userProfile={profile} />
+        <ApplicationForm jobId={job.id} userProfile={profile} screeningQuestions={job.screeningQuestions as string[]} />
       </div>
     </div>
   );

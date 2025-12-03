@@ -61,12 +61,14 @@ enum PaymentStatus {
   FUNDED
   RELEASED
   CANCELLED
+  COMPLETED
 }
 
 enum CollaboratorStatus {
   ACTIVE
   REMOVED
   LEFT
+  INVITED
 }
 
 model Profile {
@@ -108,12 +110,42 @@ model Profile {
   aiFeatureVector Unsupported("vector")?
   isPremium       Boolean         @default(false)
 
+  // Batch 9: Admin & Logs
+  isBanned        Boolean         @default(false) @map("is_banned")
+  logs            Log[]
+
+  // Batch 10: Chat System
+  participations Participant[]
+  messagesSent   Message[]
+  lastSeenAt     DateTime?       @map("last_seen_at")
+
+  // Batch 11: Transactions
+  transactions   Transaction[]
+
+  pageViews      PageView[]
+
   @@map("profiles")
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  type        String   // "DEPOSIT", "PAYOUT", "REFUND", "FEE"
+  amount      Decimal  @db.Decimal(10, 2)
+  status      String   // "SUCCESS", "PENDING", "FAILED"
+  reference   String?
+  description String?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("transactions")
 }
 
 model Job {
   id           String        @id @default(uuid())
-    title        String 
+  title        String 
   description  String
   requirements String[]      @default([])
   category     String?
@@ -132,6 +164,9 @@ model Job {
   aiFeatureVector         Unsupported("vector")?
   aiIntel                 Json?
   aiRecommendedScientists Json?
+
+  // Batch 11: Screening Questions
+  screeningQuestions      Json?
 
   @@map("jobs")
 }
@@ -154,6 +189,9 @@ model Application {
   // Batch 8: AI Features
   aiMatchScore Float?
   aiIntel      Json?
+
+  // Batch 11: Screening Answers
+  screeningAnswers Json?
 
   @@unique([jobId, applicantId])
   @@map("applications")
@@ -204,9 +242,14 @@ model ProjectFile {
   fileUrl     String   @map("file_url")
   fileType    String   @map("file_type")
   fileSize    Int?
+  content     String?  @db.Text
+  summary     String?  @db.Text
   createdAt   DateTime @default(now()) @map("created_at")
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   uploader    Profile  @relation("ProjectFiles", fields: [uploadedBy], references: [id], onDelete: Cascade)
+
+  // Batch 10: RAG
+  aiFeatureVector Unsupported("vector")?
 
   @@map("project_files")
 }
@@ -297,4 +340,105 @@ model Subscription {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("subscriptions")
+}
+model Log {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  action    String   // e.g., "LOGIN", "JOB_APPLY", "PAYMENT_SUCCESS", "PAYMENT_FAILURE"
+  status    String   // "SUCCESS", "FAILURE", "WARNING"
+  level     String   // "INFO", "WARN", "ERROR"
+  message   String
+  metadata  Json?    // Context: IP address, error stack, payment ref, etc.
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("logs")
+}
+
+// Batch 10: Chat System
+enum ConversationType {
+  DIRECT
+  GROUP
+  AI_SUPPORT
+}
+
+enum AttachmentType {
+  IMAGE
+  FILE
+  AUDIO
+}
+
+model Conversation {
+  id        String           @id @default(uuid())
+  type      ConversationType
+  name      String?          // Null for 1:1, Required for named Groups
+  
+  // Contextual Links
+  projectId String?          @map("project_id")
+  jobId     String?          @map("job_id")
+
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  participants Participant[]
+  messages     Message[]
+
+  @@map("conversations")
+}
+
+model Participant {
+  conversationId String   @map("conversation_id")
+  userId         String   @map("user_id")
+  role           String?  // 'ADMIN', 'MEMBER'
+  
+  joinedAt       DateTime @default(now()) @map("joined_at")
+  lastReadAt     DateTime @default(now()) @map("last_read_at")
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           Profile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, userId])
+  @@map("participants")
+}
+
+model Message {
+  id             String          @id @default(uuid())
+  conversationId String          @map("conversation_id")
+  senderId       String?         @map("sender_id") // Nullable for SYSTEM/AI
+  
+  content        String          @db.Text
+  
+  attachmentUrl  String?         @map("attachment_url")
+  attachmentType AttachmentType? @map("attachment_type")
+
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         Profile?     @relation(fields: [senderId], references: [id])
+
+  @@map("messages")
+}
+
+model PageView {
+  id         String     @id @default(uuid())
+  timestamp  DateTime   @default(now())
+  path       String
+  userId     String?    @map("user_id")
+  ipAddress  String     @map("ip_address")
+  deviceType DeviceType @map("device_type")
+  userAgent  String?    @map("user_agent")
+
+  user Profile? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([ipAddress])
+  @@map("page_views")
+}
+
+enum DeviceType {
+  DESKTOP
+  TABLET
+  MOBILE
 }

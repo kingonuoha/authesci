@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import ToasterProvider from "@/components/providers/ToasterProvider";
+import { AnalyticsProvider } from "@/components/providers/AnalyticsProvider"; // Import the AnalyticsProvider
 import "./globals.css";
 
 const geistSans = Geist({
@@ -48,7 +49,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-100 dark:bg-neutral-800 dark:text-white`}
       >
-        {children}
+        <AnalyticsProvider> {/* Wrap children with AnalyticsProvider */}
+          {children}
+        </AnalyticsProvider>
         <ToasterProvider />
 
         <Script src="/assets/js/lib/jquery-3.7.1.min.js"></Script>
@@ -65,7 +68,6 @@ export default function RootLayout({
         <Script src="/assets/js/lib/audioplayer.js"></Script>
         <Script src="/assets/js/flowbite.min.js"></Script>
         <Script src="/assets/js/app.js"></Script>
-        <Script src="/assets/js/homeOneChart.js"></Script>
       </body>
     </html>
   );

@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- AlterTable
 ALTER TABLE "applications" ADD COLUMN     "aiIntel" JSONB,
 ADD COLUMN     "aiMatchScore" DOUBLE PRECISION;

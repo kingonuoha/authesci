@@ -44,7 +44,7 @@ const AuthCard: React.FC<AuthCardProps> = ({ type }) => {
     } else if (state?.status === 'success') {
       if (!isSignIn) { // This is a signup success
         // Redirect to verify-email page with email as query param
-        router.push(`/auth/verify-email?email=${encodeURIComponent(state.formData?.email || '')}`);
+        router.push(`/verify-email?email=${encodeURIComponent(state.formData?.email || '')}`);
       } else {
         showToast('success', state.message, state.error); // For login, still show toast
       }
@@ -119,7 +119,7 @@ const AuthCard: React.FC<AuthCardProps> = ({ type }) => {
         <div className=" mt-6">
           <div className="flex justify-between gap-2">
             <div className="form-check style-check flex items-start gap-2">
-              <input className="form-check-input border border-neutral-300 mt-1.5" type="checkbox" value="" id="condition" required/>
+              <input className="form-check-input border border-neutral-300 mt-1.5" type="checkbox" value="" id="condition" required />
               <label className="text-sm" htmlFor="condition">
                 By creating an account means you agree to the
                 <a href="/terms" className="text-primary-600 font-semibold"> Terms & Conditions</a> and our

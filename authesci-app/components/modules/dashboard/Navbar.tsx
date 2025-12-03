@@ -8,10 +8,10 @@ import { useActionState } from 'react';
 import { showToast } from '@/lib/utils';
 import { logout } from '@/app/actions/auth';
 import { NotificationBell } from '@/components/modules/NotificationBell';
+import { MessageDropdown } from '@/components/modules/MessageDropdown';
 
 const Navbar = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => void, toggleMobileSidebar: () => void }) => {
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const [isMessageDropdownOpen, setIsMessageDropdownOpen] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
@@ -108,55 +108,10 @@ const Navbar = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
             </div>
             {/* Language Dropdown End  */}
 
+            {/* Language Dropdown End  */}
+
             {/* Message Dropdown Start  */}
-            <div className="relative">
-              <button
-                onClick={() => setIsMessageDropdownOpen(!isMessageDropdownOpen)}
-                className="has-indicator flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700"
-                type="button"
-                aria-haspopup="true"
-                aria-expanded={isMessageDropdownOpen}
-                aria-controls="dropdownMessage"
-                aria-label="View messages"
-              >
-                <Mail className="text-xl text-neutral-900 dark:text-white" />
-              </button>
-              {isMessageDropdownOpen && (
-                <div
-                  id="dropdownMessage"
-                  className="z-10 absolute right-0 mt-2 w-full max-w-[394px] overflow-hidden rounded-2xl bg-white shadow-lg dark:bg-neutral-700"
-                >
-                  {/* Message Dropdown content here */}
-                  <div className="m-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
-                    <h6 className="mb-0 text-lg font-semibold text-neutral-900">Message</h6>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-primary-600 dark:bg-neutral-600 dark:text-white">05</span>
-                  </div>
-                  <div className="scroll-sm !border-t-0">
-                    <div className="max-h-[400px] overflow-y-auto">
-                      <a href="#" className="flex justify-between gap-1 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600">
-                        <div className="flex items-center gap-3">
-                          <div className="relative flex-shrink-0">
-                            <Image className="h-11 w-11 rounded-full" src="/assets/images/notification/profile-3.png" alt="User profile picture" width={44} height={44} />
-                            <span className="absolute bottom-[2px] end-[2px] h-2.5 w-2.5 rounded-full border border-white bg-success-500 dark:border-gray-600"></span>
-                          </div>
-                          <div>
-                            <h6 className="fw-semibold mb-1 text-sm">Robiul Hasan</h6>
-                            <p className="mb-0 line-clamp-1 text-sm">hey! there i'm...</p>
-                          </div>
-                        </div>
-                        <div className="flex shrink-0 flex-col items-end gap-1">
-                          <span className="text-sm text-neutral-500">12:30 PM</span>
-                          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-warning-600 text-xs text-white">8</span>
-                        </div>
-                      </a>
-                    </div>
-                    <div className="px-4 py-3 text-center">
-                      <Link href="/messages" className="text-center font-semibold text-primary-600 hover:underline dark:text-primary-600">See All Message</Link>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <MessageDropdown />
             {/* Message Dropdown End  */}
 
             {/* Notification Start  */}
@@ -207,7 +162,7 @@ const Navbar = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                         </Link>
                       </li>
                       <li>
-                        <Link className="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600" href="/email">
+                        <Link className="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600" href="/messages">
                           <Mail className="icon text-xl" />
                           Inbox
                         </Link>

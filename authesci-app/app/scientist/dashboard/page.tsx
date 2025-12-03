@@ -1,72 +1,93 @@
 import { getAuthenticatedUser } from "@/lib/services/auth-service";
 import { Role } from "@prisma/client";
-import StatWidget from "@/components/modules/dashboard/StatWidget";
 import Link from "next/link";
-import { FileText, FlaskConical, CreditCard } from "lucide-react";
-import { ProfileCompletionCard } from "@/components/modules/profile/ProfileCompletionCard";
-import { getProfileCompletion } from "@/lib/helpers/getProfileCompletion";
+import { ScientistProgress } from "@/components/modules/scientist/ScientistProgress";
+import { ScientistFinanceWidget } from "@/components/modules/scientist/ScientistFinanceWidget";
+import { OngoingProjectsList } from "@/components/modules/scientist/OngoingProjectsList";
+import { ScientistStatsWidget } from "@/components/modules/scientist/ScientistStatsWidget";
+import LogViewer from "@/components/modules/activity-logs/LogViewer";
+import { CreditCard } from "lucide-react";
+import { FeaturedCarousel } from "@/components/modules/common/FeaturedCarousel";
 
 export default async function ScientistDashboardPage() {
   const { profile } = await getAuthenticatedUser({
     allowedRoles: [Role.SCIENTIST, Role.ADMIN],
   });
 
-  const { percentage, missingFields } = getProfileCompletion(profile);
-
   return (
-    <>
-      <div className="mb-6 space-y-6">
-        <ProfileCompletionCard percentage={percentage} missingFields={missingFields} role={profile.role} />
-        
-        {((!profile.bankName || !profile.accountNumber || profile.bankName === "" || profile.accountNumber === "") && percentage > 80) && (
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-primary-600 dark:text-primary-400">
-                <CreditCard className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1">
-                  Add Bank Details to Get Paid
-                </h3>
-                <p className="text-neutral-500 dark:text-neutral-400 text-sm max-w-xl">
-                  You haven't added your bank account information yet. Please update your wallet settings to receive payments for your projects.
-                </p>
-              </div>
-            </div>
-            <Link 
-              href="/scientist/wallet" 
-              className="whitespace-nowrap px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors text-sm"
-            >
-              Add Bank Details
-            </Link>
-          </div>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-6"> {/* Matches template's first grid */}
-        <StatWidget
-          title="Applications Submitted"
-          value="7" // Placeholder value
-          icon={FileText}
-          iconClassName="h-6 w-6 text-purple-500"
-        />
-        <StatWidget
-          title="Projects Joined"
-          value="3" // Placeholder value
-          icon={FlaskConical}
-          iconClassName="h-6 w-6 text-orange-500"
-        />
-        {/* Add more StatWidget components as needed */}
-      </div>
-
-      <div className="text-center mt-6"> {/* Added mt-6 for spacing, similar to template's second grid */}
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Scientist Dashboard</h1>
+          <p className="text-muted-foreground">
+            Welcome back, {profile.fullName}
+          </p>
+        </div>
         <Link
           href="/jobs"
-          className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md font-medium transition-colors"
         >
           Browse Jobs
         </Link>
       </div>
-    </>
+
+
+
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-8 lg:col-span-2">
+          <ScientistStatsWidget />
+          <ScientistFinanceWidget />
+
+          <FeaturedCarousel
+            query="scientist laboratory technology research"
+            captions={[
+              { title: "Global Collaboration", subtitle: "Connect with researchers worldwide." },
+              { title: "Cutting-edge Projects", subtitle: "Work on the latest scientific breakthroughs." },
+              { title: "Secure Payments", subtitle: "Guaranteed payments via our escrow system." },
+              { title: "Career Growth", subtitle: "Build your reputation and portfolio." },
+              { title: "Impactful Research", subtitle: "Contribute to solving real-world problems." },
+            ]}
+          />
+
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Ongoing Projects</h2>
+            <OngoingProjectsList />
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Recent Activity</h2>
+            <LogViewer userId={profile.id} limit={10} />
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          <ScientistProgress />
+
+          {((!profile.bankName || !profile.accountNumber) && (
+            <div className="bg-card rounded-xl p-6 border shadow-sm">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="p-3 bg-primary/10 rounded-lg text-primary">
+                  <CreditCard className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-1">
+                    Add Bank Details
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    Update your wallet settings to receive payments.
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/scientist/wallet"
+                className="block w-full text-center px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg font-medium transition-colors text-sm"
+              >
+                Update Wallet
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

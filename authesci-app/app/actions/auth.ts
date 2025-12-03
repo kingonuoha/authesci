@@ -1,5 +1,6 @@
 "use server";
 
+import { logActivity } from "@/lib/logger";
 import { createClient } from "@/lib/supabase/server";
 import { Role } from "@prisma/client";
 import { headers } from "next/headers";
@@ -9,7 +10,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/mail";
 import { getPasswordChangedEmail } from "@/lib/email/templates";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { revalidatePath } from "next/cache"; // Import revalidatePath
+import { revalidatePath } from "next/cache";
 import { createNotification } from "@/lib/notifications/service";
 
 const signUpSchema = z.object({
@@ -156,6 +157,8 @@ export async function signUp(
         "Welcome!",
         "/dashboard"
     );
+
+    await logActivity(profile.id, "SIGNUP", "SUCCESS", "User registered successfully");
   } catch (e: any) {
     console.error(e);
     await supabaseAdmin.auth.admin.deleteUser(user.id);
@@ -228,7 +231,6 @@ export async function login(
 
   const profile = await prisma.profile.findUnique({
     where: { userId: user.id },
-    // select: { role: true }, // Only select role if needed, otherwise fetch full profile
   });
 
   if (!profile) {
@@ -236,6 +238,15 @@ export async function login(
       status: "error",
       message: "Profile Not Found",
       error: "User profile not found. Please contact support.",
+    };
+  }
+
+  if (profile.isBanned) {
+    await supabase.auth.signOut();
+    return {
+      status: "error",
+      message: "Account Suspended",
+      error: "Your account has been suspended. Please contact support.",
     };
   }
 
@@ -251,7 +262,14 @@ export async function login(
     }
   }
 
-  redirect("/auth/session-refresh");
+  await logActivity(profile.id, "LOGIN", "SUCCESS", "User logged in");
+
+  // Redirect directly to dashboard based on role
+  if (profile.role) {
+    redirect(`/${profile.role.toLowerCase()}/dashboard`);
+  } else {
+    redirect("/dashboard");
+  }
 }
 
 export async function requestPasswordReset(formData: FormData): Promise<ActionResult> {
@@ -333,22 +351,24 @@ export async function resetPassword(
 
     const user = data.user;
 
-    // 2. Send confirmation email (if user object is available)
+    // 2. Send confirmation email and log activity (if user object is available)
     if (user && user.email) {
       const profile = await prisma.profile.findUnique({
         where: { userId: user.id },
-        select: { fullName: true },
       });
 
-      const fullName = profile?.fullName || "User";
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      if (profile) {
+        const fullName = profile.fullName || "User";
+        
+        const html = getPasswordChangedEmail(fullName);
+        await sendEmail({
+          to: user.email,
+          subject: "Your Authesci Password Has Been Changed",
+          html,
+        });
 
-      const html = getPasswordChangedEmail(fullName);
-      await sendEmail({
-        to: user.email,
-        subject: "Your Authesci Password Has Been Changed",
-        html,
-      });
+        await logActivity(profile.id, "PASSWORD_RESET", "SUCCESS", "Password reset successfully");
+      }
     }
 
     // 3. Sign the user out
@@ -382,76 +402,9 @@ export async function logout() {
   redirect("/login");
 }
 
-export async function updateRole(newRole: Role): Promise<ActionResult> {
-  const supabase = await createClient();
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+import { getProfileId as getProfileIdUtils } from "@/lib/auth-utils";
 
-  if (userError || !user) {
-    return {
-      status: "error",
-      message: "User not authenticated.",
-      error: userError?.message || "No authenticated user found.",
-    };
-  }
-
-  // Validate if the newRole is a valid Role enum value
-  if (!Object.values(Role).includes(newRole)) {
-    return {
-      status: "error",
-      message: "Invalid role provided.",
-      error: `Role '${newRole}' is not a valid role.`, 
-    };
-  }
-
-  try {
-    // Update role in Prisma profile
-    await prisma.profile.update({
-      where: { userId: user.id },
-      data: { role: newRole },
-    });
-
-    // Update role in Supabase app_metadata
-    const { error: adminError } = await supabaseAdmin.auth.admin.updateUserById(
-      user.id,
-      { app_metadata: { role: newRole } }
-    );
-
-    if (adminError) {
-      console.error("Failed to update user role in Supabase app_metadata:", adminError);
-      return {
-        status: "error",
-        message: "Failed to update role in authentication system.",
-        error: adminError.message,
-      };
-    }
-
-    // Revalidate the current path to reflect the role change
-    // This will trigger a re-render of server components that depend on the user's role
-    revalidatePath('/', 'layout'); // Revalidate all layouts and pages
-
-    const profile = await prisma.profile.findUnique({ where: { userId: user.id }, select: { id: true } });
-    
-    if (profile) {
-        await createNotification(
-            profile.id,
-            "SYSTEM_ALERT",
-            `Your role has been updated to ${newRole}.`,
-            "Role Updated",
-            "/dashboard"
-        );
-    }
-
-    return {
-      status: "success",
-      message: `Role updated to ${newRole}.`,
-      error: null,
-    };
-  } catch (e: any) {
-    console.error("Error updating role:", e);
-    return {
-      status: "error",
-      message: "An unexpected error occurred while updating the role.",
-      error: e.message,
-    };
-  }
+export async function getProfileId() {
+  return await getProfileIdUtils();
 }
+

@@ -15,6 +15,11 @@ import { Bell, Check, Trash2, CheckCheck, FileText, AlertCircle } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
+import LogViewerClient from "@/components/modules/activity-logs/LogViewerClient";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 export default function NotificationsContent() {
     const [activeTab, setActiveTab] = useState<"notifications" | "logs">("notifications");
@@ -113,7 +118,23 @@ export default function NotificationsContent() {
     };
 
     const handleClearAll = async () => {
-        if (!confirm("Are you sure you want to clear all notifications?")) return;
+        const result = await MySwal.fire({
+            title: 'Are you sure?',
+            text: "This will clear all your notifications.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, clear all!',
+            customClass: {
+                popup: 'dark:bg-neutral-800 dark:text-white',
+                title: 'dark:text-white',
+                htmlContainer: 'dark:text-neutral-300'
+            }
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
             await clearAllNotificationsAction();
             setNotifications([]);
@@ -206,8 +227,16 @@ export default function NotificationsContent() {
                                         className={`p-4 transition-colors hover:bg-gray-50 dark:hover:bg-neutral-700/50 ${!note.read ? 'bg-blue-50/30 dark:bg-blue-900/10' : ''}`}
                                     >
                                         <div className="flex items-start gap-4">
-                                            <div className={`mt-1 relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${!note.read ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700'}`}>
-                                                <Bell size={18} />
+                                            <div className={`mt-1 relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full overflow-hidden ${!note.read ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700'}`}>
+                                                {note.metadata?.visual_type === 'image' && note.metadata?.visual_resource ? (
+                                                    <img
+                                                        src={note.metadata.visual_resource}
+                                                        alt="Notification source"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <Bell size={18} />
+                                                )}
                                                 {!note.read && (
                                                     <span className="absolute top-0 right-0 w-3 h-3 bg-primary-600 border-2 border-white dark:border-neutral-800 rounded-full"></span>
                                                 )}
@@ -262,25 +291,8 @@ export default function NotificationsContent() {
                     </div>
                 </div>
             ) : (
-                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm p-8 text-center">
-                    <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <FileText className="w-8 h-8 text-neutral-400" />
-                    </div>
-                    <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">Activity Logs</h3>
-                    <p className="text-neutral-500 dark:text-neutral-400 max-w-md mx-auto mb-6">
-                        Detailed system logs and activity history will be available here. This feature is coming soon.
-                    </p>
-                    <div className="flex justify-center gap-2">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
-                            System Logs
-                        </span>
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
-                            User Activity
-                        </span>
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
-                            Security Events
-                        </span>
-                    </div>
+                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm p-6">
+                    <LogViewerClient isAdminView={true} limit={100} />
                 </div>
             )}
         </div>

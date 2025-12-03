@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { createNotification } from "@/lib/notifications/service";
+import { extractTextFromFile } from "@/lib/utils/file-processing";
+import { generateEmbedding } from "@/lib/ai/embedding";
 
 export async function saveFileRecord(projectId: string, fileName: string, fileUrl: string, fileType: string, fileSize: number) {
   const supabase = await createClient();
@@ -31,16 +33,39 @@ export async function saveFileRecord(projectId: string, fileName: string, fileUr
         projectId,
         uploadedBy: profile.id,
         fileName,
-        fileUrl, // This should be the public URL or just the key if we construct URL on client
+        fileUrl,
         fileType,
         fileSize,
       },
     });
 
+    // RAG Integration: Extract text and generate embedding asynchronously
+    (async () => {
+      try {
+        const text = await extractTextFromFile(fileUrl, fileType);
+        if (text) {
+          // Truncate text if too long for embedding model (usually 2048 or 8192 tokens, safe limit ~8000 chars for now)
+          const truncatedText = text.slice(0, 8000); 
+          const embedding = await generateEmbedding(truncatedText);
+
+          // Update with content and vector
+          // Note: Prisma doesn't support vector type directly in update yet, so use raw query
+          await prisma.$executeRaw`
+            UPDATE "ProjectFile"
+            SET "content" = ${text},
+                "summary" = ${text.slice(0, 200) + '...'},
+                "aiFeatureVector" = ${JSON.stringify(embedding)}::vector
+            WHERE "id" = ${file.id}
+          `;
+        }
+      } catch (error) {
+        console.error("Error processing file for RAG:", error);
+      }
+    })();
+
     revalidatePath(`/project/${projectId}/files`);
 
     // Notify other collaborators about new file
-    // Get all collaborators except uploader
     const otherCollaborators = await prisma.collaborator.findMany({
         where: {
             projectId,
@@ -53,7 +78,7 @@ export async function saveFileRecord(projectId: string, fileName: string, fileUr
     for (const collab of otherCollaborators) {
         await createNotification(
             collab.userId,
-            "SYSTEM_ALERT", // Or a new type FILE_UPLOADED
+            "SYSTEM_ALERT",
             `${profile.fullName} uploaded a new file "${fileName}" to project "${project?.title}"`,
             "New File Uploaded",
             `/project/${projectId}/files`

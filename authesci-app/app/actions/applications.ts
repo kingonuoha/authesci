@@ -1,5 +1,7 @@
 "use server";
 
+import { logActivity } from "@/lib/logger";
+
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -15,6 +17,7 @@ import { createNotification } from "@/lib/notifications/service";
 const applicationSchema = z.object({
   jobId: z.string(),
   coverLetter: z.string().min(50, "Cover letter must be at least 50 characters"),
+  screeningAnswers: z.string().optional(),
 });
 
 export type ApplicationState = {
@@ -83,6 +86,7 @@ export async function submitApplication(prevState: ApplicationState, formData: F
     const rawData = {
       jobId: formData.get("jobId"),
       coverLetter: formData.get("coverLetter"),
+      screeningAnswers: formData.get("screeningAnswers"),
     };
 
     const validatedFields = applicationSchema.safeParse(rawData);
@@ -95,7 +99,7 @@ export async function submitApplication(prevState: ApplicationState, formData: F
       };
     }
 
-    const { jobId, coverLetter } = validatedFields.data;
+    const { jobId, coverLetter, screeningAnswers } = validatedFields.data;
 
     // Check if already applied
     const existingApplication = await prisma.application.findUnique({
@@ -134,6 +138,15 @@ export async function submitApplication(prevState: ApplicationState, formData: F
         console.error("AI Match failed", e);
     }
 
+    let screeningAnswersJson = null;
+    if (screeningAnswers) {
+        try {
+            screeningAnswersJson = JSON.parse(screeningAnswers);
+        } catch (e) {
+            console.error("Failed to parse screening answers", e);
+        }
+    }
+
     const application = await prisma.application.create({
       data: {
         jobId,
@@ -143,6 +156,7 @@ export async function submitApplication(prevState: ApplicationState, formData: F
         status: ApplicationStatus.PENDING,
         aiMatchScore,
         aiIntel,
+        screeningAnswers: screeningAnswersJson || undefined,
       },
     });
 
@@ -177,6 +191,7 @@ export async function submitApplication(prevState: ApplicationState, formData: F
     }
 
     revalidatePath(`/jobs/${jobId}`);
+    await logActivity(profile.id, "SUBMIT_APPLICATION", "SUCCESS", `Application submitted for job ${jobId}`, { applicationId: application.id });
     return { status: "success", message: "Application submitted successfully!" };
 
   } catch (error) {
@@ -277,5 +292,6 @@ export async function updateApplicationStatus(applicationId: string, newStatus: 
     }
 
     revalidatePath(`/employer/jobs/${application.job.id}/applicants`);
+    await logActivity(profile.id, "UPDATE_APPLICATION_STATUS", "SUCCESS", `Application status updated to ${newStatus}`, { applicationId });
     return { success: true };
 }

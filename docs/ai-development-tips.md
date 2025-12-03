@@ -59,3 +59,94 @@ This document captures key learnings, patterns, and best practices discovered du
 
 - **RAG (Retrieval-Augmented Generation):** For even better cover letters, we could retrieve similar successful applications (anonymized) to guide the generation.
 - **Feedback Loop:** Capture user feedback (e.g., "Not relevant" on job recommendations) to fine-tune the matching algorithm.
+
+## 7. Real-time Chat & Messaging (Batch 10)
+
+### Real-time Architecture
+- **Supabase Realtime:** We use `postgres_changes` to listen for new messages and participant updates.
+- **Case Sensitivity:** Supabase payloads use `snake_case` (DB columns), while our frontend uses `camelCase`. **Crucial:** You must manually map these fields in the subscription callback (e.g., `attachment_url` -> `attachmentUrl`).
+- **Deduplication:** Real-time events can race with optimistic updates. Always check if a message ID (`prev.some(m => m.id === newMessage.id)`) exists before appending to state.
+
+### Optimistic UI Patterns
+- **Message Sending:** Create a temporary ID (`temp-${Date.now()}`), add to state immediately, then replace with the real server response.
+- **Error Handling:** If the server action fails, remove the optimistic message and show a toast error.
+
+### Database Schema & Prisma
+- **Prisma Generate:** If you encounter `EPERM` errors during `npx prisma generate`, **stop the dev server** first. The running server locks the files.
+- **New Fields:**
+  - `Profile.lastSeenAt`: For user online status.
+  - `Participant.lastReadAt`: For read receipts.
+  - `Message.attachmentUrl` / `attachmentType`: For file sharing.
+
+### File Uploads (Cloudinary)
+- **Security:** We use signed uploads. The server generates a signature (`getUploadSignature`), and the client uploads directly to Cloudinary.
+- **Env Vars:** Ensure `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` are set. The code falls back to `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` if the standard one is missing.
+
+### AI Integration (Gemini)
+- **Env Vars:** The bot accepts `GOOGLE_GENERATIVE_AI_API_KEY` or `GEMINI_API_KEY`.
+- **Context Window:** When generating responses, we inject a system prompt ("You are Authesci Admin Bot...") to ground the AI.
+
+### UI/UX Tips
+- **Router Refresh:** When a Server Action updates data that a Server Component depends on (like the sidebar list), call `router.refresh()` in the client component to force a re-render of the server parts.
+- **Group Logic:** Group chats use random names if not specified. Admin users have a special query in `getConversations` to see *all* group chats, not just ones they are in.
+
+## 8. General Development & Architecture Patterns
+
+### Server Actions & Circular Dependencies
+- **Issue:** Importing a server action (e.g., `getProfileId` from `actions/auth.ts`) into another server action or a client component can sometimes lead to "Export doesn't exist" build errors or circular dependency warnings, especially if the source file imports large libraries or other actions.
+- **Solution:** Extract shared utility logic into a separate `lib/` file (e.g., `lib/auth-utils.ts`). This ensures that both Server Actions and Components can import the logic without triggering the Next.js build optimization issues associated with "use server" boundaries.
+- **Rule of Thumb:** If a function is a helper (like getting a user ID) and not a direct mutation/action called by a form, put it in `lib/`.
+
+### Client-Side Wrappers (SSR Compatibility)
+- **Issue:** Libraries like `react-apexcharts` or `leaflet` rely on the `window` object and break during Next.js Server Side Rendering (SSR).
+- **Solution:** Create a wrapper component (e.g., `ApexChartWrapper.tsx`) that uses `next/dynamic` with `{ ssr: false }` or a `useEffect` mount check.
+- **Pattern:**
+  ```tsx
+  const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+  // OR
+  if (!isMounted) return null;
+  ```
+
+### Centralized Logging
+- **Implementation:** We implemented a `logActivity` function in `@/lib/logger.ts`.
+- **Usage:** Call this in **every** mutation server action (Create, Update, Delete) to maintain a comprehensive audit trail.
+- **Schema:** The `Log` model connects to `Profile`, allowing us to show users their own history and Admins a global view.
+
+### Supabase vs. Prisma
+- **Supabase Client (`@/lib/supabase/server`):** Use primarily for **Authentication** (getUser, signOut) and **Realtime** subscriptions.
+- **Prisma Client (`@/lib/prisma`):** Use for **Data Access** and **Business Logic**. It provides type safety and relationship handling that is superior for complex queries.
+- **Pattern:** In a server action, first `await supabase.auth.getUser()` to verify identity, then use `prisma.profile.findUnique()` to get the application-specific user data.
+
+### Visual Notifications
+- **Metadata:** The `Notification` model's `metadata` JSON field is used to store `visual_type` ('image' | 'icon') and `visual_resource` (URL or icon name).
+- **UI:** The `NotificationItem` component dynamically renders an `<img>` or a lucide-react Icon based on this metadata, providing richer context than a simple text toast.
+
+### Next.js Build & Suspense
+- **Issue:** Using `useSearchParams()` in a Client Component without a `<Suspense>` boundary causes build failures (`npm run build`) because Next.js needs to know how to handle the component during static generation.
+- **Solution:** Wrap the component usage in `<Suspense fallback={<Loading />}>` or move the `useSearchParams` logic into a child component that is wrapped.
+
+## 9. Admin Analytics & Charts (Batch 11)
+
+### ApexCharts in Next.js (React 19/Turbopack)
+- **Issue:** The `react-apexcharts` wrapper library can cause hydration errors (`t.put is not a function`, `Cannot read properties of undefined`) and compatibility issues with React 19.
+- **Solution:** Use the native `apexcharts` library directly within a `useEffect` hook.
+- **Implementation:** Create a wrapper component (`ApexChartWrapper`) that dynamically imports `apexcharts` (using `await import('apexcharts')`) inside `useEffect` to ensure it only runs on the client.
+- **Version:** Ensure `apexcharts` version is stable (e.g., `3.49.0`). Avoid `5.x` versions if they are not officially supported or cause issues.
+- **Cleanup:** Always destroy the chart instance in the `useEffect` cleanup function (`chartInstance.current.destroy()`) to prevent memory leaks and rendering artifacts.
+
+### Server Actions & Decimal Types
+- **Issue:** Passing Prisma `Decimal` types directly from Server Actions to Client Components causes serialization errors or runtime errors like `totalRevenue.toNumber is not a function` if not handled correctly.
+- **Solution:** Convert `Decimal` to `number` (using `.toNumber()`) *inside* the Server Action before returning the data to the client.
+- **Safety:** Check if the value is already a number (e.g., `0`) before calling `.toNumber()` to avoid runtime crashes.
+
+### Admin Analytics & Data Fetching
+- **Pattern:** For complex analytics (like charts with time toggles), use a dedicated Server Action (e.g., `getAnalyticsChartData`) that accepts parameters (period, type) and returns formatted data.
+- **Client-Side Fetching:** Call these Server Actions from `useEffect` in Client Components to allow for dynamic updates (like switching between Day/Week/Month) without full page reloads.
+
+### UI/UX - Charts
+- **Modern Look:** Use gradients (`fill: { type: 'gradient' }`), smooth curves (`stroke: { curve: 'smooth' }`), and custom color palettes to make charts look modern.
+- **Overlapping/Mixed Charts:** You can mix `line` and `area` types or use multiple `area` series with transparency to creating overlapping effects.
+- **Radial Bars:** Great for "Health" or "Progress" metrics. Use `hollow` centers and `track` backgrounds for a cleaner look.
+
+### Prisma Seeding
+- **Analytics:** When seeding analytics data (PageViews, Logs), ensure you generate data with realistic timestamps (backdated) to populate charts effectively for testing.

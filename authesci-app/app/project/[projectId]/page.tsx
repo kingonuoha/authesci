@@ -5,6 +5,8 @@ import { Users, CheckCircle, Clock, ListTodo } from "lucide-react";
 import EscrowCard from "@/components/modules/payment/EscrowCard";
 import ProjectActions from "@/components/modules/projects/ProjectActions";
 import Image from "next/image";
+import { InviteCollaborator } from "@/components/modules/projects/InviteCollaborator";
+import { ProjectActivityList } from "@/components/modules/projects/ProjectActivityList";
 
 export default async function ProjectPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
@@ -224,8 +226,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
 
               <div className="mt-8">
                 <h6 className="text-lg font-bold mb-4 text-neutral-900 dark:text-white">Recent Activity</h6>
-                <div className="text-center py-8 text-neutral-500 dark:text-neutral-400 bg-gray-50 dark:bg-neutral-800/50 rounded-lg border border-dashed border-gray-300 dark:border-neutral-600">
-                  No recent activity to show.
+                <div className="bg-gray-50 dark:bg-neutral-800/50 rounded-lg border border-dashed border-gray-300 dark:border-neutral-600 p-4">
+                  <ProjectActivityList projectId={projectId} />
                 </div>
               </div>
             </div>
@@ -260,8 +262,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
           <div className="card h-full rounded-lg border border-gray-200 dark:border-neutral-600 dark:bg-neutral-700">
             <div className="card-body p-6">
               <div className="flex items-center justify-between mb-6">
-                <h6 className="text-lg font-bold mb-0 text-neutral-900 dark:text-white">Team Members</h6>
-                <span className="text-sm text-neutral-500 dark:text-neutral-400">{project.collaborators.length} Users</span>
+                <div className="flex items-center gap-3">
+                  <h6 className="text-lg font-bold mb-0 text-neutral-900 dark:text-white">Team Members</h6>
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400">{project.collaborators.length} Users</span>
+                </div>
+                {/* Check if user is a member of the project */}
+                {project.collaborators.some((c: any) => c.userId === profile?.id) && (
+                  <InviteCollaborator projectId={projectId} />
+                )}
               </div>
 
               <div className="space-y-6">

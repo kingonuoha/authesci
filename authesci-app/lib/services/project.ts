@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { ProjectStatus, CollaboratorStatus, JobStatus, ApplicationStatus } from "@prisma/client";
+import { ProjectStatus, CollaboratorStatus, JobStatus, ApplicationStatus, TaskStatus, TaskPriority } from "@prisma/client";
 
 /**
  * Creates a new project from an accepted job application.
@@ -59,6 +59,75 @@ export async function createProjectFromApplication(applicationId: string) {
         role: "MEMBER",
         permissions: ["view", "edit"], // Can view and edit tasks/files
         status: CollaboratorStatus.ACTIVE,
+      },
+    });
+
+    // Create Payment Record (Escrow)
+    // Assuming 20% platform fee for now
+    const amount = application.job.finalPrice ? Number(application.job.finalPrice) : 0;
+    const platformFee = amount * 0.20;
+    const scientistAmount = amount - platformFee;
+
+    if (amount > 0) {
+        await tx.payment.create({
+            data: {
+                projectId: newProject.id,
+                employerId: application.job.employerId,
+                scientistId: application.applicantId,
+                amount: amount,
+                platformFee: platformFee,
+                scientistAmount: scientistAmount,
+                status: "FUNDED", // Employer has already paid when activating the job
+            }
+        });
+    }
+
+    // Create Tasks for Scientist
+    const scientistDeadline = new Date();
+    scientistDeadline.setDate(scientistDeadline.getDate() + 5);
+
+    await tx.task.createMany({
+      data: [
+        {
+          title: "Get to know the project scope",
+          description: "Review the project details and scope.",
+          projectId: newProject.id,
+          assignedTo: application.applicantId,
+          status: TaskStatus.OPEN,
+          priority: TaskPriority.MEDIUM,
+          dueDate: scientistDeadline,
+        },
+        {
+          title: "Understand the requirement",
+          description: "Analyze the project requirements.",
+          projectId: newProject.id,
+          assignedTo: application.applicantId,
+          status: TaskStatus.OPEN,
+          priority: TaskPriority.MEDIUM,
+          dueDate: scientistDeadline,
+        },
+        {
+          title: "Review Documentation",
+          description: "Read through any provided documentation.",
+          projectId: newProject.id,
+          assignedTo: application.applicantId,
+          status: TaskStatus.OPEN,
+          priority: TaskPriority.MEDIUM,
+          dueDate: scientistDeadline,
+        },
+      ],
+    });
+
+    // Create Task for Employer (Fund Project - Marked as DONE)
+    await tx.task.create({
+      data: {
+        title: "Fund the project",
+        description: "Ensure the project is funded.",
+        projectId: newProject.id,
+        assignedTo: application.job.employerId,
+        status: TaskStatus.DONE,
+        priority: TaskPriority.HIGH,
+        dueDate: new Date(),
       },
     });
 

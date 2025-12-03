@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/modules/common/UserAvatar";
 import {
   Tooltip,
   TooltipContent,
@@ -27,6 +27,7 @@ interface ApplicantAvatarGroupProps {
   max?: number;
   showTooltip?: boolean;
   interactive?: boolean;
+  title?: string;
 }
 
 export const ApplicantAvatarGroup: React.FC<ApplicantAvatarGroupProps> = ({
@@ -34,6 +35,7 @@ export const ApplicantAvatarGroup: React.FC<ApplicantAvatarGroupProps> = ({
   max = 5,
   showTooltip = true,
   interactive = true,
+  title = "Applicants",
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const visibleApplicants = applicants.slice(0, max);
@@ -47,16 +49,13 @@ export const ApplicantAvatarGroup: React.FC<ApplicantAvatarGroupProps> = ({
             <Tooltip key={applicant.id} delayDuration={300}>
               <TooltipTrigger asChild>
                 <div className={`relative group ${interactive ? "cursor-pointer" : "cursor-default"}`}>
-                  <Avatar className="w-8 h-8 border-2 border-white dark:border-neutral-800 transition-transform hover:-translate-y-1">
-                    <AvatarImage
-                      src={applicant.user.image || ""}
-                      alt={applicant.user.name || "Applicant"}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-300 text-xs">
-                      {applicant.user.name?.charAt(0) || "A"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <UserAvatar
+                    userId={applicant.user.id}
+                    src={applicant.user.image}
+                    name={applicant.user.name}
+                    className="w-8 h-8 border-2 border-white dark:border-neutral-800 transition-transform hover:-translate-y-1"
+                    showStatus={true}
+                  />
                 </div>
               </TooltipTrigger>
               {interactive && showTooltip && (
@@ -72,9 +71,8 @@ export const ApplicantAvatarGroup: React.FC<ApplicantAvatarGroupProps> = ({
           <button
             onClick={() => interactive && setIsModalOpen(true)}
             disabled={!interactive}
-            className={`relative w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-700 border-2 border-white dark:border-neutral-800 text-xs font-medium text-neutral-600 dark:text-neutral-300 z-10 ${
-              interactive ? "hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors cursor-pointer" : "cursor-default"
-            }`}
+            className={`relative w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-700 border-2 border-white dark:border-neutral-800 text-xs font-medium text-neutral-600 dark:text-neutral-300 z-10 ${interactive ? "hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors cursor-pointer" : "cursor-default"
+              }`}
           >
             +{remainingCount}
           </button>
@@ -86,6 +84,7 @@ export const ApplicantAvatarGroup: React.FC<ApplicantAvatarGroupProps> = ({
           applicants={applicants}
           isOpen={isModalOpen}
           onOpenChange={setIsModalOpen}
+          title={title}
         />
       )}
     </>

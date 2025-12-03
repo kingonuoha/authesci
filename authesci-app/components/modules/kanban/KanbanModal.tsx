@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Task, TaskPriority } from '@prisma/client';
+import { toast } from "react-hot-toast";
 
 interface KanbanModalProps {
   isOpen: boolean;
@@ -59,23 +60,23 @@ export function KanbanModal({ isOpen, onClose, onSave, initialData, collaborator
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!title.trim()) {
-        alert("Title is required");
-        return;
+      toast.error("Title is required");
+      return;
     }
     if (!description.trim()) {
-        alert("Description is required");
-        return;
+      toast.error("Description is required");
+      return;
     }
 
     setIsSubmitting(true);
     try {
-      await onSave({ 
-        title, 
-        description, 
-        tag, 
-        dueDate, 
+      await onSave({
+        title,
+        description,
+        tag,
+        dueDate,
         image: image || undefined,
         assignedTo: assignedTo || undefined,
         priority
@@ -121,37 +122,37 @@ export function KanbanModal({ isOpen, onClose, onSave, initialData, collaborator
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                  <div>
-                    <label htmlFor="taskPriority" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Priority</label>
-                    <select
-                      id="taskPriority"
-                      className="form-control w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      value={priority}
-                      onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                    >
-                      {Object.values(TaskPriority).map((p) => (
-                        <option key={p as string} value={p as string}>{p as string}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="taskAssignee" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Assign To</label>
-                    <select
-                      id="taskAssignee"
-                      className="form-control w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      value={assignedTo}
-                      onChange={(e) => setAssignedTo(e.target.value)}
-                    >
-                      <option value="">Unassigned</option>
-                      {collaborators.map((collab) => (
-                        <option key={collab.user.id} value={collab.user.id}>
-                          {collab.user.fullName || collab.user.email}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <label htmlFor="taskPriority" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Priority</label>
+                  <select
+                    id="taskPriority"
+                    className="form-control w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value as TaskPriority)}
+                  >
+                    {Object.values(TaskPriority).map((p) => (
+                      <option key={p as string} value={p as string}>{p as string}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="taskAssignee" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Assign To</label>
+                  <select
+                    id="taskAssignee"
+                    className="form-control w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    value={assignedTo}
+                    onChange={(e) => setAssignedTo(e.target.value)}
+                  >
+                    <option value="">Unassigned</option>
+                    {collaborators.map((collab) => (
+                      <option key={collab.user.id} value={collab.user.id}>
+                        {collab.user.fullName || collab.user.email}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="mb-3">

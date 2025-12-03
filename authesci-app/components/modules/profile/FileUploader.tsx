@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Upload, X, FileText, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toast } from "react-hot-toast";
 
 interface FileUploaderProps {
   label: string;
@@ -55,7 +56,7 @@ export function FileUploader({
 
   const handleFile = (file: File) => {
     if (file.size / 1024 / 1024 > maxSizeMB) {
-      alert(`File size too big (max ${maxSizeMB}MB)`);
+      toast.error(`File size too big (max ${maxSizeMB}MB)`);
       return;
     }
     setSelectedFile(file);
@@ -86,7 +87,7 @@ export function FileUploader({
       <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
         {label}
       </label>
-      
+
       {!selectedFile && !previewUrl ? (
         <div
           className={cn(
@@ -133,7 +134,7 @@ export function FileUploader({
               )}
             </div>
           )}
-          
+
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">
               {selectedFile ? selectedFile.name : "Current File"}

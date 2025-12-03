@@ -25,17 +25,19 @@ interface ApplicantListModalProps {
   applicants: Applicant[];
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  title?: string;
 }
 
 export const ApplicantListModal: React.FC<ApplicantListModalProps> = ({
   applicants,
   isOpen,
   onOpenChange,
+  title = "Applicants",
 }) => {
   useEffect(() => {
     if (isOpen) {
       MySwal.fire({
-        title: <span className="text-xl font-bold text-neutral-900 dark:text-white">Applicants ({applicants.length})</span>,
+        title: <span className="text-xl font-bold text-neutral-900 dark:text-white">{title} ({applicants.length})</span>,
         html: (
           <div className="max-h-[60vh] overflow-y-auto pr-2 text-left">
             <ul className="divide-y divide-neutral-200 dark:divide-neutral-700 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
@@ -74,8 +76,8 @@ export const ApplicantListModal: React.FC<ApplicantListModalProps> = ({
         showCloseButton: true,
         width: '500px',
         customClass: {
-            popup: 'dark:bg-neutral-800 dark:border dark:border-neutral-700 rounded-xl',
-            closeButton: 'dark:text-neutral-400 hover:dark:text-neutral-200 focus:outline-none'
+          popup: 'dark:bg-neutral-800 dark:border dark:border-neutral-700 rounded-xl',
+          closeButton: 'dark:text-neutral-400 hover:dark:text-neutral-200 focus:outline-none'
         },
         willClose: () => {
           onOpenChange(false);

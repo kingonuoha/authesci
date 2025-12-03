@@ -1,11 +1,15 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/logger";
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { JobType, JobStatus } from "@prisma/client";
 import { createNotification } from "@/lib/notifications/service";
+import { createClient } from "@/lib/supabase/server";
+import { sendEmail } from "@/lib/mail";
+import { newJobAlertEmail } from "@/lib/email/templates";
 
 const jobSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -15,6 +19,7 @@ const jobSchema = z.object({
   jobType: z.nativeEnum(JobType),
   location: z.string().min(1, "Location is required"),
   salaryRange: z.string().min(1, "Salary is required"),
+  screeningQuestions: z.string().optional(),
 });
 
 export type JobState = {
@@ -50,6 +55,7 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
     jobType: formData.get("jobType"),
     location: formData.get("location"),
     salaryRange: formData.get("salaryRange"),
+    screeningQuestions: formData.get("screeningQuestions"),
   };
 
   const validatedFields = jobSchema.safeParse(rawData);
@@ -62,13 +68,26 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
     };
   }
 
-  const { title, description, requirements, category, jobType, location, salaryRange } = validatedFields.data;
+  const { title, description, requirements, category, jobType, location, salaryRange, screeningQuestions } = validatedFields.data;
 
   const requirementsArray = requirements.split("\n").map(r => r.trim()).filter(Boolean);
+  
+  let screeningQuestionsJson = null;
+  if (screeningQuestions) {
+      try {
+          screeningQuestionsJson = JSON.parse(screeningQuestions);
+      } catch (e) {
+          console.error("Failed to parse screening questions", e);
+      }
+  }
 
   try {
+    const paymentAmount = formData.get("paymentAmount");
+    // Default to 5000 if not provided or invalid, otherwise use the max salary provided
+    const amountInKobo = paymentAmount ? parseFloat(paymentAmount.toString()) * 100 : 5000 * 100; 
+    const finalPrice = amountInKobo / 100;
+
     // Create job with PENDING_PAYMENT status by default for now (or DRAFT)
-    // We'll assume all jobs require payment for this batch as per PRD implying Paystack integration
     const job = await prisma.job.create({
       data: {
         employerId: profile.id,
@@ -79,7 +98,9 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
         jobType,
         location,
         salaryRange,
-        status: JobStatus.PENDING_PAYMENT, 
+        finalPrice,
+        status: JobStatus.PENDING_PAYMENT,
+        screeningQuestions: screeningQuestionsJson || undefined,
       },
     });
 
@@ -96,13 +117,6 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
         revalidatePath("/employer/jobs");
         return { status: "success", message: "Job posted successfully!", jobId: job.id };
     }
-
-    const paymentAmount = formData.get("paymentAmount");
-    // Default to 5000 if not provided or invalid, otherwise use the max salary provided
-    // Note: This logic assumes the fee is the salary amount as per user request "pay the max"
-    // If it's meant to be a fee based on salary, this logic might need adjustment.
-    // For now, we follow the instruction "pay the max".
-    const amount = paymentAmount ? parseFloat(paymentAmount.toString()) * 100 : 5000 * 100; 
     
     const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/employer/jobs/${job.id}/verify-payment`;
 
@@ -114,7 +128,7 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
       },
       body: JSON.stringify({
         email: profile.email,
-        amount,
+        amount: amountInKobo,
         callback_url: callbackUrl,
         metadata: {
           jobId: job.id,
@@ -137,6 +151,8 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
         "Job Created",
         `/employer/jobs/${job.id}/verify-payment`
     );
+
+    await logActivity(profile.id, "CREATE_JOB", "SUCCESS", `Job "${title}" created`, { jobId: job.id });
 
     // Generate and store embedding
     if (process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES) {
@@ -208,6 +224,7 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
     jobType: formData.get("jobType"),
     location: formData.get("location"),
     salaryRange: formData.get("salaryRange"),
+    screeningQuestions: formData.get("screeningQuestions"),
   };
 
   const validatedFields = jobSchema.safeParse(rawData);
@@ -220,8 +237,17 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
     };
   }
 
-  const { title, description, requirements, category, jobType, location, salaryRange } = validatedFields.data;
+  const { title, description, requirements, category, jobType, location, salaryRange, screeningQuestions } = validatedFields.data;
   const requirementsArray = requirements.split("\n").map(r => r.trim()).filter(Boolean);
+
+  let screeningQuestionsJson = null;
+  if (screeningQuestions) {
+      try {
+          screeningQuestionsJson = JSON.parse(screeningQuestions);
+      } catch (e) {
+          console.error("Failed to parse screening questions", e);
+      }
+  }
 
   try {
     await prisma.job.update({
@@ -234,6 +260,7 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
         jobType,
         location,
         salaryRange,
+        screeningQuestions: screeningQuestionsJson || undefined,
       },
     });
 
@@ -247,6 +274,8 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
         "Job Updated",
         `/employer/jobs/${jobId}`
     );
+
+    await logActivity(profile.id, "UPDATE_JOB", "SUCCESS", `Job "${title}" updated`, { jobId });
 
     // Generate and store embedding
     if (process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES === "true") {
@@ -303,6 +332,27 @@ export async function verifyJobPayment(reference: string, jobId: string) {
                 );
             }
 
+            await logActivity(job?.employerId || "", "JOB_PAYMENT_VERIFIED", "SUCCESS", `Payment verified for job ${jobId}`, { reference });
+
+            // Notify all scientists about the new job
+            try {
+                const scientists = await prisma.profile.findMany({
+                    where: { role: "SCIENTIST" },
+                    select: { email: true, fullName: true }
+                });
+
+                // Send emails in parallel (limit concurrency if needed in future)
+                await Promise.all(scientists.map(scientist => 
+                    sendEmail({
+                        to: scientist.email,
+                        subject: `New Job Alert: ${job?.title}`,
+                        html: newJobAlertEmail(scientist.fullName, job?.title || "New Job", jobId)
+                    }).catch(err => console.error(`Failed to send alert to ${scientist.email}`, err))
+                ));
+            } catch (e) {
+                console.error("Failed to send job alerts", e);
+            }
+
             revalidatePath("/jobs");
             revalidatePath("/employer/jobs");
             return { success: true };
@@ -328,6 +378,7 @@ export async function deleteJob(jobId: string) {
     if (job.employerId !== profile.id) return { error: "Unauthorized" };
 
     await prisma.job.delete({ where: { id: jobId } });
+    await logActivity(profile.id, "DELETE_JOB", "SUCCESS", `Job ${jobId} deleted`);
     revalidatePath("/employer/jobs");
     return { success: true };
 }

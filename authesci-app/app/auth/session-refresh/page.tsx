@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import ClientRedirector from '@/components/modules/auth/ClientRedirector';
 
+export const dynamic = 'force-dynamic';
+
 export default async function SessionRefreshPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Role } from '@prisma/client'; // Assuming Role enum is available from Prisma client
 import { Users } from 'lucide-react'; // Icon for role switching
-import { updateRole } from '@/app/actions/auth'; // Server Action to update role
+import { updateRole } from '@/app/actions/role'; // Server Action to update role
 
 interface RoleSwitcherProps {
   currentRole: Role;

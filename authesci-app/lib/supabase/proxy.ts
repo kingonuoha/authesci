@@ -58,24 +58,8 @@ export async function updateSession(request: NextRequest) {
     const role = user.app_metadata.role as string | undefined;
     const pathname = request.nextUrl.pathname;
 
-    // Fetch profile from Supabase (REST) to avoid P1001 connection errors in middleware
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('userId', user.id)
-      .single();
-
-    if (!profile) {
-      // This indicates a data inconsistency issue.
-      // A user exists in Supabase auth but not in our public profiles table.
-      // Forcing a logout and redirecting to an error page might be a good strategy.
-      // For now, we'll redirect to login, which is safe.
-      await supabase.auth.signOut();
-      const url = request.nextUrl.clone();
-      url.pathname = '/login';
-      url.searchParams.set('error', 'profile_not_found');
-      return NextResponse.redirect(url);
-    }
+    // Profile check removed to avoid RLS issues in middleware.
+    // We rely on user.app_metadata.role which is set during signup/login.
 
     // Profile completion check
     // if (profile.completionScore === 0 && !pathname.endsWith("/profile/edit")) {

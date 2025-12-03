@@ -1,5 +1,7 @@
 "use server";
 
+import { logActivity } from "@/lib/logger";
+
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -147,6 +149,7 @@ export async function saveBankDetails(
         "/scientist/wallet"
     );
 
+    await logActivity(profile.id, "SAVE_BANK_DETAILS", "SUCCESS", "Bank details saved");
     return {
       status: "success",
       message: "Bank details saved successfully!",
@@ -186,6 +189,7 @@ export async function deleteBankDetails() {
 
     revalidatePath("/scientist/wallet");
 
+    await logActivity(user.id, "DELETE_BANK_DETAILS", "SUCCESS", "Bank details deleted");
     return {
       status: "success",
       message: "Bank details removed.",
@@ -335,6 +339,20 @@ export async function fundProject(
         }
     });
 
+    // Create Transaction Record (PENDING DEPOSIT)
+    await prisma.transaction.create({
+        data: {
+            userId: employerProfile.id,
+            type: "DEPOSIT",
+            amount: amount,
+            status: "PENDING",
+            reference: data.data.reference,
+            description: `Project funding deposit for: ${project.title}`,
+            metadata: { projectId: project.id, paymentId: payment.id }
+        }
+    });
+
+    await logActivity(employerProfile.id, "FUND_PROJECT_INIT", "SUCCESS", `Project funding initialized for ${project.id}`, { paymentId: payment.id });
     return { url: data.data.authorization_url };
 
   } catch (error) {
@@ -452,6 +470,7 @@ export async function verifyPayment(reference: string) {
     // Send Email to Employer
     try {
         await sendEmail({
+        
             to: payment.employer.email,
             subject: `Payment Confirmed: ${payment.project.title}`,
             html: projectFundingConfirmedEmail(payment.employer.fullName, payment.project.title, projectId),
@@ -460,10 +479,255 @@ export async function verifyPayment(reference: string) {
         console.error("Failed to send email", e);
     }
 
+    await logActivity(payment.employerId, "PAYMENT_VERIFIED", "SUCCESS", `Payment verified for project ${projectId}`, { reference });
+    
+    // Update Transaction Status
+    const transaction = await prisma.transaction.findFirst({
+        where: { reference: reference }
+    });
+
+    if (transaction) {
+        await prisma.transaction.update({
+            where: { id: transaction.id },
+            data: { status: "SUCCESS" }
+        });
+    }
+
     return { success: true, message: "Payment verified successfully", projectId };
 
   } catch (error) {
     console.error("Verify payment error:", error);
     return { success: false, message: "Internal server error during verification" };
+  }
+}
+
+export async function getPayouts() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
+  if (!profile || profile.role !== "ADMIN") return { error: "Unauthorized" };
+
+  try {
+    const payouts = await prisma.payment.findMany({
+      where: {
+        status: { in: ["RELEASED", "COMPLETED"] },
+      },
+      include: {
+        project: {
+          select: { title: true },
+        },
+        scientist: {
+          select: {
+            fullName: true,
+            email: true,
+            bankName: true,
+            accountNumber: true,
+            accountName: true,
+            recipientCode: true,
+          },
+        },
+      },
+      orderBy: [
+        { status: "desc" }, // RELEASED (R) comes after COMPLETED (C)? No.
+        // We want RELEASED first.
+        // Alphabetical: COMPLETED, FUNDED, PENDING, RELEASED.
+        // So 'desc' puts RELEASED before COMPLETED. Correct.
+        { updatedAt: "desc" },
+      ],
+    });
+
+    return { success: true, data: payouts };
+  } catch (error) {
+    console.error("Get payouts error:", error);
+    return { error: "Failed to fetch payouts" };
+  }
+}
+
+export async function getPaystackBalance() {
+    if (!PAYSTACK_SECRET_KEY) return 0;
+    try {
+        const response = await fetch("https://api.paystack.co/balance", {
+            headers: {
+                Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+            },
+            next: { revalidate: 60 } // Cache for 60 seconds
+        });
+        const data = await response.json();
+        if (data.status && data.data.length > 0) {
+            // Paystack returns an array of balances (one per currency).
+            // We assume NGN or the first one.
+            const ngnBalance = data.data.find((b: any) => b.currency === "NGN") || data.data[0];
+            return ngnBalance.balance / 100; // Convert kobo to main unit
+        }
+        return 0;
+    } catch (error) {
+        console.error("Error fetching Paystack balance:", error);
+        return 0;
+    }
+}
+
+export async function getPayoutStats() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: "Unauthorized" };
+
+    const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
+    if (!profile || profile.role !== "ADMIN") return { error: "Unauthorized" };
+
+    try {
+        const [pending, completed, paystackBalance] = await Promise.all([
+            prisma.payment.aggregate({
+                where: { status: "RELEASED" },
+                _sum: { scientistAmount: true },
+                _count: true
+            }),
+            prisma.payment.aggregate({
+                where: { status: "COMPLETED" },
+                _sum: { scientistAmount: true },
+                _count: true
+            }),
+            getPaystackBalance()
+        ]);
+
+        return {
+            success: true,
+            data: {
+                pendingCount: pending._count,
+                pendingAmount: Number(pending._sum.scientistAmount || 0),
+                completedCount: completed._count,
+                completedAmount: Number(completed._sum.scientistAmount || 0),
+                paystackBalance: paystackBalance
+            }
+        };
+    } catch (error) {
+        console.error("Get payout stats error:", error);
+        return { error: "Failed to fetch stats" };
+    }
+}
+
+export async function processPayout(paymentId: string, method: "AUTO" | "MANUAL") {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
+  if (!profile || profile.role !== "ADMIN") return { error: "Unauthorized" };
+
+  try {
+    const payment = await prisma.payment.findUnique({
+        where: { id: paymentId },
+        include: { scientist: true, project: true }
+    });
+
+    if (!payment) return { error: "Payment not found" };
+    if (payment.status !== "RELEASED") return { error: "Payment is not pending release" };
+
+    let transactionRef = `PAYOUT-${Date.now()}`;
+
+    if (method === "AUTO") {
+        if (!PAYSTACK_SECRET_KEY) return { error: "Paystack key missing" };
+        if (!payment.scientist.recipientCode) {
+            // Try to create recipient code if missing but bank details exist
+             if (payment.scientist.bankName && payment.scientist.accountNumber && payment.scientist.accountName) {
+                // We need bank code. Assuming we stored it or can fetch it? 
+                // Currently we don't store bankCode in Profile, just bankName.
+                // This is a limitation. We should have stored bankCode.
+                // For now, fail if no recipientCode.
+                return { error: "Scientist has no recipient code. Use Manual Payout." };
+             }
+             return { error: "Scientist bank details incomplete. Use Manual Payout." };
+        }
+
+        // Initiate Transfer
+        const response = await fetch("https://api.paystack.co/transfer", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                source: "balance",
+                amount: Math.round(payment.scientistAmount.toNumber() * 100),
+                recipient: payment.scientist.recipientCode,
+                reason: `Payout for ${payment.project.title}`,
+                reference: transactionRef
+            }),
+        });
+
+        const data = await response.json();
+        if (!data.status) {
+            return { error: data.message || "Transfer failed" };
+        }
+        // If queued or success, proceed.
+    }
+
+    // Update Payment
+    await prisma.payment.update({
+      where: { id: paymentId },
+      data: {
+        status: "COMPLETED",
+      },
+    });
+
+    // Update or Create Transaction
+    // Check if a pending transaction exists for this payment
+    // We can't easily query inside JSON metadata efficiently without raw query, 
+    // but we can search by userId and type and status PENDING.
+    const pendingTx = await prisma.transaction.findFirst({
+        where: {
+            userId: payment.scientistId,
+            type: "PAYOUT",
+            status: "PENDING",
+            // Ideally we check metadata, but for now let's just create a new one if not found or update latest.
+            // Or just create a SUCCESS one and mark old PENDING as FAILED/CANCELLED?
+            // Better: Just create a new SUCCESS transaction. The PENDING one serves as a "Request".
+            // Actually, let's try to update if we can find it.
+        },
+        orderBy: { createdAt: 'desc' }
+    });
+
+    if (pendingTx) {
+        await prisma.transaction.update({
+            where: { id: pendingTx.id },
+            data: {
+                status: "SUCCESS",
+                reference: transactionRef,
+                description: `Payout processed (${method}) for project: ${payment.project.title}`
+            }
+        });
+    } else {
+        await prisma.transaction.create({
+            data: {
+                userId: payment.scientistId,
+                type: "PAYOUT",
+                amount: payment.scientistAmount,
+                status: "SUCCESS",
+                reference: transactionRef,
+                description: `Payout processed (${method}) for project: ${payment.project.title}`,
+                metadata: { projectId: payment.projectId, paymentId: payment.id }
+            }
+        });
+    }
+
+    await createNotification(
+      payment.scientistId,
+      "PAYMENT_SUCCESS",
+      `Your payout for "${payment.project.title}" has been processed via ${method === "AUTO" ? "Bank Transfer" : "Manual Transfer"}.`,
+      "Payout Processed",
+      "/scientist/wallet"
+    );
+
+    await logActivity(profile.id, "PROCESS_PAYOUT", "SUCCESS", `Processed payout for payment ${paymentId} (${method})`);
+    
+    revalidatePath("/admin/payroll");
+    return { success: true };
+  } catch (error) {
+    console.error("Process payout error:", error);
+    return { error: "Failed to process payout" };
   }
 }
