@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: "Authesci",
     images: [
       {
-        url: "/assets/images/og_image.png",
+        url: "https://authesci.com/assets/images/og_image.png",
         width: 1200,
         height: 630,
         alt: "Authesci Dashboard",
@@ -80,6 +80,29 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google Tag Manager */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-M9VVVVJB');`,
+          }}
+        />
+
+        {/* Default to light mode (no device theme preference) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if (localStorage.getItem('color-theme') === 'dark') {
+  document.documentElement.classList.add('dark');
+} else {
+  document.documentElement.classList.remove('dark');
+}`,
+          }}
+        />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link
           rel="icon"
           type="image/png"
@@ -120,6 +143,13 @@ export default async function RootLayout({
           {children}
         </AnalyticsProvider>
         <ToasterProvider />
+
+        {/* Google Tag Manager (noscript) */}
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M9VVVVJB" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
+          }}
+        />
 
         <Script src="/assets/js/lib/jquery-3.7.1.min.js"></Script>
         <Script src="/assets/js/lib/simple-datatables.min.js"></Script>

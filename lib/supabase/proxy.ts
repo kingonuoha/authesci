@@ -49,6 +49,7 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/front-assets') &&
     !request.nextUrl.pathname.startsWith('/assets') &&
     !request.nextUrl.pathname.startsWith('/about') &&
+    !request.nextUrl.pathname.startsWith('/sitemap.xml') &&
     !request.nextUrl.pathname.startsWith('/contact') &&
     !request.nextUrl.pathname.startsWith('/privacy') &&
     !request.nextUrl.pathname.startsWith('/terms') &&
@@ -82,6 +83,7 @@ export async function updateSession(request: NextRequest) {
       pathname.startsWith('/reset-password') ||
       pathname.startsWith('/verify-email') ||
       pathname.startsWith('/check-email') ||
+      pathname.startsWith('/sitemap.xml') ||
       pathname.startsWith('/auth');
 
     if (isAuthPage) {
