@@ -1,0 +1,840 @@
+<!-- meta tags and other links -->
+@@include('../partial-html/_template-top.html')
+@@include('../layouts/_sidebar.html')
+
+<main class="dashboard-main">
+  @@include('../layouts/_nav.html')
+
+  <div class="dashboard-main-body">
+
+    @@include('../layouts/_breadcrumb.html',{
+    pageTitle: "POS & Inventory",
+      activePage: "POS & Inventory"
+    })
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="col-span-12">
+            <div class="card border-0 rounded-[12px]">
+                <div class="card-body p-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-6">
+                        <div class="col-span-12 sm:col-span-6 xl:col-span-4 2xl:col-span-3">
+                            <div class="px-5 py-4 shadow-none rounded-[8px] h-full bg-gradient-to-l from-cyan-500/10 to-cyan-500/20 left-line line-bg-primary relative overflow-hidden">
+                                <div class="flex flex-wrap items-start justify-between gap-1 mb-2">
+                                    <div>
+                                        <span class="mb-0.5 font-medium text-neutral-600 text-base">Gross Sales</span>
+                                        <h6 class="font-semibold mb-1">$40,000</h6>
+                                    </div>
+                                    <span class="w-11 h-11 rounded-[8px] inline-flex justify-center items-center text-2xl bg-primary-600/25 text-primary-600 dark:text-primary-600">
+                                        <i class="ri-shopping-cart-fill"></i>
+                                    </span>
+                                </div>
+                                <p class="text-sm mb-0"><span class="bg-success-focus px-1 rounded-[2px] font-medium text-success-600 dark:text-success-600 text-sm"><i class="ri-arrow-right-up-line"></i> 80%</span> From last month </p>
+                            </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-6 xl:col-span-4 2xl:col-span-3">
+                            <div class="px-5 py-4 shadow-none rounded-[8px] h-full bg-gradient-to-l from-purple-500/10 to-purple-500/20 left-line line-bg-lilac relative overflow-hidden">
+                                <div class="flex flex-wrap items-start justify-between gap-1 mb-2">
+                                    <div>
+                                        <span class="mb-0.5 font-medium text-neutral-600 text-base">Total Purchase</span>
+                                        <h6 class="font-semibold mb-1">$35,000</h6>
+                                    </div>
+                                    <span class="w-11 h-11 rounded-[8px] inline-flex justify-center items-center text-2xl bg-purple-600/25 text-purple-600 dark:text-purple-600">
+                                        <i class="ri-handbag-fill"></i>
+                                    </span>
+                                </div>
+                                <p class="text-sm mb-0"><span class="bg-success-focus px-1 rounded-[2px] font-medium text-success-600 dark:text-success-600 text-sm"><i class="ri-arrow-right-up-line"></i> 95%</span> From last month </p>
+                            </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-6 xl:col-span-4 2xl:col-span-3">
+                            <div class="px-5 py-4 shadow-none rounded-[8px] h-full bg-gradient-to-l from-success-500/10 to-success-500/20 left-line line-bg-success relative overflow-hidden">
+                                <div class="flex flex-wrap items-start justify-between gap-1 mb-2">
+                                    <div>
+                                        <span class="mb-0.5 font-medium text-neutral-600 text-base">Total Income</span>
+                                        <h6 class="font-semibold mb-1">$30,000</h6>
+                                    </div>
+                                    <span class="w-11 h-11 rounded-[8px] inline-flex justify-center items-center text-2xl bg-success-600/25 text-success-600 dark:text-success-600">
+                                        <i class="ri-shopping-cart-fill"></i>
+                                    </span>
+                                </div>
+                                <p class="text-sm mb-0"><span class="bg-danger-focus px-1 rounded-[2px] font-medium text-danger-600 dark:text-danger-600 text-sm"><i class="ri-arrow-right-down-line"></i> 30%</span> From last month </p>
+                            </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-6 xl:col-span-4 2xl:col-span-3">
+                            <div class="px-5 py-4 shadow-none rounded-[8px] h-full bg-gradient-to-l from-warning-500/10 to-warning-500/20 left-line line-bg-warning relative overflow-hidden">
+                                <div class="flex flex-wrap items-start justify-between gap-1 mb-2">
+                                    <div>
+                                        <span class="mb-0.5 font-medium text-neutral-600 text-base">Total Expense</span>
+                                        <h6 class="font-semibold mb-1">$7,000</h6>
+                                    </div>
+                                    <span class="w-11 h-11 rounded-[8px] inline-flex justify-center items-center text-2xl bg-warning-600/25 text-warning-600 dark:text-warning-600">
+                                        <i class="ri-shopping-cart-fill"></i>
+                                    </span>
+                                </div>
+                                <p class="text-sm mb-0"><span class="bg-success-focus px-1 rounded-[2px] font-medium text-success-600 dark:text-success-600 text-sm"><i class="ri-arrow-right-up-line"></i> 60%</span> From last month </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-12 2xl:col-span-8">
+            <div class="card border-0 h-full">
+                <div class="card-body p-6 mb-0">
+                    <div class="flex items-center flex-wrap gap-2 justify-between">
+                        <h6 class="font-bold text-lg mb-0">Income Vs Expense </h6>
+                        <select class="form-select form-select-sm w-auto bg-base border text-neutral-600 rounded-[8px] dark:text-white dark:bg-neutral-800">
+                            <option>Yearly</option>
+                            <option>Monthly</option>
+                            <option>Weekly</option>
+                            <option>Today</option>
+                        </select>
+                    </div>
+                    <ul class="flex flex-wrap items-center justify-center my-3 gap-6">
+                        <li class="flex flex-col gap-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-[50rem] bg-primary-600"></span>
+                                <span class="text-neutral-600 text-sm font-semibold">Income </span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <h6 class="mb-0">$26,201</h6>
+                                <span class="text-success-600 dark:text-success-600 flex items-center gap-1 text-sm font-bolder">
+                                    10%
+                                    <i class="ri-arrow-up-s-fill flex"></i>
+                                </span>
+                            </div>
+                        </li>
+                        <li class="flex flex-col gap-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-[50rem] bg-warning-600"></span>
+                                <span class="text-neutral-600 text-sm font-semibold">Expenses </span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <h6 class="mb-0">$18,120</h6>
+                                <span class="text-danger-600 dark:text-danger-600 flex items-center gap-1 text-sm font-bolder">
+                                    10%
+                                    <i class="ri-arrow-down-s-fill flex"></i>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div id="incomeExpense" class="apexcharts-tooltip-style-1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-12 md:col-span-6 2xl:col-span-4">
+            <div class="card border-0 h-full">
+                <div class="card-header border-bottom">
+                    <div class="flex items-center flex-wrap gap-2 justify-between">
+                        <h6 class="font-bold text-lg mb-0">Users</h6>
+                        <a href="javascript:void(0)" class="text-primary-600 dark:text-primary-600 hover-text-primary flex items-center gap-1">
+                            View All
+                            <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-5">
+                    <div class="flex flex-col gap-7">
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                            <img src="assets/images/user-grid/user-grid-img1.png" alt="" class="w-10 h-10 rounded-circle shrink-0 me-3 overflow-hidden">
+                            <div class="grow">
+                                <h6 class="text-base mb-0">Psychiatry</h6>
+                                <span class="text-sm text-neutral-600 font-normal">Super Admin</span>
+                            </div>
+                            </div>
+                            <span class="text-warning-600 dark:text-warning-600 font-medium text-base">Pending</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                            <img src="assets/images/user-grid/user-grid-img2.png" alt="" class="w-10 h-10 rounded-circle shrink-0 me-3 overflow-hidden">
+                            <div class="grow">
+                                <h6 class="text-base mb-0">Orthopedic</h6>
+                                <span class="text-sm text-neutral-600 font-normal">Admin</span>
+                            </div>
+                            </div>
+                            <span class="text-success-600 dark:text-success-600 font-medium text-base">Active</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                            <img src="assets/images/user-grid/user-grid-img3.png" alt="" class="w-10 h-10 rounded-circle shrink-0 me-3 overflow-hidden">
+                            <div class="grow">
+                                <h6 class="text-base mb-0">Cardiology</h6>
+                                <span class="text-sm text-neutral-600 font-normal">Manager</span>
+                            </div>
+                            </div>
+                            <span class="text-success-600 dark:text-success-600 font-medium text-base">Active</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                            <img src="assets/images/user-grid/user-grid-img4.png" alt="" class="w-10 h-10 rounded-circle shrink-0 me-3 overflow-hidden">
+                            <div class="grow">
+                                <h6 class="text-base mb-0">Pediatrics</h6>
+                                <span class="text-sm text-neutral-600 font-normal">Admin</span>
+                            </div>
+                            </div>
+                            <span class="text-success-600 dark:text-success-600 font-medium text-base">Active</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center">
+                            <img src="assets/images/user-grid/user-grid-img1.png" alt="" class="w-10 h-10 rounded-circle shrink-0 me-3 overflow-hidden">
+                            <div class="grow">
+                                <h6 class="text-base mb-0">Neurology </h6>
+                                <span class="text-sm text-neutral-600 font-normal">Manager</span>
+                            </div>
+                            </div>
+                            <span class="text-success-600 dark:text-success-600 font-medium text-base">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-12 md:col-span-6 2xl:col-span-4">
+            <div class="card border-0 h-full">
+                <div class="card-header">
+                    <div class="flex items-center flex-wrap gap-2 justify-between">
+                        <h6 class="font-bold text-lg mb-0">Top Suppliers</h6>
+                        <a href="javascript:void(0)" class="text-primary-600 dark:text-primary-600 hover-text-primary flex items-center gap-1">
+                            View All
+                            <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-6">
+                    <div class="table-responsive scroll-sm">
+                        <table class="table bordered-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="!py-4">SL</th>
+                                    <th scope="col" class="!py-4">Name  </th>
+                                    <th scope="col" class="!py-4">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">1</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Esther Howard</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$30,00.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">2</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Wade Warren</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$40,00.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">3</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Jenny Wilson</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$50,00.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">4</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Kristin Watson</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$60,00.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">5</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Eleanor Pena</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$70,00.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">6</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Darlene Robertson</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$80,00.00</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-12 md:col-span-6 2xl:col-span-4">
+            <div class="card border-0 h-full">
+                <div class="card-header">
+                    <div class="flex items-center flex-wrap gap-2 justify-between">
+                        <h6 class="font-bold text-lg mb-0">Top Customer</h6>
+                        <a href="javascript:void(0)" class="text-primary-600 dark:text-primary-600 hover-text-primary flex items-center gap-1">
+                            View All
+                            <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-6">
+                    <div class="table-responsive scroll-sm">
+                        <table class="table bordered-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="!py-4">SL</th>
+                                    <th scope="col" class="!py-4">Name  </th>
+                                    <th scope="col" class="!py-4">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">1</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Savannah Nguyen</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$30,00.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">2</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Annette Black</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$40,00.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">3</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Theresa Webb</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$50,00.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">4</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Marvin McKinney</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$60,00.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">5</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Brooklyn Simmons</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$70,00.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">6</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Dianne Russell</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$80,00.00</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-12 md:col-span-6 2xl:col-span-4">
+            <div class="card border-0 h-full">
+                <div class="card-header">
+                    <div class="flex items-center flex-wrap gap-2 justify-between">
+                        <h6 class="mb-0.5 font-bold text-lg">Overall Report</h6>
+                        <select class="form-select form-select-sm w-auto bg-base border text-neutral-600 rounded-[8px] dark:text-white dark:bg-neutral-800">
+                            <option>Yearly</option>
+                            <option>Monthly</option>
+                            <option>Weekly</option>
+                            <option>Today</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body p-6">
+                    <div class="mt-8">
+                        <div id="userOverviewDonutChart" class="mx-auto apexcharts-tooltip-z-none"></div>
+                    </div>
+                    <div class="flex flex-wrap gap-5 justify-center mt-12">
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-[2px] bg-primary-600"></span>
+                            <span class="text-neutral-600">Purchase</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-[2px] bg-lilac-600"></span>
+                            <span class="text-neutral-600">Sales</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-[2px] bg-warning-600"></span>
+                            <span class="text-neutral-600">Expense</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-[2px] bg-success-600"></span>
+                            <span class="text-neutral-600">Gross Profit</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-12 md:col-span-6 2xl:col-span-4">
+            <div class="card border-0 h-full">
+                <div class="card-header">
+                    <div class="flex items-center flex-wrap gap-2 justify-between">
+                        <h6 class="font-bold text-lg mb-0">Purchase & Sales</h6>
+                        <select class="form-select form-select-sm w-auto bg-base text-neutral-600">
+                            <option>This Month</option>
+                            <option>This Week</option>
+                            <option>This Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body p-6">
+                    <ul class="flex flex-wrap items-center justify-center my-3 gap-4">
+                        <li class="flex items-center gap-2">
+                            <span class="w-3 h-2 rounded-[50rem] bg-warning-600"></span>
+                            <span class="text-neutral-600 text-sm font-semibold">Purchase: $<span class="text-primary-light font-bold">500</span>
+                            </span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-3 h-2 rounded-[50rem] bg-success-600"></span>
+                            <span class="text-neutral-600 text-sm font-semibold">Sales: $<span class="text-primary-light font-bold">800</span>
+                        </span>
+                        </li>
+                    </ul>
+                    <div id="purchaseSaleChart" class="margin-16-minus y-value-left"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-12 md:col-span-6 2xl:col-span-8">
+            <div class="card border-0 h-full">
+                <div class="card-header">
+                    <div class="flex items-center flex-wrap gap-2 justify-between">
+                        <h6 class="font-bold text-lg mb-0">Recent Transactions</h6>
+                        <a href="javascript:void(0)" class="text-primary-600 dark:text-primary-600 hover-text-primary flex items-center gap-1">
+                            View All
+                            <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-6">
+                    <div class="table-responsive scroll-sm">
+                        <table class="table bordered-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">SL</th>
+                                    <th scope="col">Date  </th>
+                                    <th scope="col">Payment Type</th>
+                                    <th scope="col">Paid Amount</th>
+                                    <th scope="col">Due Amount</th>
+                                    <th scope="col">Payable Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">1</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">21 Jun 2024</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Cash</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$0.00</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$150.00</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$150.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">2</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">21 Jun 2024</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Bank</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$570 </span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$0.00</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$570.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">3</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">21 Jun 2024</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">PayPal</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$300.00</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$100.00</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$200.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">4</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">21 Jun 2024</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">Cash</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$0.00</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$150.00</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$150.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">3</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">21 Jun 2024</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">PayPal</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$300.00</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$100.00</span>
+                                    </td>
+                                    <td class="!py-4">
+                                        <span class="text-neutral-600">$200.00</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+  </div>
+
+  @@include('../layouts/_footer.html')
+</main>
+  
+@@include('../partial-html/_template-bottom.html')
+
+<script>
+    // ===================== Income VS Expense Start =============================== 
+    function createChartTwo(chartId, color1, color2) {
+        var options = {
+            series: [{
+                name: 'series1',
+                data: [48, 35, 50, 32, 48, 40, 55, 50, 60]
+            }, {
+                name: 'series2',
+                data: [12, 20, 15, 26, 22, 30, 25, 35, 25]
+            }],
+            legend: {
+                show: false 
+            },
+            chart: {
+                type: 'area',
+                width: '100%',
+                height: 270,
+                toolbar: {
+                    show: false
+                },
+                padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 3,
+                colors: [color1, color2], // Use two colors for the lines
+                lineCap: 'round'
+            },
+            grid: {
+                show: true,
+                borderColor: '#D1D5DB',
+                strokeDashArray: 1,
+                position: 'back',
+                xaxis: {
+                    lines: {
+                        show: false
+                    }
+                },
+                yaxis: {
+                    lines: {
+                        show: true
+                    }
+                },
+                row: {
+                    colors: undefined,
+                    opacity: 0.5
+                },
+                column: {
+                    colors: undefined,
+                    opacity: 0.5
+                },
+                padding: {
+                    top: -20,
+                    right: 0,
+                    bottom: -10,
+                    left: 0
+                },
+            },
+            fill: {
+                type: 'gradient',
+                colors: [color1, color2], // Use two colors for the gradient
+                // gradient: {
+                //     shade: 'light',
+                //     type: 'vertical',
+                //     shadeIntensity: 0.5,
+                //     gradientToColors: [`${color1}`, `${color2}00`], // Bottom gradient colors with transparency
+                //     inverseColors: false,
+                //     opacityFrom: .6,
+                //     opacityTo: 0.3,
+                //     stops: [0, 100],
+                // },
+                gradient: {
+                    shade: 'light',
+                    type: 'vertical',
+                    shadeIntensity: 0.5,
+                    gradientToColors: [undefined, `${color2}00`], // Apply transparency to both colors
+                    inverseColors: false,
+                    opacityFrom: [0.4, 0.6], // Starting opacity for both colors
+                    opacityTo: [0.3, 0.3], // Ending opacity for both colors
+                    stops: [0, 100],
+                },
+            },
+            markers: {
+                colors: [color1, color2], // Use two colors for the markers
+                strokeWidth: 3,
+                size: 0,
+                hover: {
+                    size: 10
+                }
+            },
+            xaxis: {
+                labels: {
+                    show: false
+                },
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                tooltip: {
+                    enabled: false
+                },
+                labels: {
+                    formatter: function (value) {
+                        return value;
+                    },
+                    style: {
+                        fontSize: "14px"
+                    }
+                }
+            },
+            yaxis: {
+                labels: {
+                    formatter: function (value) {
+                    return "$" + value + "k";
+                    },
+                    style: {
+                    fontSize: "14px"
+                    }
+                },
+            },
+            tooltip: {
+                x: {
+                    format: 'dd/MM/yy HH:mm'
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector(`#${chartId}`), options);
+        chart.render();
+    }
+
+    createChartTwo('incomeExpense', '#487FFF', '#FF9F29');
+    // ===================== Income VS Expense End =============================== 
+
+    // ================================ Users Overview Donut chart Start ================================ 
+    var options = { 
+      series: [30, 30, 20, 20],
+      colors: ['#FF9F29', '#487FFF', '#45B369', '#9935FE'],
+      labels: ['Purchase', 'Sales', 'Expense', 'Gross Profit'] ,
+      legend: {
+          show: false 
+      },
+      chart: {
+        type: 'donut',    
+        height: 270,
+        sparkline: {
+          enabled: true // Remove whitespace
+        },
+        margin: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        },
+        padding: {
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0
+        }
+      },
+      stroke: {
+        width: 0,
+      },
+      dataLabels: {
+        enabled: true
+      },
+      responsive: [{
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 200
+          },
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }],
+    };
+
+    var chart = new ApexCharts(document.querySelector("#userOverviewDonutChart"), options);
+    chart.render();
+    // ================================ Users Overview Donut chart End ================================ 
+  
+    // ================================ Purchase & sale chart End ================================ 
+    var options = {
+      series: [{
+        name: 'Net Profit',
+        data: [44, 100, 40, 56, 30, 58, 50]
+      }, {
+        name: 'Free Cash',
+        data: [60, 120, 60, 90, 50, 95, 90]
+      }],
+      colors: ['#45B369', '#FF9F29'],
+      labels: ['Active', 'New', 'Total'] ,
+      
+      legend: {
+          show: false 
+      },
+      chart: {
+        type: 'bar',
+        height: 260,
+        toolbar: {
+          show: false
+        },
+      },
+      grid: {
+          show: true,
+          borderColor: '#D1D5DB',
+          strokeDashArray: 4, // Use a number for dashed style
+          position: 'back',
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          columnWidth: 8,
+        },
+      },
+      dataLabels: {
+        enabled: false
+      },
+      states: {
+        hover: {
+        filter: {
+            type: 'none'
+            }
+        }
+    },
+      stroke: {
+        show: true,
+        width: 0,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'],
+      },
+      fill: {
+        opacity: 1,
+        width: 18,
+      },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#purchaseSaleChart"), options);
+    chart.render();
+  // ================================ Purchase & sale chart End ================================ 
+</script>
+
+</body>
+</html>

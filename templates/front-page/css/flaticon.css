@@ -1,0 +1,242 @@
+	/*
+  	Flaticon icon font: Flaticon
+  	Creation date: 23/01/2019 13:57
+  	*/
+
+	  @font-face {
+		font-family: "Flaticon";
+		src: url("../fonts/flaticonaf9a.ttf?b7a060d317ab0e06a1b4ff5ef78e32e1") format("truetype"),
+			url("../fonts/flaticonaf9a.woff?b7a060d317ab0e06a1b4ff5ef78e32e1") format("woff"),
+			url("../fonts/flaticonaf9a.woff2?b7a060d317ab0e06a1b4ff5ef78e32e1") format("woff2"),
+			url("../fonts/flaticonaf9a.eot?b7a060d317ab0e06a1b4ff5ef78e32e1#iefix") format("embedded-opentype"),
+			url("../fonts/flaticonaf9a.svg?b7a060d317ab0e06a1b4ff5ef78e32e1#flaticon_jobsy") format("svg");
+		}
+	
+	i[class^="pbmit-jobsy-icon-"]:before, [class*=" pbmit-jobsy-icon-"]:before,
+	i[class^="pbmit-jobsy-icon-"]:after, [class*=" pbmit-jobsy-icon-"]:after {   
+		font-family: "flaticon";
+		font-style: normal; 
+		font-weight: normal;
+		font-variant: normal;
+		text-transform: none;  
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	} 
+
+
+.pbmit-jobsy-icon-rocket:before {
+    content: "\f101";
+}
+.pbmit-jobsy-icon-send:before {
+    content: "\f102";
+}
+.pbmit-jobsy-icon-airplane:before {
+    content: "\f103";
+}
+.pbmit-jobsy-icon-loupe:before {
+    content: "\f104";
+}
+.pbmit-jobsy-icon-placeholder:before {
+    content: "\f105";
+}
+.pbmit-jobsy-icon-saved:before {
+    content: "\f106";
+}
+.pbmit-jobsy-icon-bookmark:before {
+    content: "\f107";
+}
+.pbmit-jobsy-icon-dollar:before {
+    content: "\f108";
+}
+.pbmit-jobsy-icon-location:before {
+    content: "\f109";
+}
+.pbmit-jobsy-icon-job:before {
+    content: "\f10a";
+}
+.pbmit-jobsy-icon-suitcase-1:before {
+    content: "\f10b";
+}
+.pbmit-jobsy-icon-businessman:before {
+    content: "\f10c";
+}
+.pbmit-jobsy-icon-login:before {
+    content: "\f10d";
+}
+.pbmit-jobsy-icon-resume:before {
+    content: "\f10e";
+}
+.pbmit-jobsy-icon-online-profile:before {
+    content: "\f10f";
+}
+.pbmit-jobsy-icon-certified:before {
+    content: "\f110";
+}
+.pbmit-jobsy-icon-cooperation:before {
+    content: "\f111";
+}
+.pbmit-jobsy-icon-job-seeker:before {
+    content: "\f112";
+}
+.pbmit-jobsy-icon-job-interview:before {
+    content: "\f113";
+}
+.pbmit-jobsy-icon-salary:before {
+    content: "\f114";
+}
+.pbmit-jobsy-icon-job-opportunities:before {
+    content: "\f115";
+}
+.pbmit-jobsy-icon-skill:before {
+    content: "\f116";
+}
+.pbmit-jobsy-icon-working:before {
+    content: "\f117";
+}
+.pbmit-jobsy-icon-trophy:before {
+    content: "\f118";
+}
+.pbmit-jobsy-icon-best-employee:before {
+    content: "\f119";
+}
+.pbmit-jobsy-icon-office-chair:before {
+    content: "\f11a";
+}
+.pbmit-jobsy-icon-office-building:before {
+    content: "\f11b";
+}
+.pbmit-jobsy-icon-profile:before {
+    content: "\f11c";
+}
+.pbmit-jobsy-icon-profile-1:before {
+    content: "\f11d";
+}
+.pbmit-jobsy-icon-calculator:before {
+    content: "\f11e";
+}
+.pbmit-jobsy-icon-pen-tool:before {
+    content: "\f11f";
+}
+.pbmit-jobsy-icon-layer:before {
+    content: "\f120";
+}
+.pbmit-jobsy-icon-search:before {
+    content: "\f121";
+}
+.pbmit-jobsy-icon-newspaper:before {
+    content: "\f122";
+}
+.pbmit-jobsy-icon-safety:before {
+    content: "\f123";
+}
+.pbmit-jobsy-icon-graduation-cap:before {
+    content: "\f124";
+}
+.pbmit-jobsy-icon-settings:before {
+    content: "\f125";
+}
+.pbmit-jobsy-icon-idea:before {
+    content: "\f126";
+}
+.pbmit-jobsy-icon-megaphone:before {
+    content: "\f127";
+}
+.pbmit-jobsy-icon-waiter:before {
+    content: "\f128";
+}
+.pbmit-jobsy-icon-scales:before {
+    content: "\f129";
+}
+.pbmit-jobsy-icon-logistic:before {
+    content: "\f12a";
+}
+.pbmit-jobsy-icon-charity:before {
+    content: "\f12b";
+}
+.pbmit-jobsy-icon-research:before {
+    content: "\f12c";
+}
+.pbmit-jobsy-icon-consultant:before {
+    content: "\f12d";
+}
+.pbmit-jobsy-icon-medical-box:before {
+    content: "\f12e";
+}
+.pbmit-jobsy-icon-pet-care:before {
+    content: "\f12f";
+}
+.pbmit-jobsy-icon-pet-house:before {
+    content: "\f130";
+}
+.pbmit-jobsy-icon-grooming:before {
+    content: "\f131";
+}
+.pbmit-jobsy-icon-dog-walking:before {
+    content: "\f132";
+}
+.pbmit-jobsy-icon-clothes:before {
+    content: "\f133";
+}
+.pbmit-jobsy-icon-ear-cleaning:before {
+    content: "\f134";
+}
+.pbmit-jobsy-icon-pet-food:before {
+    content: "\f135";
+}
+.pbmit-jobsy-icon-like:before {
+    content: "\f136";
+}
+.pbmit-jobsy-icon-briefcase:before {
+    content: "\f137";
+}
+.pbmit-jobsy-icon-job-search:before {
+    content: "\f138";
+}
+.pbmit-jobsy-icon-employee:before {
+    content: "\f139";
+}
+.pbmit-jobsy-icon-form:before {
+    content: "\f13a";
+}
+.pbmit-jobsy-icon-candidates:before {
+    content: "\f13b";
+}
+.pbmit-jobsy-icon-resume-1:before {
+    content: "\f13c";
+}
+.pbmit-jobsy-icon-vacancy:before {
+    content: "\f13d";
+}
+.pbmit-jobsy-icon-application:before {
+    content: "\f13e";
+}
+.pbmit-jobsy-icon-customer-service:before {
+    content: "\f13f";
+}
+.pbmit-jobsy-icon-cv:before {
+    content: "\f140";
+}
+.pbmit-jobsy-icon-goal:before {
+    content: "\f141";
+}
+.pbmit-jobsy-icon-interview:before {
+    content: "\f142";
+}
+.pbmit-jobsy-icon-credit-card:before {
+    content: "\f143";
+}
+.pbmit-jobsy-icon-check:before {
+    content: "\f144";
+}
+.pbmit-jobsy-icon-building:before {
+    content: "\f145";
+}
+.pbmit-jobsy-icon-time:before {
+    content: "\f146";
+}
+.pbmit-jobsy-icon-airplane-around-earth:before {
+    content: "\f147";
+}
+.pbmit-jobsy-icon-delivery-delay:before {
+    content: "\f148";
+}

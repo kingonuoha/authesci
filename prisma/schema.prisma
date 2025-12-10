@@ -1,0 +1,445 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SCIENTIST
+  EMPLOYER
+  COLLABORATOR
+  ADMIN
+}
+
+enum JobType {
+  REMOTE
+  HYBRID
+  ON_SITE
+  CONTRACT
+}
+
+enum JobStatus {
+  DRAFT
+  PENDING_PAYMENT
+  ACTIVE
+  CLOSED
+}
+
+enum ApplicationStatus {
+  PENDING
+  SHORTLISTED
+  REJECTED
+  ACCEPTED
+}
+
+enum ProjectStatus {
+  ACTIVE
+  PENDING_COMPLETION
+  COMPLETED
+  ARCHIVED
+}
+
+enum TaskStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum PaymentStatus {
+  PENDING
+  FUNDED
+  RELEASED
+  CANCELLED
+  COMPLETED
+}
+
+enum CollaboratorStatus {
+  ACTIVE
+  REMOVED
+  LEFT
+  INVITED
+}
+
+model Profile {
+  id               String          @id @default(uuid())
+  userId           String          @unique
+  email            String          @unique
+  fullName         String          @map("full_name")
+  role             Role
+  bio              String?
+  skills           String[]        @default([])
+  experience       String?
+  cvUrl            String?         @map("cv_url")
+  avatarUrl        String?         @map("avatar_url")
+  companyLogoUrl   String?         @map("company_logo_url")
+  institution      String?
+  publications     String[]        @default([])
+  certifications   String[]        @default([])
+  completionScore  Int             @default(0) @map("completion_score")
+  bankName         String?         @map("bank_name")
+  accountNumber    String?         @map("account_number")
+  accountName      String?         @map("account_name")
+  recipientCode    String?         @map("recipient_code")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  jobsPosted       Job[]           @relation("JobsPosted")
+  applications     Application[]   @relation("Applications")
+  projectsCreated  Project[]       @relation("ProjectsCreated")
+  collaborations   Collaborator[]  @relation("Collaborations")
+  notifications    Notification[]  @relation("Notifications")
+  projectFiles     ProjectFile[]   @relation("ProjectFiles")
+  tasks            Task[]          @relation("Tasks")
+  projectActivities ProjectActivity[] @relation("ProjectActivities")
+  paymentsAsEmployer Payment[]       @relation("PaymentsAsEmployer")
+  paymentsAsScientist Payment[]       @relation("PaymentsAsScientist")
+
+  // Batch 8: AI & Notifications
+  cvUrls          String[]        @default([])
+  cvIntel         Json?
+  aiFeatureVector Unsupported("vector")?
+  isPremium       Boolean         @default(false)
+  settings        Json?
+
+  // Batch 9: Admin & Logs
+  isBanned        Boolean         @default(false) @map("is_banned")
+  logs            Log[]
+
+  // Batch 10: Chat System
+  participations Participant[]
+  messagesSent   Message[]
+  lastSeenAt     DateTime?       @map("last_seen_at")
+
+  // Batch 11: Transactions
+  transactions   Transaction[]
+
+  pageViews      PageView[]
+
+  @@map("profiles")
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  type        String   // "DEPOSIT", "PAYOUT", "REFUND", "FEE"
+  amount      Decimal  @db.Decimal(10, 2)
+  status      String   // "SUCCESS", "PENDING", "FAILED"
+  reference   String?
+  description String?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("transactions")
+}
+
+model Job {
+  id           String        @id @default(uuid())
+  title        String 
+  description  String
+  requirements String[]      @default([])
+  category     String?
+  jobType      JobType       @map("job_type")
+  location     String?
+  salaryRange  String?       @map("salary_range")
+  finalPrice   Decimal?      @db.Decimal(10, 2) @map("final_price")
+  status       JobStatus     @default(DRAFT)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  employerId   String        @map("employer_id")
+  employer     Profile       @relation("JobsPosted", fields: [employerId], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  // Batch 8: AI Features
+  aiFeatureVector         Unsupported("vector")?
+  aiIntel                 Json?
+  aiRecommendedScientists Json?
+
+  // Batch 11: Screening Questions
+  screeningQuestions      Json?
+
+  @@map("jobs")
+}
+
+model Application {
+  id            String            @id @default(uuid())
+  jobId         String            @map("job_id")
+  applicantId   String            @map("applicant_id")
+  coverLetter   String?           @map("cover_letter")
+  resumeUrl     String?           @map("resume_url")
+  status        ApplicationStatus @default(PENDING)
+  shortlistedAt DateTime?         @map("shortlisted_at")
+  rejectedAt    DateTime?         @map("rejected_at")
+  contactedAt   DateTime?         @map("contacted_at")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  job           Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicant     Profile           @relation("Applications", fields: [applicantId], references: [id], onDelete: Cascade)
+
+  // Batch 8: AI Features
+  aiMatchScore Float?
+  aiIntel      Json?
+
+  // Batch 11: Screening Answers
+  screeningAnswers Json?
+
+  @@unique([jobId, applicantId])
+  @@map("applications")
+}
+
+model Project {
+  id           String         @id @default(uuid())
+  creatorId    String         @map("creator_id")
+  title        String
+  description  String
+  budget       Decimal?       @db.Decimal(10, 2)
+  status       ProjectStatus  @default(ACTIVE)
+  hasQuestions Boolean        @default(false) @map("has_questions")
+  deletedAt    DateTime?      @map("deleted_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  creator      Profile        @relation("ProjectsCreated", fields: [creatorId], references: [id], onDelete: Cascade)
+  collaborators Collaborator[]
+  files        ProjectFile[]
+  tasks        Task[]
+  questions    ProjectQuestion[]
+  activities   ProjectActivity[]
+  payments     Payment[]
+
+  @@map("projects")
+}
+
+model Collaborator {
+  id         String             @id @default(uuid())
+  projectId  String             @map("project_id")
+  userId     String             @map("user_id")
+  role       String
+  permissions String[]           @default(["view"])
+  status     CollaboratorStatus @default(ACTIVE)
+  joinedAt   DateTime           @default(now()) @map("joined_at")
+  project    Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user       Profile            @relation("Collaborations", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("collaborators")
+}
+
+model ProjectFile {
+  id          String   @id @default(uuid())
+  projectId   String   @map("project_id")
+  uploadedBy  String   @map("uploaded_by")
+  fileName    String   @map("file_name")
+  fileUrl     String   @map("file_url")
+  fileType    String   @map("file_type")
+  fileSize    Int?
+  content     String?  @db.Text
+  summary     String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  uploader    Profile  @relation("ProjectFiles", fields: [uploadedBy], references: [id], onDelete: Cascade)
+
+  // Batch 10: RAG
+  aiFeatureVector Unsupported("vector")?
+
+  @@map("project_files")
+}
+
+model Task {
+  id          String       @id @default(uuid())
+  projectId   String       @map("project_id")
+  assignedTo  String?      @map("assigned_to")
+  title       String
+  description String?
+  status      TaskStatus   @default(OPEN)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?    @map("due_date")
+  imageUrl    String?      @map("image_url")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee    Profile?     @relation("Tasks", fields: [assignedTo], references: [id])
+
+  @@map("tasks")
+}
+
+model ProjectQuestion {
+  id           String  @id @default(uuid())
+  projectId    String  @map("project_id")
+  questionText String  @map("question_text")
+  required     Boolean
+  orderIndex   Int?    @map("order_index")
+  project      Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_questions")
+}
+
+model ProjectActivity {
+  id        String   @id @default(uuid())
+  projectId String   @map("project_id")
+  userId    String   @map("user_id")
+  action    String
+  metadata  Json?    @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at")
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      Profile  @relation("ProjectActivities", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("project_activity")
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  projectId   String        @map("project_id")
+  employerId  String        @map("employer_id")
+  scientistId String        @map("scientist_id")
+  amount          Decimal       @db.Decimal(10, 2)
+  platformFee     Decimal       @default(0) @db.Decimal(10, 2) @map("platform_fee")
+  scientistAmount Decimal       @default(0) @db.Decimal(10, 2) @map("scientist_amount")
+  status      PaymentStatus @default(PENDING)
+  reference   String?       @unique
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employer    Profile       @relation("PaymentsAsEmployer", fields: [employerId], references: [id], onDelete: Cascade)
+  scientist   Profile       @relation("PaymentsAsScientist", fields: [scientistId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  type      String
+  message   String
+  read      Boolean  @default(false)
+  metadata  Json?    @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Batch 8: Enhanced Notifications
+  title     String?
+  link      String?
+  
+  user      Profile  @relation("Notifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  source    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("subscriptions")
+}
+model Log {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  action    String   // e.g., "LOGIN", "JOB_APPLY", "PAYMENT_SUCCESS", "PAYMENT_FAILURE"
+  status    String   // "SUCCESS", "FAILURE", "WARNING"
+  level     String   // "INFO", "WARN", "ERROR"
+  message   String
+  metadata  Json?    // Context: IP address, error stack, payment ref, etc.
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("logs")
+}
+
+// Batch 10: Chat System
+enum ConversationType {
+  DIRECT
+  GROUP
+  AI_SUPPORT
+}
+
+enum AttachmentType {
+  IMAGE
+  FILE
+  AUDIO
+}
+
+model Conversation {
+  id        String           @id @default(uuid())
+  type      ConversationType
+  name      String?          // Null for 1:1, Required for named Groups
+  
+  // Contextual Links
+  projectId String?          @map("project_id")
+  jobId     String?          @map("job_id")
+
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  participants Participant[]
+  messages     Message[]
+
+  @@map("conversations")
+}
+
+model Participant {
+  conversationId String   @map("conversation_id")
+  userId         String   @map("user_id")
+  role           String?  // 'ADMIN', 'MEMBER'
+  
+  joinedAt       DateTime @default(now()) @map("joined_at")
+  lastReadAt     DateTime @default(now()) @map("last_read_at")
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           Profile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, userId])
+  @@map("participants")
+}
+
+model Message {
+  id             String          @id @default(uuid())
+  conversationId String          @map("conversation_id")
+  senderId       String?         @map("sender_id") // Nullable for SYSTEM/AI
+  
+  content        String          @db.Text
+  
+  attachmentUrl  String?         @map("attachment_url")
+  attachmentType AttachmentType? @map("attachment_type")
+
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         Profile?     @relation(fields: [senderId], references: [id])
+
+  @@map("messages")
+}
+
+model PageView {
+  id         String     @id @default(uuid())
+  timestamp  DateTime   @default(now())
+  path       String
+  userId     String?    @map("user_id")
+  ipAddress  String     @map("ip_address")
+  deviceType DeviceType @map("device_type")
+  userAgent  String?    @map("user_agent")
+
+  user Profile? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([ipAddress])
+  @@map("page_views")
+}
+
+enum DeviceType {
+  DESKTOP
+  TABLET
+  MOBILE
+}

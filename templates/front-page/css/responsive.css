@@ -1,0 +1,1875 @@
+/******************************
+
+INDEX:
+
+******************************/
+
+body {
+    overflow: visible;
+    overflow-x: hidden;
+}
+
+@media (min-width: 1400px){
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: 1200px;
+    }
+}
+
+@media (max-width: 1400px){
+	/** Homepage 01 **/
+	.ihbox-one_ihbox-style-13{
+		left: -90px;
+	}
+	.about-job-one_rightbox{
+		margin-right: -100px;
+		padding-right: 177px;
+		border-radius: 0;
+	}
+	/** Homepage 02 **/
+	.pricebox-two_bg .container{
+		width: auto;
+		padding: 0;
+	}
+	.testimonial_img2{
+		right: 15%;
+	}
+	.testimonial_img4{
+		left: 15%;
+	}
+	/** Homepage 03 **/
+	.about-three_bg{
+		margin: 0;
+	}
+	.about-three-contact_box{
+		right: -19%;
+	}
+	/** Homepage 06 **/
+	.about-six_star_img{
+		left: 30px;
+    	top: 90px;
+	}
+	/** Homepage 07 **/
+	.ihbox-seven_bg:before{
+		margin-right: -112px;
+	}
+	/** About Us **/
+	.about-col-1, 
+	.about-col-2,
+	.about-col-3,
+	.about-col-4{
+		width: 25%;
+	}
+	.about-us-img1{
+		margin-left: -80px;
+		margin-right: 30px;
+	}
+	.about-us-img4{
+		margin-right: -80px;
+		margin-left: 30px;
+	}
+}
+
+@media (max-width: 1366px){
+	/** Homepage 01 **/
+	.about-job-one_rightbox{
+		margin-right: -83px;
+	}
+	/** Homepage 03 **/
+	.about-three_rightbox{
+		margin-right: -110px;
+	}
+}
+
+@media (max-width: 1280px){
+	/** Homepage 01 **/
+	.about-one_ihbox-style-7{
+		left: 405px;
+	}
+	.about-job-one_rightbox{
+		margin-right: -40px;
+	}
+	.ihbox-one_icon{
+		left: -25px;
+	}
+	.ihbox-one_ihbox-style-13 {
+		left: -25px;
+	}
+	.job-category_one .pbmit-job-category{
+		padding: 35px 20px;
+	}
+	/** Homepage 02 **/
+	.pricebox-two_content{
+		border-radius: 0;
+	}
+	.google_img{
+		right: -8%;
+	}
+	/** Homepage 03 **/
+	.about-three-contact_box{
+		display: none;
+	}
+	.about-three_rightbox{
+		margin-right: -67px;
+	}
+	/** About Us **/
+	.about-us-img1{
+		margin-left: -30px;
+	}
+	.about-us-img4{
+		margin-right: -30px;
+	}
+	/** Post Job **/
+	.step-indicator .step a {
+		min-width: 179px;
+	}
+}
+
+@media (min-width: 1200px){
+	.container {
+		max-width: 1200px;
+	}
+	.site-header .pbmit-logo-menuarea{
+		display: flex!important;
+		justify-content: space-between!important;
+	}
+	.site-header .main-menu .navigation > li{
+		height: 100px;
+		line-height: 100px;
+	}
+	.site-navigation ul.navigation > li > a{
+		margin: 0 13px;
+		height: 100px;
+		line-height: 100px;
+	}
+	.main-menu .navigation > li > ul li a:before{
+		position: absolute;
+		content: '';
+		left: 18px;
+		top: 24px;
+		width: 0px;
+		height: 2px;
+		background-color: transparent;
+		-webkit-transition: all .500s ease-in-out;
+		transition: all .500s ease-in-out;
+	}
+	.main-menu .navigation > li > ul li:hover a{
+		padding-left: 40px;
+	}
+	.main-menu .navigation > li > ul li:hover a:before{
+		background-color: rgba(0, 0, 0, 0.50);
+    	width: 10px;
+	}
+	.site-header .pbmit-header-search-btn{
+		margin: 0 10px;
+	}
+	.main-menu .navigation > li > ul li:hover a{
+		background-color: var(--pbmit-white-color);
+		color: var(--pbmit-global-color);
+	}
+	.main-menu .navigation > li > ul li.active a{
+		color: var(--pbmit-global-color);
+	}
+	.site-navigation ul.navigation > li > a:hover{
+		color: var(--pbmit-global-color);
+   }
+	.header-style-1 .container-fluid{
+		max-width: none;
+    	padding: 0 30px;
+	}
+	.header-style-1 .site-branding{
+		margin-right: 60px;
+	}
+	.header-style-1 .site-navigation ul.navigation > li > a, 
+	.header-style-1.site-header .main-menu .navigation > li {
+		height: 80px;
+		line-height: 80px;
+	}
+	.site-header .sticky-header .site-title, 
+	.site-header .sticky-header .main-menu .navigation > li, 
+	.sticky-header .site-navigation ul.navigation > li > a {
+		height: auto;
+		line-height: 90px;
+	}
+	.header-style-3.site-header .site-navigation ul.navigation > li > a,
+	.header-style-3.site-header .site-navigation ul.navigation > li > a:after{
+		color: var(--pbmit-white-color);
+	}
+}
+
+@media (max-width: 1200px){
+	/*=== Header ===*/ 
+	.pbmit-right-main-box {
+		display: none;
+	}
+	.pbmit-header-button{
+		display: none;
+	}
+	.site-header .pbmit-right-box,
+	.pbmit-right-box .pbmit-header-search-btn{
+		display: none;
+	}
+	.header-content{
+		width: 100%;
+	}
+	.header-style-1 .pbmit-pre-header-wrapper{
+		display: none;
+	}
+	.pbmit-header-overlay{
+		position: relative;
+	}
+	/*=== Title Bar ===*/
+	.pbmit-tbar-title{
+		font-size: 36px;
+    	line-height: 42px;
+	}
+	/** Homepage 01 **/
+	.about-one_ihbox-style-7{
+		left: 390px;
+		width: 185px;
+	}
+	.about-one_ihbox-style-14{
+		left: 335px;
+		width: 237px;
+	}
+	.ihbox-one_icon{
+		left: 14px;
+		top: -45px;
+	}
+	.ihbox-one_ihbox-style-13{
+		left: 15px;
+		bottom: 20px;
+		width: 200px;
+	}
+	.ihbox-one_imgbox{
+		margin-left: -45px;
+	}
+	.about-job-one_rightbox{
+		margin-right: -12px;
+		padding-right: 101px;
+		background-image: none;
+	}
+	/** Homepage 02 **/ 
+	.google_img{
+		padding: 0;
+		right: 65px;
+	}
+	/** Homepage 03 **/ 
+	.about-us-three_rightbox .pbmit-ihbox-style-4 .pbmit-heading-desc br{
+		display: none;
+	}
+	/** Homepage 05 **/ 
+	.ihbox-five_col{
+		padding-left: 30px;
+	}
+	/** Homepage 07 **/ 
+	.ihbox-seven_bg:before {
+		margin-right: -19px;
+	}
+}
+
+
+@media(max-width:1199px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: none;
+    }
+	.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+		padding-right: calc(var(--bs-gutter-x) * .8);
+		padding-left: calc(var(--bs-gutter-x) * .8);
+	} 
+	.sticky-header{
+		position: relative  !important;
+	}
+    /** Main menu resoposive **/
+	.pbmit-menu-wrap {
+		background-color: #fff;
+		position: fixed;
+		top: 0;
+		right: -400px;
+		z-index: 1000;
+		width: 300px;
+		height: 100%;
+		padding: 0;
+		display: block;
+		transition: all 900ms ease;
+		-moz-transition: all 900ms ease;
+		-webkit-transition: all 900ms ease;
+		-ms-transition: all 900ms ease;
+		-o-transition: all 900ms ease;
+		-webkit-transform: translateX(400px);
+		-ms-transform: translateX(400px);
+		transform: translateX(400px);
+		opacity: 0;
+	}
+	.active .pbmit-menu-wrap{
+		right: 0px;
+		-webkit-transform: translateX(0);
+		-ms-transform: translateX(0);
+		transform: translateX(0);
+		visibility: visible;
+		opacity: 1;
+		overflow-y: scroll;
+		-webkit-transition-delay: 600ms;
+		-moz-transition-delay: 600ms;
+		-ms-transition-delay: 600ms;
+		-o-transition-delay: 600ms;
+		transition-delay: 600ms;
+		opacity: 1;
+	}
+	.pbmit-menu-wrap>ul{
+		padding: 98px 0;
+	}
+	.pbmit-mobile-menu-bg {
+		position: fixed;
+		right: 0;
+		top: 0;
+		width: 0%;
+		height: 100%;
+		display: block;
+		z-index: 99;
+		background: rgba(0,0,0,.9);
+		-webkit-transform: translateX(101%);
+		-ms-transform: translateX(101%);
+		transform: translateX(101%);
+		transition: all 900ms ease;
+		-moz-transition: all 900ms ease;
+		-webkit-transition: all 900ms ease;
+		-ms-transition: all 900ms ease;
+		-o-transition: all 900ms ease;
+		-webkit-transition-delay: 300ms;
+		-moz-transition-delay: 300ms;
+		-ms-transition-delay: 300ms;
+		-o-transition-delay: 300ms;
+		transition-delay: 300ms;
+	}
+	.active .pbmit-mobile-menu-bg {
+		opacity: 1;
+		width: 100%;
+		visibility: visible;
+		transition: all 900ms ease;
+		-moz-transition: all 900ms ease;
+		-webkit-transition: all 900ms ease;
+		-ms-transition: all 900ms ease;
+		-o-transition: all 900ms ease;
+		-webkit-transform: translateX(0%);
+		-ms-transform: translateX(0%);
+		transform: translateX(0%);
+	}
+	.closepanel {
+		position: absolute;
+		z-index: 99;
+		right: 24px;
+		margin-left: -20px;
+		top: 25px;
+		display: block;
+		width: 30px;
+		height: 30px;
+		line-height: 30px;
+		border-radius: 50%;
+		text-align: center;
+		cursor: pointer;
+		font-size: 16px;
+		color: #fff;
+		border: 0;
+		background-color: rgb(111 111 111);
+		-webkit-transition: all 300ms ease;
+		transition: all 300ms ease;
+	}
+	.closepanel:hover{
+		color: var(--pbmit-white-color);
+		background-color: var(--pbmit-global-color);
+	}
+    .navbar-toggler { 
+		display: block;
+		border: none; 
+		font-size: 35px; 
+		width: 40px;
+		line-height: 35px;
+		padding: 0; 
+		outline: none; 
+		color: #2c2c2c;
+		vertical-align: middle;
+	}
+    .sticky-header .navbar-toggler { 
+		top: 10px; 
+	}
+    .navbar-toggler:hover, 
+	.navbar-toggler:focus { 
+		outline: none; 
+	}
+    .main-menu .navbar-collapse {
+		position: absolute;
+		width: 100%; left: 0;
+		background-color: #fff;
+		z-index: 99;
+		top: 82px; 
+	}
+    .sticky-header .navbar-collapse {
+		top: 60px; 
+	}
+    .main-menu .navigation > li {
+		float: none; 
+		border-bottom: 1px solid rgb(0 0 0 / 6%); 
+	}
+    .site-header .site-navigation ul.navigation > li > a {
+		height: auto; 
+		line-height: inherit; 
+		padding: 15px 20px; 
+		margin: 0; 	
+		display: inline-block;	
+	}
+	.main-menu .navigation > li > ul a{
+		padding: 15px 25px; 
+		text-transform: none;
+		display: inline-block;
+	}
+    .main-menu .navigation > li > ul,
+	.main-menu .navigation > li > ul > li > ul {
+		border: none; 
+		box-shadow: inherit !important; 
+		width: 100%;
+		display: none; 
+		position: inherit; 
+		-webkit-transform: translateY(0); 
+		-moz-transform: translateY(0); 
+		-ms-transform: translateY(0); 
+		-o-transform: translateY(0); 
+		transform: translateY(0); 
+	}
+    .main-menu .navigation > li > ul > li > ul { 
+		left: 0; 
+		top: 100%; 
+	}
+    .main-menu .navigation > li.dropdown > ul.open, 
+	.main-menu .navigation > li.dropdown > ul.open li.dropdown > ul.open {
+		display: block; 
+		opacity: 1; 
+		visibility: visible; 
+		padding-bottom: 10px;
+		height: auto;
+		padding-left: 1em;
+	}
+	.main-menu .navigation > li > ul li{
+		border-bottom: 1px solid rgb(0 0 0 / 6%);
+	}
+	.main-menu .navigation > li > ul a{
+		border: none;
+	}
+    .menu-right-box { 
+		position: relative; 
+		right: 30px; 
+		top: 10px; 
+	}
+	.site-header .righticon {
+		display: block;
+		position: absolute;
+		right: 25px;
+		top: 15px;
+		cursor: pointer;
+		color: rgba(0, 0, 0, 0.80);
+	}
+    .site-header .menu-right-box { 
+		display: none !important; 
+	}
+    .main-menu ul > li.dropdown > a:after{
+		display: none;
+	}
+    /** Header responsive **/
+	.header-style-3.site-header .site-branding .logo-img{
+		display: none;
+	}
+	.header-style-3.site-header .site-branding .responsive-logo{
+		display: block;
+	}
+}
+
+@media(min-width:1024px){
+	/** Homepage 01 **/ 
+	.ihbox-one_icon2{
+		left: 390px;
+	} 
+	/** Homepage 08 **/ 
+	.about-us-section_eight{
+		background-attachment: fixed;
+	}
+}
+
+@media(max-width:1024px) {
+	/** Section padding **/
+	.section-lgx {
+		padding-top: 90px;
+		padding-bottom: 70px;
+	}
+	/** Homepage 01 **/ 
+	.about-one_ihbox-style-7{
+		display: none;
+	}
+	.about-one_ihbox-style-14{
+		left: 155px;
+	}
+	.about-one_leftbox .pbmit-job-search-form{
+		margin-right: -55px;
+	}
+	.client_one{
+		padding-top: 80px;
+	}
+	.job-category_one{
+		padding-bottom: 80px;
+	}
+	.ihbox-one_imgbox{
+		margin-left: -120px;
+	}
+	.ihbox-one_rightbox{
+		padding: 35px 0px 0px 70px;
+	}
+	.slider-one_leftbox{
+		padding-top: 90px;
+	}
+	.about-job-one_rightbox {
+		margin-right: 0px;
+		padding-right: 0;
+	}
+	.about-us_one .container{
+		padding: 0;
+	}
+	.about-us-one_leftbox{
+		height: 100%;
+		padding: 20px 0px 0px 65px;
+	}
+	.about-us-one_rightbox{
+		padding: 100px 15px 30px 15px;
+	}
+	/** Homepage 02 **/ 
+	.about-us_two_leftbox{
+		padding-left: 50px;
+	}
+	.pbmit-ihbox-style-5 .pbmit-ihbox-icon-wrapper{
+		margin-right: 0;
+	}
+	.about-us-two_rightbox{
+		padding-left: 47px;
+	}
+	/** Homepage 03 **/ 
+	.about-three_col{
+		padding-top: 100px;
+	}
+	.about-three_rightbox{
+		margin: 0;
+	}
+	.ihbox-three_box{
+		margin-top: 80px;
+	}
+	.about-us-three_leftbox {
+		padding-right: 60px;
+	}
+	.job-block-three_ihbox1 .pbmit-ihbox-style-5 .pbmit-ihbox-contents,
+	.job-block-three_ihbox2 .pbmit-ihbox-style-5 .pbmit-ihbox-contents{
+		margin-left: 25px;
+	}
+	/** Homepage 04 **/ 
+	.about-four_bg{
+		padding-top: 100px;
+	}
+	.pbmit-static-box-style-1 .pbmit-contentbox{
+		padding: 80px 0 0px 50px;
+	}
+	.pbmit-static-box-style-1 .pbmit-contentbox h4{
+		padding-right: 0;
+	}
+	.about-us-four_rightbox{
+		padding-right: 0;
+	}
+	/** Homepage 05 **/
+	.about-five_leftbox {
+		padding: 70px 0px 10px 0px;
+	} 
+	.about-five_leftbox .pbmit-job-search-form{
+		margin-right: 0;
+	}
+	.client_five .pbmit-col-wrapper{
+		width: 33%;
+	}
+	.client_five .pbmit-client-style-2{
+		margin-bottom: 30px;
+	}
+	.ihbox-five_col{
+		padding: 100px 260px 100px 30px;
+	}
+	.testimonial-five_box{
+		padding-top: 0;
+	}
+	/** Homepage 06 **/ 
+	.about-six_bg .pbmit-job-search-form button{
+		padding: 17px 25px;
+	}
+	.ihbox-six_box .pbmit-ihbox-style-11 .pbmit-heading-desc br{
+		display: none;
+	}
+	.about-us-six_col-1, .about-us-six_col-3 {
+		width: 27%;
+	}
+	.about-us-six_col-2 {
+		width: 46%;
+	}
+	.about-us-six_col-1 .pbmit-ihbox-style-10 .pbmit-ihbox-contents,
+	.about-us-six_col-3 .pbmit-ihbox-style-10 .pbmit-ihbox-contents{
+		padding: 33px 30px;
+	}
+	.about-us-one_iconbox .pbmit-ihbox-style-15 .pbmit-ihbox-box {
+		padding: 15px 14px;
+	}
+	/** Homepage 07 **/ 
+	.ihbox-seven_bg{
+		padding: 80px 0px 80px 0px;
+	}
+	.accordion-seven_leftbox{
+		margin-left: -150px;
+	}
+	.ihbox-seven_bg .pbmit-ihbox-style-8 .pbmit-ihbox-contents{
+		padding: 0 50px;
+	}
+	/** Homepage 08 **/ 
+	.about-eight_leftbox {
+		padding-top: 80px;
+	}
+	.about-eight_leftbox .pbmit-job-search-form{
+		margin-right: 150px;
+	}
+	.about-eight_bg{
+		background-image: none;
+	}
+	.pbmit-lottie-eight_box{
+		margin: 0;
+	}
+	.fid-section_eight{
+		padding-top: 0 !important;
+	}
+	.category-eight_box .pbmit-job-category h4{
+		font-size: 15px;
+	}
+	.ihbox-eight_leftbox .pbmit-col-stretched-left{
+		position: relative;
+		margin: 0;
+		background-image: none;
+	}
+	.ihbox-eight_leftbox{
+		margin-right: 0;
+		padding-bottom: 60px;
+	}
+	.pbmit-lottiefiles-style-1{
+		margin: 0;
+	}
+	.ihbox-eight_rightbox {
+		padding-bottom: 0;
+	}
+	.testimonial-eight_leftbox{
+		padding-top: 0;
+	}
+	.testimonial-eight_box{
+		padding-bottom: 0;
+	}
+	.testimonial-eight_box .pbmit-col-stretched-right{
+		background-image: none;
+	}
+	.pbmit-lottiefiles-style-2{
+		margin: 0;
+	}
+	.pbmit-lottiefiles-style-2 lottie-player {
+		height: auto;
+	}
+	/** Candidate Single **/ 
+	.job_details_section .job-details_inner .progressbar{
+		padding: 10px 60px 10px 15px;
+	}
+	.job-details_achivement_content{
+		padding: 7px;
+	}
+	.job-details_achivement_content p{
+		padding: 12px;
+    	font-size: 13px;
+	}
+	/** About Us **/ 
+	.fid_section{
+		padding: 100px 15px 100px 15px;
+	}
+	.about-us-img1 {
+		margin-left: 0;
+	}
+	.about-us-img4{
+		margin-right: 0;
+	}
+	.client_section {
+		padding: 50px 0px 40px 0px;
+	}
+	/** Blog Classic **/ 
+	.sidebar .recent-post-list li > a{
+		margin-right: 15px;
+	}
+	.sidebar .recent-post-list li a{
+		font-size: 15px;
+	} 
+	/** Post Job **/ 
+	.step-indicator .step a {
+		min-width: 114px;
+	}
+	/*=== Footer ===*/
+	.pbmit-footer-big-area-wrapper{
+		padding-right: 12px;
+	}
+	.pbmit-footer-big-area-wrapper .container{
+		padding: 0;
+	}
+	.footer .newslatter-form{
+		padding-right: 160px;
+		border-radius: 0px;
+	}
+	.pbmit-footer-copyright-box{
+		padding-bottom: 20px;
+	}
+}
+
+@media(max-width:991px) {
+	/** Section Title **/
+	.pbmit-heading .pbmit-title,
+	.about-six_leftbox .pbmit-heading .pbmit-title,
+	.about-three_leftbox .pbmit-heading .pbmit-title,
+	.about-four_bg .pbmit-heading .pbmit-title,
+	.about_two .pbmit-heading .pbmit-title{
+		font-size: 32px;
+    	line-height: 36px;
+	}
+	.pbmit-heading .pbmit-title br,
+	.pbmit-heading .pbmit-heading-desc br{
+		display: none;
+	}
+    /** Section Padding **/
+	.section-lg {
+		padding-top: 80px;
+		padding-bottom: 80px;
+	}
+	.section-lgb{
+		padding-bottom: 80px;
+	}
+	.section-lgt{
+		padding-top: 70px;
+	}
+	/** Revolution **/
+	#rev_slider_7_1_wrapper .dogimg,
+	#rev_slider_7_1_wrapper .side_text{
+		bottom: 55px;
+	}
+	#rev_slider_7_1_wrapper .slider-1-slide-1-layer-play_icon{
+		bottom: 80px;
+		left: -5px;
+		line-height: 23px !important;
+		height: 40px !important;
+   	 	width: 40px !important;
+	}
+	/** Homepage 01 **/ 
+	.about-one_leftbox{
+		padding: 80px 0px 0px 0px;
+	}
+	.about-one_leftbox .pbmit-job-search-form{
+		margin-right: 0;
+	}
+	.about-one_ihbox {
+		margin-top: 50px;
+		margin-bottom: 50px;
+	}
+	.about-one_rightbox:before{
+		left: -22px;
+		border-radius: 0;
+	}
+	.about-one_ihbox-style-7{
+		display: block;
+		width: 210px;
+		left: 515px;
+	}
+	.job-category_one{
+		padding-bottom: 60px;
+	}
+	.ihbox-one_imgbox{
+		margin: 0;
+		text-align: center;
+	}
+	.ihbox-one_icon2{
+		right: 15px;
+		left: auto;
+		top: 460px;
+	}
+	.ihbox-one_bg{
+		border-radius: 0;
+	}
+	.ihbox-one_rightbox{
+		padding-left: 15px;
+	}
+	.ihbox-one_rightbox .pbmit-ihbox-style-1{
+		margin-bottom: 30px;
+	}
+	.slider-one_leftbox {
+		padding: 0px 15px 30px 0px;
+	}
+	.about-job_one{
+		margin-top: 50px;
+    	margin-bottom: 80px;
+	}
+	.about-job-one_img{
+		margin-top: 0;
+	}
+	.about-us-one_img:before{
+		left: 100px;
+	}
+	.about-us_two_leftbox{
+		padding-left: 25px;
+    	padding-right: 15px;
+	}
+	.about-us-two_rightbox .pbmit-ihbox-style-5 .pbmit-ihbox-contents,
+	.about-us_two_leftbox .pbmit-ihbox-style-5 .pbmit-ihbox-contents {
+		margin-left: 25px;
+	}
+	.about-us-two_rightbox .pbmit-ihbox-style-5 .pbmit-heading-desc br,
+	.about-us_two_leftbox .pbmit-ihbox-style-5 .pbmit-heading-desc br{
+		display: none;
+	}
+	.about-us-two_rightbox .pbmit-ihbox-style-5 .pbmit-element-title a,
+	.about-us_two_leftbox .pbmit-ihbox-style-5 .pbmit-element-title a{
+		font-size: 26px;
+	}
+	.about-us-one_rightbox{
+		padding-top: 60px;
+	}
+	/** Homepage 02 **/ 
+	.about-us-two_rightbox{
+		padding-left: 28px;
+	}
+	.ihbox-two_box .pbmit-ihbox-style-2 .pbmit-ihbox-box:before{
+		width: 82px;
+	}
+	.ihbox-two_box .pbmit-ihbox-style-2 .pbmit-heading-desc br{
+		display: none;
+	}
+	.google_img{
+		right: 0;
+	}
+	.pricing_two .pbmit-ptable-cols .pbmit-ptable-col:not(:last-child){
+		margin-bottom: 30px;
+	}
+	.browse-compny-two_left{
+		padding-right: 0;
+	}
+	.browse-compny-section_two{
+		padding-bottom: 100px;
+	}
+	.browse-compny-two_right{
+		padding: 0px 50px 0px 20px;
+	}
+	.testimonial_two{
+		padding: 60px 0px 30px 0px;
+	}
+	.testimonial_img{
+		display: none;
+	}
+	.pbmit-testimonial-style-7 blockquote{
+		padding: 0;
+	}
+	/** Homepage 03 **/ 
+	.about-three_leftbox .pbmit-job-search-form{
+		margin-right: 0;
+	}
+	.ihbox-three_box .col-md-12:not(:last-child){
+		margin-bottom: 30px;
+	}
+	.top-countries_three{
+		padding: 90px 0px 90px 0px;
+	}
+	.about-us-three_leftbox .browse-compny-two_right{
+		margin-bottom: 80px;
+	}
+	.about-us_three{
+		padding-top: 70px;
+	}
+	.about-us-three_leftbox {
+		padding-right: 140px;
+	}
+	.testimonial-three_leftbox {
+		padding: 70px 0px 50px 15px;
+	}
+	.testimonial-three_col .swiper-horizontal>.swiper-pagination-bullets{
+		right: 10%;
+	}
+	.testimonial-three_rightbox{
+		margin: 0;
+		text-align: center;
+	}
+	/** Homepage 04 **/ 
+	.tab_section .pbmit-tab-style-1 .nav_title{
+		margin-bottom: 20px;
+	}
+	.tab_section .pbmit-tab-style-1 .pbmit-tab_list {
+		margin-right: 0;
+	}
+	.pbmit-static-box-style-1 .pbmit-contentbox {
+		padding: 40px 0 0px 30px;
+	}
+	.pbmit-static-box-style-1:nth-child(even) .pbmit-ihbox-box-number h4{
+		left: 705px;
+	}
+	.testimonial_one{
+		margin-bottom: 60px;
+	}
+	.pbmit-testimonial-style-3 .pbminfotech-post-item{
+		padding: 30px 20px 30px 20px;
+	}
+	.about-us-four_rightbox {
+		padding: 70px 116px 30px 0px;
+	}
+	/** Homepage 05 **/ 
+	.about-six_star_img img{
+		display: none;
+	}
+	.about-five_leftbox{
+		padding: 0;
+	}
+	.about-section_five{
+		padding-top: 80px;
+	}
+	.about-five-animation{
+		padding-bottom: 25px;
+	}
+	.client_five .pbmit-client-style-2{
+		text-align: center;
+	}
+	.ihbox-five_col {
+		padding: 70px 0px 70px 30px;
+	}
+	.ihbox-five_rightbox{
+		margin-left: 0;
+		text-align: center;
+	}
+	.demo_five .browse-compny-two_right{
+		padding: 0px 90px 0px 90px;
+	}
+	.testimonial-five_img{
+		margin: 0;
+		padding-bottom: 30px;
+	}
+	.testimonial-five_img img{
+		width: 100%;
+	}
+	.testimonial-five_box{
+		padding-left: 0;
+	}
+	.about-five-ihbox-style-14{
+		left: -80px;
+	}
+	/** Homepage 06 **/ 
+	.about-six_bg{
+		padding-top: 0;
+	}
+	.about-six_rightbox{
+		padding-top: 50px;
+		text-align: center;
+	}
+	.about-six-single_img{
+		left: 190px;
+	}
+	.pbmit-ihbox-style-11{
+		padding: 50px 20px 50px 20px;
+	}
+	.we-can-help-six_img{
+		text-align: center;
+	}
+	.we-can-help-six_content{
+		padding-top: 90px;
+	}
+	.about-us-six_col-1,
+	.about-us-six_col-2, 
+	.about-us-six_col-3 {
+		width: 100%;
+	}
+	.about-us-six_col-2{
+		margin: 50px 0;
+	}
+	/** Homepage 07 **/ 
+	.accordion-seven_leftbox{
+		margin: 0;
+	}
+	.accordion-seven_rightbox{
+		padding-top: 50px;
+		padding-left: 0;
+	}
+	.ihbox-seven_bg .pbmit-ihbox-style-8 .pbmit-ihbox-contents {
+		padding: 0 0px;
+	}
+	.ihbox-seven_bg .pbmit-ihbox-style-8 .pbmit-ihbox-icon:before{
+		right: -65px;
+		width: 100px;
+	}
+	.testimonial-seven_leftbox {
+		padding: 0;
+	}
+	.testimonial-seven_leftbox .pbmit-testimonial-style-4{
+		margin-right: 0;
+	}
+	/** Homepage 08 **/ 
+	.fid-section_eight .col-md-6:first-child .pbminfotech-ele-fid-style-1,
+	.fid-section_eight .col-md-6:nth-child(2) .pbminfotech-ele-fid-style-1{
+		margin-bottom: 30px;
+	}
+	.category-eight_box .pbmit-job-category h4{
+		font-size: 20px;
+	}
+	.category-eight_box{
+		margin-bottom: 30px;
+	}
+	.job-block-three_ihbox2{
+		margin-bottom: 30px;
+	}
+	.about-us-section_eight{
+		padding: 100px 0px 100px 0px;
+	}
+	.about-us_eight_box {
+		padding: 0px 100px 0px 100px;
+	}
+	/** Job List **/
+	.pbmit-card.widget_job{
+		margin-bottom: 40px;
+	}
+	.widget_job_btn_border:before, 
+	.widget_job_btn_border:after{
+		width: 310px;
+	}
+	/** Employer List **/
+	.pbmit-filters.pbmit-card{
+		margin-bottom: 40px;
+	}
+	/** Candidate Single **/
+	.job-details_achivement_content {
+		padding: 10px;
+	}
+	.job-details_achivement_content p{
+		padding: 19px;
+	}
+	/** About Us **/
+	.ihbox-style-3_box .col-lg-4:not(:last-child) .pbmit-ihbox-style-3{
+		margin-bottom: 30px;
+	}
+	.fid_section{
+		padding: 80px 15px 80px 15px;
+	}
+	.pbmit-team-style-1 .pbmit-social-share-icon{
+		right: 85px;
+	}
+	.pbmit-team-style-1 .pbminfotech-box-social-links{
+		right: 75px;
+	}
+	/** Our Plan **/
+	.pricing_box .pbmit-ptable-col:not(:last-child){
+		margin-bottom: 30px;
+	}
+	/** Blog Single **/
+	.comment-respond{
+		padding-bottom: 50px;
+	}
+	.comments-box .depth-2{
+		margin-left: 0;
+	}
+	/** Sidebar **/
+	.service-left-col {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+	.service-right-col {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+	.pbmit-sidebar-left ,
+	.pbmit-sidebar-right {
+	    flex: 0 0 34%;
+	    max-width: 34%;
+	}
+	.pbmit-sidebar-left,
+	.pbmit-sidebar-right{
+	    flex: 0 0 66%;
+	    max-width: 66%;
+	} 
+	.blog-left-col {
+		flex: auto;
+		max-width: 100%;
+	}
+	.blog-right-col{
+		max-width: 100%;
+		flex: auto;
+	}
+	/** Job Post **/
+	.pbmit_confirm_box img {
+		width: 50%;
+	}
+	.pbmit_confirm_box h1{
+		font-size: 40px;
+	}
+	/*=== Footer ===*/
+	.footer .pbmit-newsletter{
+		display: block;
+		margin-left: 60px;
+	}
+	.footer .pbmit-newsletter p{
+		text-align: center;
+		padding-right: 0;
+		margin-bottom: 30px;
+	}
+	.pbmit-footer-widget-area {
+		padding-top: 50px;
+	}
+	.site-footer .widget{
+		padding-bottom: 35px;
+	}
+	.footer-widget-col-1, 
+	.footer-widget-col-2, 
+	.footer-widget-col-3,
+	.footer-widget-col-4{
+		flex: 0 0 50%;
+    	max-width: 50%;
+	}
+}
+
+@media(max-width:820px){
+	/** homepage 01 **/
+	.testimonial_img5{
+		top: 19%;
+	}
+}
+
+@media(max-width:767px) {
+	/*=== Title Bar ===*/ 
+	.pbmit-tbar-title {
+		font-size: 30px;
+		line-height: 36px;
+	}
+	/*=== Revolution ===*/ 
+	#rev_slider_7_1_wrapper .slider-1-slide-1-layer-play_icon{
+		bottom: 70px;
+		line-height: 19px !important;
+		height: 30px !important;
+		width: 30px !important;
+	}
+	#rev_slider_7_1_wrapper .slider-1-slide-1-layer-play_icon i{
+		font-size: 10px;
+	}
+	/** Section Title **/
+	.pbmit-heading .pbmit-title,
+	.about-three_leftbox .pbmit-heading .pbmit-title,
+	.about_two .pbmit-heading .pbmit-title,
+	.about-six_leftbox .pbmit-heading .pbmit-title,
+	.about-four_bg .pbmit-heading .pbmit-title {
+		font-size: 26px;
+		letter-spacing: -0.5px;
+	}
+	.pbmit-heading .pbmit-heading-desc br{
+		display: none;
+	}
+	.pbmit-heading{
+		margin-bottom: 40px;
+	}
+	/** Section Padding **/
+	.section-lgb{
+		padding-bottom: 80px;
+	}
+	.section-lgx{
+		padding-top: 60px;
+    	padding-bottom: 50px;
+	}
+	/** Homepage 01 **/
+	.about-one_leftbox{
+		padding-top: 50px;
+	}
+	.about-one_rightbox{
+		margin-top: 20px;
+	}
+	.about-one_rightbox:before{
+		left: -22px;
+	}
+	.about-one_ihbox-style-14 {
+		left: 50px;
+		width: 260px;
+	}
+	.ihbox-one_rightbox{
+		padding: 35px 15px 0px 15px;
+	}
+	.ihbox-one_imgbox{
+		text-align: center;
+	}
+	.ihbox-one_icon2{
+		display: none;
+	}
+	.about-job_one{
+		margin-bottom: 50px;
+	}
+	.about-job-one_rightbox{
+		padding: 70px 15px 20px 15px;
+	}
+	.about-us-one_img:before{
+		left: 0;
+	}
+	/** Homepage 02 **/
+	.ihbox-two_box .pbmit-ihbox-style-2 .pbmit-ihbox-box:before{
+		display: none;
+	}
+	.ihbox-two_box .pbmit-col-wrapper:not(:last-child) .pbmit-ihbox-style-2{
+		margin-bottom: 30px;
+	}
+	.about-us_two_leftbox{
+		padding-left: 170px;
+	}
+	.about-us-two_rightbox{
+		padding-left: 135px;
+	}
+	.browse-compny-two_left {
+    	padding: 30px 0px 150px 0px;
+	}
+	.testimonial_two .pbmit-testimonial-style-7 blockquote{
+		padding: 0;
+	}
+	.testimonial_img4,
+	.testimonial_img2{
+		display: none;
+	}
+	.testimonial_img6{
+		bottom: 20%;
+	}
+	.testimonial_img3{
+		bottom: 90px;
+	}
+	/** Homepage 03 **/
+	.about-three_rightbox{
+		padding-top: 50px;
+	}
+	.about-three_leftbox {
+		padding-right: 0;
+	}
+	.ihbox-three_box .col-md-4:not(:last-child){
+		margin-bottom: 30px;
+	}
+	.top-countries_three {
+		padding: 70px 0px 70px 0px;
+	}
+	.about-us_three{
+		padding-top: 70px;
+	}
+	.about-us-three_rightbox{
+		padding-right: 0;
+	}
+	/** Homepage 04 **/
+	.tab_section .pbmit-tab-style-1 .nav-tabs{
+		display: block;
+	}
+	.tab_section .pbmit-tab-style-1 .nav-item{
+		text-align: left;
+	}
+	.tab_section .pbmit-tab-style-1 .nav-tabs .nav-link{
+		padding-left: 0;
+	}
+	.tab_section .pbmit-tab-style-1 .nav-item a.active{
+		margin-bottom: 20px;
+	}
+	.pbmit-static-box-style-1{
+		display: block;
+	}
+	.pbmit-static-box-style-1 .pbmit-contentbox{
+		padding-bottom: 50px;
+	}
+	.pbmit-static-box-style-1 .pbmit-contentbox, 
+	.pbmit-static-box-style-1 .pbmit-imgbox {
+		width: 100%;
+	}
+	.pbmit-static-box-style-1 .pbmit-imgbox img{
+		width: 100%;
+	}
+	.pbmit-static-box-style-1:nth-child(even) .pbmit-ihbox-box-number h4{
+		left: 485px;
+	}
+	.testimonial_one {
+		margin-bottom: 50px;
+	}
+	.pbmit-testimonial-style-3 .pbminfotech-post-item{
+		padding: 40px 50px 40px 40px;
+	}
+	/** Homepage 05 **/
+	.client_five.section-lg{
+		padding-top: 50px;
+		padding-bottom: 30px;
+	}
+	.about-five-ihbox-style-7{
+		bottom: 20px;
+		top: inherit;
+	}
+	.about-five-ihbox-style-14{
+		display: none;
+	}
+	.about-six_bg{
+		padding-top: 0;
+	}
+	/** Homepage 06 **/
+	.ihbox-six_box .pbmit-col-wrapper:not(:last-child) {
+		margin-bottom: 30px;
+	}
+	.testimonial-six_bg .swiper-slide {
+		padding: 0;
+	}
+	.testimonial-six_bg .swiper-horizontal>.swiper-pagination-bullets{
+		display: none;
+	}
+	/** Homepage 07 **/
+	.ihbox-seven_bg {
+		padding: 60px 0px 60px 0px;
+	}
+	.ihbox-seven_bg .pbmit-ihbox-style-8 .pbmit-ihbox-icon:before{
+		display: none;
+	}
+	.ihbox-seven_bg .pbmit-col-wrapper:not(:last-child) .pbmit-ihbox-style-8{
+		margin-bottom: 50px;
+	}
+	.ihbox-seven_bg .pbmit-ihbox-style-8 .pbmit-ihbox-contents{
+		padding: 0 70px;
+	}
+	.testimonial-seven_imgbox{
+		margin-top: 60px;
+	}
+	/** Homepage 08 **/
+	.about-eight_leftbox .pbmit-job-search-form {
+		margin-right: 0;
+	}
+	.about-eight_leftbox .pbmit-ihbox-style-17 {
+		margin-top: 50px;
+	}
+	.about-eight_leftbox {
+		padding-top: 50px;
+	}
+	.fid-section_eight .col-md-6:nth-child(3) .pbminfotech-ele-fid-style-1{
+		margin-bottom: 30px;
+	}
+	.ihbox-eight_leftbox {
+		padding-bottom: 0;
+    	margin-top: -100px;
+	}
+	.pbmit-employee .pbmit-employee-icons{
+		display: flex;
+	}
+	.pbmit-employee .pbmit-employee-rating{
+		text-align: center !important;
+	}
+	.about-us-section_eight {
+		padding: 80px 0px 80px 0px; 
+	}
+	.about-us_eight_box {
+		padding: 0px 0px 0px 0px;
+		text-align: center;
+	}
+	.about-us-eight_btn {
+		text-align: center;
+	}
+	/** Job List **/
+	.pbmit-job-block .pbmit-job-info{
+		display: block;
+	}
+	.widget_job_btn_border:before, 
+	.widget_job_btn_border:after{
+		width: 175px;
+	}
+	/** Job Details **/
+	.job_details_sidebar_top_box {
+		margin-left: 0;
+		margin-top: 25px;
+	}
+	.job-details_inner .job-details_imgbox img{
+		margin-bottom: 30px;
+	}
+	.job_details_section .accordion-item .pbmit-accordion-icon-right{
+		right: 0px;
+	}
+	/** Candidate List **/
+	.pbmit-employee .pbmit-employee-wrap{
+		display: block !important;
+	}
+	.pbmit-employee .pbmit-employee-inner{
+		margin-top: 20px;
+	}
+	/** Candidate Single **/
+	.job-details_description .job_candidate_education .content{
+		padding-right: 0;
+	}
+	.job-details_achivement_content{
+		width: 48%;
+    	margin-bottom: 20px;
+	}
+	/** About Us **/
+	.about-col-1, .about-col-2, 
+	.about-col-3, .about-col-4,
+	.about-col-1 img,.about-col-2 img,
+	.about-col-3 img,.about-col-4 img {
+		width: 100%;
+	}
+	.about-us-img1{
+		margin-right: 0;
+	}
+	.about-us-img2{
+		padding-right: 0;
+	}
+	.about-us-img3{
+		padding-left: 0;
+	}
+	.about-us-img4{
+		margin-left: 0;
+	}
+	.about-col-1, .about-col-2, .about-col-3, .about-col-4{
+		margin-bottom: 20px;
+	}
+	.fid_section{
+		padding: 60px 15px 60px 15px;
+	}
+	.fid_section .col-md-3:not(:last-child) .pbminfotech-ele-fid-style-2{
+		margin-bottom: 30px;
+	}
+	.pbmit-team-style-1 .pbmit-social-share-icon {
+		right: 145px;
+	}
+	.pbmit-team-style-1 .pbminfotech-box-social-links {
+		right: 135px;
+	}
+	.client_section {
+		padding: 30px 0px 30px 0px;
+	}
+	.client_section .col-md-20percent{
+		flex: 0 0 100%;
+    	max-width: 100%;
+	}
+	/** Blog Classic **/
+	.blog_classic {
+		padding-top: 60px;
+		padding-bottom: 40px;
+	}
+	.pbmit-blog-meta-wrapper .pbmit-post-title {
+		font-size: 25px;
+		line-height: 30px;
+	}
+	.pbmit-blog-meta-bottom{
+		display: block;
+	}
+	.pbmit-blog-meta-bottom-right{
+		margin-top: 50px;
+	}
+	/** Blog Single **/
+	.blog-single_section{
+		padding-top: 60px;
+		padding-bottom: 40px;
+	}
+	.pbmit-blog-meta-wrapper{
+		padding-top: 30px;
+	}
+	.post .pbmit-block-columns{
+		display: block;
+	}
+	.pbmit-block-column:not(:first-child) {
+		margin-left: 0;
+		padding-top: 20px;
+	}
+	.post-navigation .nav-links{
+		display: block;
+	}
+	.post-navigation .nav-links .nav-next {
+		text-align: right;
+   	 	margin-left: auto;
+	}
+	.nav-next .pbmit-post-nav-wrapper{
+		margin-left: 0;
+	}
+	.comments-box .comments-title{
+		margin-bottom: 10px;
+	}
+	.pbmit-comment{
+		display: block;
+	}
+	.pbmit-comment-content{
+		margin-top: 30px;
+	}
+	/** Job Post **/
+	.pbmit_confirm_box h1 {
+		font-size: 30px;
+	}
+	/*=== Footer ===*/
+	.footer .pbmit-newsletter p{
+		font-size: 23px;
+	}
+	.footer .newslatter-form{
+		padding: 65px 0px 65px 15px;
+	}
+	.footer .pbmit-newsletter{
+		margin-left: 0;
+	}
+	.footer .pbmit-newsletter input{
+		margin-left: 13px;
+	}
+	.footer-widget-col-1, 
+	.footer-widget-col-2, 
+	.footer-widget-col-3,
+	.footer-widget-col-4 {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+	.site-footer .widget{
+		padding-bottom: 20px;
+	}
+	.pbmit-footer-copyright-box-2{
+		padding-top: 0;
+	}
+	.footer .pbmit-social-links{
+		float: left;
+		padding-bottom: 30px;
+	}
+	.pbmit-footer-copyright-box ul{
+		margin-bottom: 15px;
+	}
+}
+
+@media(max-width:575px) { 
+	/** Section Padding **/
+	.section-lg {
+		padding-top: 70px;
+		padding-bottom: 50px;
+	}
+	.section-lgt{
+		padding-top: 50px;
+	}
+	/** Homepage 01 **/
+	.about-one_ihbox-style-7{
+		display: none;
+	}
+	.ihbox-one_imgbox{
+		margin-left: -45px;
+	}
+	.client_one{
+		padding-top: 50px;
+	}
+	/** Homepage 02 **/
+	.about-us_two_leftbox {
+		padding-left: 15px;
+		margin-bottom: 20px;
+	}
+	.pbmit-ihbox-style-5 .pbmit-ihbox-contents{
+		margin-left: 25px;
+	}
+	.about-us-two_rightbox {
+		padding-left: 15px;
+	}
+	.about-us-two_rightbox .pbmit-ihbox-style-5 .pbmit-heading-desc br{
+		display: none;
+	}
+	.browse-compny-two_left {
+		padding: 0px 0px 100px 0px;
+	}
+	.testimonial_two{
+		padding-bottom: 70px;
+	}
+	/** Homepage 03 **/
+	.about-us-three_leftbox {
+		padding-right: 40px;
+	}
+	.testimonial-three_rightbox img{
+		width: 100%;
+	}
+	/** Homepage 05 **/
+	.client_five .pbmit-col-wrapper{
+		width: 50%;
+	}
+	.browse-compny-two_right,
+	.demo_five .browse-compny-two_right{
+		margin-top: 0;
+	}
+	.testimonial-five_box .swiper-horizontal>.swiper-pagination-bullets {
+		text-align: right;
+		bottom: 110px;
+	}
+	.testimonial-five_btn{
+		padding-left: 55px;
+	}
+	.testimonial-five_icon-wrapper{
+		text-align: end;
+		margin-top: -55px;
+	}
+	/** Homepage 06 **/
+	.about-six-single_img {
+		left: 73px;
+	}
+	.bg-shape_box{
+		right: -10px;
+	}
+	.we-can-help-six_ihbox .col-md-6:first-child .pbmit-ihbox-style-9{
+		margin-bottom: 30px;
+	}
+	.about-six_leftbox {
+		padding-top: 60px;
+	}
+	/** Contact Us **/
+	.contact_section{
+		padding-top: 50px;
+	}
+	.contact_form{
+		margin-top: 50px;
+	}
+}
+
+@media (max-width:414px) {
+	/** Revolution **/
+	#rev_slider_7_1_wrapper .dogimg,
+	#rev_slider_7_1_wrapper .side_text,
+	#rev_slider_7_1_wrapper .slider-1-slide-1-layer-play_icon{
+		bottom: 0px;
+	}
+	#rev_slider_7_1_wrapper .slider-1-slide-1-layer-play_icon{
+		line-height: 9px !important;
+		height: 20px !important;
+		width: 20px !important;
+	}
+	/** Homepage 01 **/
+	.about-one_rightbox{
+		padding-left: 0;
+	}
+	.about-job-one_rightbox{
+		padding-bottom: 50px;
+	}
+	.about-us-one_leftbox{
+		padding-left: 0;
+	}
+	.ihbox-one_rightbox .pbmit-ihbox-style-1 .pbmit-ihbox-icon:before{
+		height: 88px;
+	}
+	.ihbox-one_rightbox .pbmit-ihbox-style-1{
+		margin-bottom: 0;
+	}
+	.ihbox-one_rightbox .pbmit-ihbox-style-1 .pbmit-element-title{
+		font-size: 19px;
+	}
+	/** Homepage 02 **/
+	.browse-compny-two_right,
+	.demo_five .browse-compny-two_right {
+   		padding: 0px 50px 0px 50px;
+	}
+	.testimonial_img1,
+	.testimonial_img3,
+	.testimonial_img5,
+	.testimonial_img6{
+		display: none;
+	}
+	.testimonial_two {
+		padding: 70px 0px 0px 0px;
+	}
+	/** Homepage 03 **/
+	.about-us-three_rightbox .pbmit-ihbox-style-4 .pbmit-ihbox-box{
+		display: block !important;
+	}
+	.about-us-three_rightbox .pbmit-ihbox-style-4 .pbmit-ihbox-icon{
+		margin-right: 0;
+		text-align: -webkit-center;
+		margin-bottom: 30px;
+	}
+	.about-us-three_rightbox .pbmit-ihbox-style-4 .pbmit-ihbox-contents{
+		text-align: center;
+	}
+	.testimonial-three_rightbox img{
+		width: 100%;
+	}
+	/** Homepage 04 **/
+	.pbmit-static-box-style-1 .pbmit-ihbox-box-number h4{
+		display: none;
+	}
+	.about-us-four_rightbox{
+		padding-right: 0;
+	}
+	/** Homepage 06 **/
+	.about-six-single_img {
+		left: 17px;
+	}
+	.single-img_box{
+		left: 0;
+	}
+	.about-us-six_col-2{
+		margin: 0;
+	}
+	.about-us-six_img{
+		display: none;
+	}
+	/** Homepage 07 **/
+	.ihbox-seven_bg .pbmit-ihbox-style-8 .pbmit-ihbox-contents {
+		padding: 0 50px;
+	}
+	/** Homepage 08 **/
+	.category-eight_box .pbmit-job-category h4{
+		font-size: 16px;
+	}
+	/** Job List **/
+	.pbmit-job-block{
+		padding: 30px 25px;
+	}
+	.widget_job_btn_border:before, 
+	.widget_job_btn_border:after{
+		width: 120px;
+	}
+	.pbmit-job-block .pbmit-job-block-wrap{
+		display: block !important;
+	}
+	.pbmit-job-block .pbmit-company-logo{
+		margin-bottom: 20px;
+	}
+	/** Job Details **/
+	.job-detail-employer-info ul li{
+		padding: 0 10px;
+	}
+	.job-detail-emp_info ul li:nth-child(2) .value,
+	.emp-detail-company_info ul li:nth-child(5) .value{
+		font-size: 12px;
+		margin-left: 20px;
+		line-height: 20px;
+	}
+	.accordion-item .pbmit-accordion-icon-right{
+		right: 0px;
+	}
+	/** Employer List **/
+	.pbmit-employer-listing .pbmit-job-block .pbmit-job-block-wrap{
+		display: block;
+	}
+	.pbmit-employer-listing .pbmit-job-block .pbmit-company-logo{
+		margin-bottom: 30px;
+	}
+	/** Candidate List **/
+	.pbmit-employee .pbmit-employee-inner{
+		display: block !important;
+	}
+	.pbmit-employee .pbmit-employee-rating{
+		text-align: left !important;
+	}
+	.pbmit-employee .pbmit-employee-icons{
+		margin-top: 20px;
+	}
+	/** Candidate Single **/
+	.job-details_achivement_content{
+		width: 67%;
+	}
+	/** About Us **/
+	.pbmit-team-style-1 .pbmit-social-share-icon{
+		right: 85px;
+	}
+	.pbmit-team-style-1 .pbminfotech-box-social-links{
+		right: 75px;
+	}
+	/** Blog Classic **/
+	.pbmit-blog-meta-wrapper .pbmit-post-title {
+		font-size: 22px;
+		line-height: 26px;
+	}
+	.pbmit-read-more-link{
+		width: 100%;
+	}
+	/** Blog Single **/
+	.pbmit-author-box{
+		display: block;
+	}
+	.pbmit-author-content{
+		padding-top: 20px;
+	}
+	.post-navigation .nav-links .nav-previous, 
+	.post-navigation .nav-links .nav-next{
+		width: 100%;
+	}
+	/** Job Post **/
+	.pbmit_package_box{
+		padding-left: 0;
+    	padding-top: 10px;
+		padding-right: 0;
+		background-color: transparent;
+	}
+	.table>:not(caption)>*>*{
+		padding: 5px 4px;
+		font-size: 12px;
+	}
+	.pbmit_confirm_box{
+		padding: 30px;
+	}
+	.pbmit_confirm_box img {
+		width: 70%;
+	}
+	.pbmit_confirm_box h1 {
+		font-size: 25px;
+		line-height: 30px;
+	}
+	.pbmit_confirm_box h6{
+		font-size: 17px;
+	}
+	.pbmit_confirm_btn .pbmit-btn:first-child{
+		margin-bottom: 10px;
+	}
+	/** Footer **/
+	.footer .pbmit-newsletter{
+		margin-left: 0;
+	}
+	.footer .pbmit-newsletter input{
+		width: 93%;
+		margin-bottom: 20px;
+	}
+	.footer .pbmit-newsletter button{
+		width: 93%;
+		margin: 0 13px;
+		position: relative;
+	}
+}
+
+@media(max-width:390px){
+	/** Candidate List **/
+	.pbmit-candidate-listing .pbmit-employee .pbmit-employee-bottom{
+		display: block !important;
+		background: transparent;
+	}
+	.pbmit-candidate-listing .pbmit-employee .pbmit-employee-tags {
+		margin-left: 0;
+		margin-bottom: 20px;
+	}
+	.pbmit-candidate-listing .pbmit-employee .pbmit-employee-tags li a{
+		color: var(--pbmit-blackish-color);
+		background: var(--pbmit-light-color);
+	}
+}
+
+@media(max-width:375px) {
+	/** Homepage 01 **/
+	.about-job-one_rightbox{
+		padding-bottom: 70px;
+	}
+	.about-us-one_img:before{
+		height: 380px;
+    	width: 380px;
+	}
+	/** Homepage 02 **/
+	.testimonial_two{
+		padding-bottom: 0;
+	}
+	/** Job List **/
+	.pbmit-job-block .pbmit-company-logo {
+		margin-right: 15px;
+	}
+	/** Employer List **/
+	.breadcrumb_box nav ol{
+		flex-wrap: inherit;
+	}
+	/** About Us **/
+	.pbmit-team-style-1 .pbmit-social-share-icon {
+		right: 70px;
+	}
+	.pbmit-team-style-1 .pbminfotech-box-social-links {
+		right: 55px;
+	}
+    /** Blog Single **/
+	.pbmit-entry-meta-wrapper{
+		margin: 0 70px;
+	}
+}
+
+
+

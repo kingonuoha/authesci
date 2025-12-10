@@ -1,0 +1,825 @@
+<!-- meta tags and other links -->
+@@include('../partial-html/_template-top.html')
+@@include('../layouts/_sidebar.html')
+
+<main class="dashboard-main">
+  @@include('../layouts/_nav.html')
+
+  <div class="dashboard-main-body">
+
+    @@include('../layouts/_breadcrumb.html',{
+    pageTitle: "Finance & Banking",
+      activePage: "Finance & Banking"
+    })
+
+    <!-- Widgets start -->
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-6">
+        <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
+            <div class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#d4f7ff] dark:from-neutral-700 dark:to-neutral-800">
+                <div class="card-body p-0">
+                    <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="mb-0 w-[48px] h-[48px] bg-cyan-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
+                                <img src="assets/images/home-eleven/icons/home-eleven-icon1.svg" alt="">
+                            </span>
+                            <div>
+                                <span class="font-medium text-neutral-600 text-base">Total Period Income</span>
+                                <h6 class="font-semibold mt-[2px]">$50,000</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
+                        <span class="bg-success-focus px-1.5 py-[2px] rounded-[6px] font-medium text-success-600 dark:text-success-500 text-sm flex items-center gap-1">
+                            <i class="ri-arrow-right-up-line"></i> 95%
+                        </span> Last month $24,000.00
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
+            <div class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#ffefdd] dark:from-neutral-700 dark:to-neutral-800">
+                <div class="card-body p-0">
+                    <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="mb-0 w-[48px] h-[48px] bg-warning-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
+                                <img src="assets/images/home-eleven/icons/home-eleven-icon2.svg" alt="">
+                            </span>
+                            <div>
+                                <span class="font-medium text-neutral-600 text-base">Total Period Expenses</span>
+                                <h6 class="font-semibold mt-[2px]">$35,000</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
+                        <span class="bg-success-focus px-1.5 py-[2px] rounded-[6px] font-medium text-success-600 dark:text-success-500 text-sm flex items-center gap-1">
+                            <i class="ri-arrow-right-up-line"></i> 95%
+                        </span> Last month $1,600.00
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
+            <div class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#e9e0ff] dark:from-neutral-700 dark:to-neutral-800">
+                <div class="card-body p-0">
+                    <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="mb-0 w-[48px] h-[48px] bg-lilac-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
+                                <img src="assets/images/home-eleven/icons/home-eleven-icon3.svg" alt="">
+                            </span>
+                            <div>
+                                <span class="font-medium text-neutral-600 text-base">Net Profit</span>
+                                <h6 class="font-semibold mt-[2px]">$50,000</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
+                        <span class="bg-danger-focus px-1.5 py-[2px] rounded-[6px] font-medium text-danger-600 dark:text-danger-500 text-sm flex items-center gap-1">
+                            <i class="ri-arrow-right-down-line"></i> 70%
+                        </span> Last month $24,000.00
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
+            <div class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#deffec] to-[#f6fffa] dark:from-neutral-700 dark:to-neutral-800">
+                <div class="card-body p-0">
+                    <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="mb-0 w-[48px] h-[48px] bg-success-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
+                                <img src="assets/images/home-eleven/icons/home-eleven-icon4.svg" alt="">
+                            </span>
+                            <div>
+                                <span class="font-medium text-neutral-600 text-base">Total Saving</span>
+                                <h6 class="font-semibold mt-[2px]">$50,000</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
+                        <span class="bg-success-focus px-1.5 py-[2px] rounded-[6px] font-medium text-success-600 dark:text-success-500 text-sm flex items-center gap-1">
+                            <i class="ri-arrow-right-up-line"></i> 95%
+                        </span> Last month $2,500.00
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Widgets end -->
+
+    <div class="mt-6">
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-6">
+            <div class="col-span-12 xl:col-span-8">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div class="col-span-12">
+                        <div class="card border-0 h-full">
+                            <div class="card-body">
+                            <div class="flex items-center flex-wrap gap-2 justify-between">
+                                <h6 class="font-bold text-lg mb-0">Balance Statistic</h6>
+                                <select class="form-select bg-white dark:bg-neutral-700 form-select-sm w-auto">
+                                <option>Today</option>
+                                <option>Weekly</option>
+                                <option>Monthly</option>
+                                <option>Yearly</option>
+                                </select>
+                            </div>
+                
+                            <ul class="flex flex-wrap items-center justify-center mt-4 gap-4">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-primary-600"></span>
+                                    <span class="text-neutral-600 text-sm font-semibold">Word: 
+                                        <span class="text-neutral-600 font-bold">500</span>
+                                    </span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-warning-600"></span>
+                                    <span class="text-neutral-600 text-sm font-semibold">Image:  
+                                        <span class="text-neutral-600 font-bold">300</span>
+                                    </span>
+                                </li>
+                            </ul>
+                
+                            <div class="mt-10">
+                                <div id="balanceStatistics" class=""></div>
+                            </div>
+                            
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-12 md:col-span-6">
+                        <div class="card border-0 rounded-2xl h-full">
+                            <div class="card-header">
+                                <div class="flex items-center flex-wrap gap-2 justify-between">
+                                    <h6 class="font-bold text-lg mb-0">Earning Categories</h6>
+                                    <a href="javascript:void(0)" class="text-primary-600 dark:text-primary-600 hover-text-primary flex items-center gap-1">
+                                        View All
+                                        <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="flex flex-col gap-5">
+                                    <div class="flex items-center justify-between gap-4">
+                                        <div class="flex items-center w-full gap-4 grow">
+                                            <span class="w-10 h-10 rounded-full flex justify-center items-center shrink-0 bg-primary-100 dark:bg-primary-600/25">
+                                                <img src="assets/images/home-eleven/icons/earn-cat-icon1.svg" alt="" class="">
+                                            </span>
+                                            <div class="grow">
+                                                <h6 class="text-sm mb-0">Digital Assets</h6>
+                                                <span class="text-xs text-neutral-600 font-medium">$50 / from $1000</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-full max-w-[66px] ms-auto">
+                                                <div class="progress progress-sm rounded-[50rem]" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                                    <div class="progress-bar bg-primary-600 rounded-[50rem]" style="width: 80%;"></div>
+                                                </div>
+                                            </div>
+                                            <span class="text-neutral-600 font-xs font-semibold">80%</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between gap-4">
+                                        <div class="flex items-center w-full gap-4 grow">
+                                            <span class="w-10 h-10 rounded-full flex justify-center items-center shrink-0 bg-danger-100 dark:bg-danger-600/25">
+                                                <img src="assets/images/home-eleven/icons/earn-cat-icon2.svg" alt="" class="">
+                                            </span>
+                                            <div class="grow">
+                                                <h6 class="text-sm mb-0">Side Project</h6>
+                                                <span class="text-xs text-neutral-600 font-medium">$50 / from $1000</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-full max-w-[66px] ms-auto">
+                                                <div class="progress progress-sm rounded-[50rem]" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                                    <div class="progress-bar bg-orange rounded-[50rem]" style="width: 60%;"></div>
+                                                </div>
+                                            </div>
+                                            <span class="text-neutral-600 font-xs font-semibold">60%</span>
+                                        </div>
+                                    </div>
+                    
+                                    <div class="flex items-center justify-between gap-4">
+                                        <div class="flex items-center w-full gap-4 grow">
+                                            <span class="w-10 h-10 rounded-full flex justify-center items-center shrink-0 bg-warning-200 dark:bg-warning-600/25">
+                                                <img src="assets/images/home-eleven/icons/earn-cat-icon3.svg" alt="" class="">
+                                            </span>
+                                            <div class="grow">
+                                                <h6 class="text-sm mb-0">Investment</h6>
+                                                <span class="text-xs text-neutral-600 font-medium">$50 / from $1000</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-full max-w-[66px] ms-auto">
+                                                <div class="progress progress-sm rounded-[50rem]" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                                    <div class="progress-bar bg-warning-600 rounded-[50rem]" style="width: 49%;"></div>
+                                                </div>
+                                            </div>
+                                            <span class="text-neutral-600 font-xs font-semibold">49%</span>
+                                        </div>
+                                    </div>
+                    
+                                    <div class="flex items-center justify-between gap-4">
+                                        <div class="flex items-center w-full gap-4 grow">
+                                            <span class="w-10 h-10 rounded-full flex justify-center items-center shrink-0 bg-success-200 dark:bg-success-600/25">
+                                                <img src="assets/images/home-eleven/icons/earn-cat-icon4.svg" alt="" class="">
+                                            </span>
+                                            <div class="grow">
+                                                <h6 class="text-sm mb-0">Working Hard</h6>
+                                                <span class="text-xs text-neutral-600 font-medium">$50 / from $1000</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-full max-w-[66px] ms-auto">
+                                                <div class="progress progress-sm rounded-[50rem]" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                                    <div class="progress-bar bg-success-main rounded-[50rem]" style="width: 100%;"></div>
+                                                </div>
+                                            </div>
+                                            <span class="text-neutral-600 font-xs font-semibold">100%</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-12 md:col-span-6">
+                        <div class="card border-0 rounded-2xl h-full">
+                            <div class="card-header">
+                                <div class="flex items-center flex-wrap gap-2 justify-between">
+                                    <h6 class="font-bold text-lg mb-0">Expense Statistics</h6>
+                                    <select class="form-select bg-white dark:bg-neutral-700 form-select-sm w-auto">
+                                        <option>Today</option>
+                                        <option>Weekly</option>
+                                        <option>Monthly</option>
+                                        <option>Yearly</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="expenseStatistics" class="apexcharts-tooltip-z-none flex justify-center"> </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-12 md:col-span-6">
+                        <div class="card border-0 rounded-2xl">
+                            <div class="card-header">
+                                <div class="flex items-center flex-wrap gap-2 justify-between">
+                                    <h6 class="font-bold text-lg mb-0">Payment History</h6>
+                                    <a href="javascript:void(0)" class="text-primary-600 dark:text-primary-600 hover-text-primary flex items-center gap-1">
+                                        View All
+                                        <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="flex items-center justify-between pb-2.5 mb-2.5 border-bottom border-neutral-200">
+                                    <div class="">
+                                        <h6 class="text-base mb-0">Digital Assets</h6>
+                                        <span class="text-xs text-neutral-600 font-medium">18 Nov 2024</span>
+                                    </div>
+                                    <div class="">
+                                        <h6 class="text-sm mb-1">$450.00</h6>
+                                        <span class="text-xs py-[2px] font-medium text-success-600 bg-success-100 dark:bg-success-600/25 dark:text-success-600 rounded-[50rem] px-4">Paid</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between pb-2.5 mb-2.5 border-bottom border-neutral-200">
+                                    <div class="">
+                                        <h6 class="text-base mb-0">Electricity</h6>
+                                        <span class="text-xs text-neutral-600 font-medium">18 Nov 2024</span>
+                                    </div>
+                                    <div class="">
+                                        <h6 class="text-sm mb-1">$150.00</h6>
+                                        <span class="text-xs py-[2px] font-medium text-warning-600 bg-warning-100 dark:bg-warning-600/25 dark:text-warning-600 rounded-[50rem] px-4">Due</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between pb-2.5 mb-2.5 border-bottom border-neutral-200">
+                                    <div class="">
+                                        <h6 class="text-base mb-0">Internet Bill</h6>
+                                        <span class="text-xs text-neutral-600 font-medium">18 Nov 2024</span>
+                                    </div>
+                                    <div class="">
+                                        <h6 class="text-sm mb-1">$450.00</h6>
+                                        <span class="text-xs py-[2px] font-medium text-danger-600 bg-danger-100 dark:bg-danger-600/25 dark:text-danger-600 rounded-[50rem] px-4">Cancel</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between pb-2.5 mb-2.5 border-bottom border-neutral-200">
+                                    <div class="">
+                                        <h6 class="text-base mb-0">House rent </h6>
+                                        <span class="text-xs text-neutral-600 font-medium">18 Nov 2024</span>
+                                    </div>
+                                    <div class="">
+                                        <h6 class="text-sm mb-1">$450.00</h6>
+                                        <span class="text-xs py-[2px] font-medium text-success-600 bg-success-100 dark:bg-success-600/25 dark:text-success-600 rounded-[50rem] px-4">Paid</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="">
+                                        <h6 class="text-base mb-0">Office rent</h6>
+                                        <span class="text-xs text-neutral-600 font-medium">18 Nov 2024</span>
+                                    </div>
+                                    <div class="">
+                                        <h6 class="text-sm mb-1">$450.00</h6>
+                                        <span class="text-xs py-[2px] font-medium text-success-600 bg-success-100 dark:bg-success-600/25 dark:text-success-600 rounded-[50rem] px-4">Paid</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-12 md:col-span-6">
+                        <div class="card border-0 rounded-2xl">
+                            <div class="card-header">
+                                <div class="flex items-center flex-wrap gap-2 justify-between">
+                                    <h6 class="font-bold text-lg mb-0">Monthly Expense Breakdown</h6>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3 flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="464" height="12" viewBox="0 0 464 12" fill="none">
+                                        <g clip-path="url(#clip0_6886_52892)">
+                                            <rect width="464" height="12" rx="6" fill="#6B7280"/>
+                                            <rect width="464" height="12" rx="6" fill="#06B6D4"/>
+                                            <rect width="418" height="12" rx="6" fill="#22C55E"/>
+                                            <rect width="365" height="12" rx="6" fill="#84CC16"/>
+                                            <rect width="295" height="12" rx="6" fill="#EAB308"/>
+                                            <rect width="210" height="12" rx="6" fill="#F59E0B"/>
+                                            <rect width="111" height="12" rx="6" fill="#F97316"/>
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_6886_52892">
+                                            <rect width="464" height="12" rx="6" fill="white"/>
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-neutral-100 dark:bg-neutral-600/25">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3 h-2 bg-orange rounded-[50rem]"></span>
+                                        <span class="text-neutral-600">Healthcare</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-neutral-600">$1500</span>
+                                        <span class="text-neutral-600 font-semibold">40%</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-base">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3 h-2 bg-warning-600 rounded-[50rem]"></span>
+                                        <span class="text-neutral-600">Education</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-neutral-600">$1500</span>
+                                        <span class="text-neutral-600 font-semibold">40%</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-neutral-100 dark:bg-neutral-600/25">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3 h-2 bg-warning-600 rounded-[50rem]"></span>
+                                        <span class="text-neutral-600">Clothes</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-neutral-600">$1500</span>
+                                        <span class="text-neutral-600 font-semibold">40%</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-base">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3 h-2 bg-success-600 rounded-[50rem]"></span>
+                                        <span class="text-neutral-600">Food</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-neutral-600">$1500</span>
+                                        <span class="text-neutral-600 font-semibold">30%</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-neutral-100 dark:bg-neutral-600/25">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3 h-2 bg-success-600 rounded-[50rem]"></span>
+                                        <span class="text-neutral-600">Transport</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-neutral-600">$1500</span>
+                                        <span class="text-neutral-600 font-semibold">20%</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-base">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3 h-2 bg-cyan-600 rounded-[50rem]"></span>
+                                        <span class="text-neutral-600">Pets</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-neutral-600">$1500</span>
+                                        <span class="text-neutral-600 font-semibold">20%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar start -->
+            <div class="col-span-12 xl:col-span-4">
+                <div class="card border-0 rounded-2xl">
+                    <div class="card-header">
+                        <div class="flex items-center flex-wrap gap-2 justify-between">
+                            <h6 class="font-bold text-lg mb-0">Quick Transfer</h6>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="p-5">
+                            <div class="relative z-[1] py-8 text-center px-4">
+                                <img src="assets/images/home-eleven/bg/bg-orange-gradient.png" alt="" class="absolute top-0 start-0 w-full h-full -z-[1]">
+                                <h3 class="text-white">$500.00</h3>
+                                <span class="text-white">Your Balance</span>
+                            </div>
+                        </div>
+
+                        <div class="px-6 bg-neutral-100 dark:bg-neutral-600/25 border-bottom-0 py-5 dark-bg-neutral-200">
+                            <div class="flex items-center flex-wrap gap-2 justify-between">
+                                <h6 class="font-bold text-lg mb-0">Contacts</h6>
+                                <a href="javascript:void(0)" class="text-primary-600 dark:text-primary-600 hover-text-primary flex items-center gap-1">
+                                    View All
+                                    <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="py-4 px-6">
+                            <div class="officer-slider">
+                                <div class="officer-slider__item flex flex-col text-center items-center justify-center">
+                                    <div class="officer-slider__thumb w-14 h-14 rounded-full overflow-hidden flex-shrink-0 mx-8">
+                                        <img src="assets/images/home-eleven/officer-img1.png" alt="" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="officer-slider__content mt-6 min-w-max">
+                                        <h6 class="mb-0 text-xl">Mr. Bin</h6>
+                                        <span class="text-sm text-neutral-600">Insurance officer</span>
+                                    </div>
+                                </div>
+                                <div class="officer-slider__item flex flex-col text-center items-center justify-center">
+                                    <div class="officer-slider__thumb w-14 h-14 rounded-full overflow-hidden flex-shrink-0 mx-8">
+                                        <img src="assets/images/home-eleven/officer-img2.png" alt="" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="officer-slider__content mt-6 min-w-max">
+                                        <h6 class="mb-0 text-xl">Mr. Robiul</h6>
+                                        <span class="text-sm text-neutral-600">Insurance officer</span>
+                                    </div>
+                                </div>
+                                <div class="officer-slider__item flex flex-col text-center items-center justify-center">
+                                    <div class="officer-slider__thumb w-14 h-14 rounded-full overflow-hidden flex-shrink-0 mx-8">
+                                        <img src="assets/images/home-eleven/officer-img3.png" alt="" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="officer-slider__content mt-6 min-w-max">
+                                        <h6 class="mb-0 text-xl">Mr. Deo</h6>
+                                        <span class="text-sm text-neutral-600">Insurance officer</span>
+                                    </div>
+                                </div>
+                                <div class="officer-slider__item flex flex-col text-center items-center justify-center">
+                                    <div class="officer-slider__thumb w-14 h-14 rounded-full overflow-hidden flex-shrink-0 mx-8">
+                                        <img src="assets/images/home-eleven/officer-img4.png" alt="" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="officer-slider__content mt-6 min-w-max">
+                                        <h6 class="mb-0 text-xl">Mr. Riad</h6>
+                                        <span class="text-sm text-neutral-600">Insurance officer</span>
+                                    </div>
+                                </div>
+                                <div class="officer-slider__item flex flex-col text-center items-center justify-center">
+                                    <div class="officer-slider__thumb w-14 h-14 rounded-full overflow-hidden flex-shrink-0 mx-8">
+                                        <img src="assets/images/home-eleven/officer-img5.png" alt="" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="officer-slider__content mt-6 min-w-max">
+                                        <h6 class="mb-0 text-xl">Mr. Alex</h6>
+                                        <span class="text-sm text-neutral-600">Insurance officer</span>
+                                    </div>
+                                </div>
+                                <div class="officer-slider__item flex flex-col text-center items-center justify-center">
+                                    <div class="officer-slider__thumb w-14 h-14 rounded-full overflow-hidden flex-shrink-0 mx-8">
+                                        <img src="assets/images/home-eleven/officer-img2.png" alt="" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="officer-slider__content mt-6 min-w-max">
+                                        <h6 class="mb-0 text-xl">Mr. John</h6>
+                                        <span class="text-sm text-neutral-600">Insurance officer</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form action="#">
+                                <div class="">
+                                    <label for="message" class="block font-semibold text-neutral-600 dark:text-white mb-2">Write Short Description </label>
+                                    <textarea class="form-control" id="message" rows="4" cols="50" placeholder="Enter a description..."></textarea>
+                                </div>
+                                <div class="mt-4">
+                                    <label for="Amount" class="block font-semibold text-neutral-600 dark:text-white mb-2">Amount</label>
+                                    <div class="flex gap-4">
+                                        <input type="text" id="Amount" class="form-control form-control-lg" placeholder="Ex: $200">
+                                        <button class="btn btn-primary-600 flex-shrink-0 flex items-center gap-2 px-8" type="submit">Send <i class="ri-send-plane-fill"></i> </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 rounded-2xl mt-6">
+                    <div class="card-header">
+                        <div class="flex items-center flex-wrap gap-2 justify-between">
+                            <h6 class="font-bold text-lg mb-0">Investment</h6>
+                            <select class="form-select bg-white dark:bg-neutral-700 form-select-sm w-auto">
+                                <option>Today</option>
+                                <option>Weekly</option>
+                                <option>Monthly</option>
+                                <option>Yearly</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body py-5">
+                        <p class="text-center text-neutral-600 flex items-center gap-2 justify-center">Total Investment: <span class="font-semibold text-neutral-600">$500</span> </p>
+
+                        <div class="mt-10 mb-6 text-center pe-[110px] relative max-w-[282px] mx-auto">
+                            <div class="w-[170px] h-[170px] rounded-full z-[1] relative inline-flex justify-center items-center border border-white border-width-2-px">
+                                <img src="assets/images/home-eleven/bg/radial-bg1.png" alt="" class="absolute top-0 start-0 -z-[1] w-full h-full object-cover">
+                                <h5 class="text-white"> 60% </h5>
+                            </div>
+                            <div class="w-[144px] h-[144px] rounded-full z-[1] inline-flex justify-center items-center border border-white border-width-3-px absolute top-0 end-0 -mt-9">
+                                <img src="assets/images/home-eleven/bg/radial-bg2.png" alt="" class="absolute top-0 start-0 -z-[1] w-full h-full object-cover">
+                                <h5 class="text-white"> 30% </h5>
+                            </div>
+                            <div class="w-[110px] h-[110px] rounded-full z-[1] inline-flex justify-center items-center border border-white border-width-3-px absolute bottom-0 start-[50%] translate-x-[-50%] ms-12">
+                                <img src="assets/images/home-eleven/bg/radial-bg3.png" alt="" class="absolute top-0 start-0 -z-[1] w-full h-full object-cover">
+                                <h5 class="text-white"> 10% </h5>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center flex-wrap gap-105 justify-between">
+                            <div class="flex flex-col items-start">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-[50rem] bg-primary-600"></span>
+                                    <span class="text-neutral-600 text-sm font-normal">Net Income</span>
+                                </div>
+                                <h6 class="text-neutral-600 font-semibold mb-0 mt-105 text-lg">$50,000</h6>
+                            </div>
+                            <div class="flex flex-col items-start">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-[50rem] bg-purple-600"></span>
+                                    <span class="text-neutral-600 text-sm font-normal">Real State</span>
+                                </div>
+                                <h6 class="text-neutral-600 font-semibold mb-0 mt-105 text-lg">$150</h6>
+                            </div>
+                            <div class="flex flex-col items-start">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-[50rem] bg-success-600"></span>
+                                    <span class="text-neutral-600 text-sm font-normal">Business</span>
+                                </div>
+                                <h6 class="text-neutral-600 font-semibold mb-0 mt-105 text-lg">$100</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <!-- Sidebar end -->
+
+        </div>
+    </div>
+
+    <!-- Table Start -->
+    <div class="card border-0 rounded-2xl mt-6">
+        <div class="card-header">
+            <div class="flex items-center flex-wrap gap-2 justify-between">
+                <h6 class="font-bold text-lg mb-0">Payment History</h6>
+                <a href="javascript:void(0)" class="text-primary-600 dark:text-primary-600 hover-text-primary flex items-center gap-1">
+                    View All
+                    <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="overflow-x-auto">
+                <div class="w-[100px]">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Users </th>
+                                <th scope="col" class="text-center">Email</th>
+                                <th scope="col" class="text-center">Transaction ID</th>
+                                <th scope="col" class="text-center">Amount</th>
+                                <th scope="col" class="text-center">Payment Method</th>
+                                <th scope="col" class="text-center">Date</th>
+                                <th scope="col" class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="">
+                                    <div class="flex items-center">
+                                    <img src="assets/images/users/user1.png" alt="" class="w-10 h-10 rounded-full flex-shrink-0 me-3 overflow-hidden">
+                                    <div class="grow">
+                                        <h6 class="text-base mb-0 font-medium">Dianne Russell</h6>
+                                    </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">osgoodwy@gmail.com</td>
+                                <td class="text-center">9562415412263</td>
+                                <td class="text-center">$29.00</td>
+                                <td class="text-center">Bank</td>
+                                <td class="text-center">24 Jun 2024</td>
+                                <td class="text-center"> 
+                                    <span class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">Active</span> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="">
+                                    <div class="flex items-center">
+                                    <img src="assets/images/users/user2.png" alt="" class="w-10 h-10 rounded-full flex-shrink-0 me-3 overflow-hidden">
+                                    <div class="grow">
+                                        <h6 class="text-base mb-0 font-medium">Wade Warren</h6>
+                                    </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">redaniel@gmail.com</td>
+                                <td class="text-center">9562415412263</td>
+                                <td class="text-center">$29.00</td>
+                                <td class="text-center">Bank</td>
+                                <td class="text-center">24 Jun 2024</td>
+                                <td class="text-center"> 
+                                    <span class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">Active</span> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="">
+                                    <div class="flex items-center">
+                                    <img src="assets/images/users/user3.png" alt="" class="w-10 h-10 rounded-full flex-shrink-0 me-3 overflow-hidden">
+                                    <div class="grow">
+                                        <h6 class="text-base mb-0 font-medium">Albert Flores</h6>
+                                    </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">seema@gmail.com</td>
+                                <td class="text-center">9562415412263</td>
+                                <td class="text-center">$29.00</td>
+                                <td class="text-center">Bank</td>
+                                <td class="text-center">24 Jun 2024</td>
+                                <td class="text-center"> 
+                                    <span class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">Active</span> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="">
+                                    <div class="flex items-center">
+                                    <img src="assets/images/users/user4.png" alt="" class="w-10 h-10 rounded-full flex-shrink-0 me-3 overflow-hidden">
+                                    <div class="grow">
+                                        <h6 class="text-base mb-0 font-medium">Bessie Cooper </h6>
+                                    </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">hamli@gmail.com</td>
+                                <td class="text-center">9562415412263</td>
+                                <td class="text-center">$29.00</td>
+                                <td class="text-center">Bank</td>
+                                <td class="text-center">24 Jun 2024</td>
+                                <td class="text-center"> 
+                                    <span class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">Active</span> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="">
+                                    <div class="flex items-center">
+                                    <img src="assets/images/users/user5.png" alt="" class="w-10 h-10 rounded-full flex-shrink-0 me-3 overflow-hidden">
+                                    <div class="grow">
+                                        <h6 class="text-base mb-0 font-medium">Arlene McCoy</h6>
+                                    </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">zitka@mail.ru</td>
+                                <td class="text-center">9562415412263</td>
+                                <td class="text-center">$29.00</td>
+                                <td class="text-center">Bank</td>
+                                <td class="text-center">24 Jun 2024</td>
+                                <td class="text-center"> 
+                                    <span class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">Active</span> 
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Table End -->
+  </div>
+
+  @@include('../layouts/_footer.html')
+</main>
+  
+@@include('../partial-html/_template-bottom.html')
+
+
+<script>
+    // ================================ Balance Statistics Chart Start ================================ 
+    var options = {
+      series: [{
+        name: 'Net Profit',
+        data: [20000, 16000, 14000, 25000, 45000, 18000, 28000, 11000, 26000, 48000, 18000, 22000]
+      },{
+        name: 'Revenue',
+        data: [15000, 18000, 19000, 20000, 35000, 20000, 18000, 13000, 18000, 38000, 14000, 16000]
+      }],
+      colors: ['#487FFF', '#FF9F29'],
+      labels: ['Active', 'New', 'Total'],
+      legend: {
+          show: false 
+      },
+      chart: {
+        type: 'bar',
+        height: 250,
+        toolbar: {
+          show: false
+        },
+      },
+      grid: {
+          show: true,
+          borderColor: '#D1D5DB',
+          strokeDashArray: 4, // Use a number for dashed style
+          position: 'back',
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          columnWidth: 10,
+        },
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      },
+      yaxis: {
+        categories: ['0', '5000', '10,000', '20,000', '30,000', '50,000', '60,000', '60,000', '70,000', '80,000', '90,000', '100,000'],
+      },
+      fill: {
+        opacity: 1,
+        width: 18,
+      },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#balanceStatistics"), options);
+    chart.render();
+  // ================================ Balance Statistics Chart End ================================ 
+
+  // ================================ Expense Statistics Chart start ================================ 
+    var options = {
+        series: [30, 30, 30, 30],
+          chart: {
+          height: 240,
+          type: 'pie',
+        },
+        labels: ['Entertainment', 'Bill Expense', 'Others', 'Investment'],
+        colors: ['#02BCAF', '#F0437D', '#1C52F6', '#43DCFF'],
+        legend: {
+            show: true
+        },
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+                position: 'bottom'
+            }
+          }
+        }]
+    };
+
+    var chart = new ApexCharts(document.querySelector("#expenseStatistics"), options);
+    chart.render();
+  // ================================ Expense Statistics Chart End ================================ 
+
+  // ================================ Expense Statistics Chart start ================================ 
+    $('.officer-slider').slick({
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        arrows: false,
+        dots: false,
+        speed: 800,
+        centerPadding: '20px',
+        infinite: true,
+        autoplaySpeed: 2000,
+        centerMode: true,
+        autoplay: true,
+        rtl: $('html').attr('dir') === 'rtl' ? true : false,
+    });
+  // ================================ Expense Statistics Chart End ================================ 
+</script>
+
+</body>
+</html>
