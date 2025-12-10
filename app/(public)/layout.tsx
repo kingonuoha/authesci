@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     siteName: "Authesci",
     images: [
       {
-        url: "/assets/images/og_image.png",
+        url: "https://authesci.com/assets/images/og_image.png",
         width: 1200,
         height: 630,
         alt: "Authesci - Africa's Premier Research Hub",
