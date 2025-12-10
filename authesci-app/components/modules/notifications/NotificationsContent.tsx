@@ -8,7 +8,7 @@ import {
     deleteNotificationAction,
     clearAllNotificationsAction,
     getProfileIdAction
-} from "@/app/actions/notifications";
+} from "@/app/(app)/actions/notifications";
 import { createClient } from '@/lib/supabase/client';
 import { formatDistanceToNow } from "date-fns";
 import { Bell, Check, Trash2, CheckCheck, FileText, AlertCircle } from "lucide-react";

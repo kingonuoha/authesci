@@ -11,14 +11,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Swal from "sweetalert2";
-import { Button } from "@/components/ui/button";
-import { updateApplicationStatus } from "@/app/actions/applications";
+import { updateApplicationStatus, startApplicantChat } from "@/app/(app)/actions/applications";
 import { ApplicationStatus } from "@prisma/client";
 import { toast } from "react-hot-toast";
-
+import { useRouter } from "next/navigation";
 
 interface Applicant {
-  id: string;
+  id: string; // This is the Application ID
   user: {
     id: string;
     name: string | null;
@@ -52,7 +51,8 @@ const COVER_IMAGES = [
 ];
 
 export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
-
+  const router = useRouter();
+  const [chatLoadingId, setChatLoadingId] = React.useState<string | null>(null);
 
   const handleStatusUpdate = async (applicationId: string, newStatus: ApplicationStatus) => {
     try {
@@ -91,11 +91,24 @@ export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
     });
   };
 
-  const handleChatClick = (userName: string) => {
-    toast.success(`Redirecting to chat interface with ${userName}...`, {
-      icon: '💬',
-      duration: 3000,
-    });
+  const handleChatClick = async (applicationId: string, userName: string) => {
+    setChatLoadingId(applicationId);
+    toast.loading(`Starting chat with ${userName}...`, { id: 'chat-toast' });
+
+    try {
+      const result = await startApplicantChat(applicationId);
+
+      if (result.success && result.conversationId) {
+        toast.success("Chat started! Redirecting...", { id: 'chat-toast' });
+        router.push(`/messages?id=${result.conversationId}`);
+      } else {
+        toast.error(result.error || "Failed to start chat", { id: 'chat-toast' });
+        setChatLoadingId(null);
+      }
+    } catch (error) {
+      toast.error("An error occurred", { id: 'chat-toast' });
+      setChatLoadingId(null);
+    }
   };
 
   const showCoverLetter = (name: string, coverLetter: string) => {
@@ -254,19 +267,18 @@ export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
 
                 {/* Static Chat Button */}
                 <button
-                  onClick={() => handleChatClick(applicant.user.name || "Applicant")}
-                  className="mt-2 w-full bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-neutral-600 dark:text-neutral-300 transition-all duration-300 py-2.5 px-3 rounded-lg flex items-center justify-center font-medium gap-2 text-sm"
+                  onClick={() => handleChatClick(applicant.id, applicant.user.name || "Applicant")}
+                  disabled={chatLoadingId === applicant.id}
+                  className="mt-2 w-full bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-neutral-600 dark:text-neutral-300 transition-all duration-300 py-2.5 px-3 rounded-lg flex items-center justify-center font-medium gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  Chat
+                  {chatLoadingId === applicant.id ? "Starting..." : "Chat"}
                 </button>
               </div>
             </div>
           );
         })}
       </div>
-
-
     </>
   );
 };

@@ -4,12 +4,12 @@ import FormInput from './FormInput';
 import { Mail, Lock, User, Building, Users as UsersIcon, Facebook, Youtube } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { login, signUp } from '@/app/actions/auth';
+import { login, signUp } from '@/app/(app)/actions/auth';
 import { Role } from '@prisma/client';
 import RoleSelector from './RoleSelector';
 import { useActionState } from 'react';
 import { showToast } from '@/lib/utils';
-import { ActionResult } from '@/app/actions/auth';
+import { ActionResult } from '@/app/(app)/actions/auth';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 interface AuthCardProps {

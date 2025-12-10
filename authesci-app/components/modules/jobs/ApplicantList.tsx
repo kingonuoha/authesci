@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { MoreHorizontal, FileText, Check, X, ChevronDown, Sparkles, ArrowUpDown } from "lucide-react";
 import { Application, Profile, ApplicationStatus } from "@prisma/client";
-import { updateApplicationStatus } from "@/app/actions/applications";
+import { updateApplicationStatus } from "@/app/(app)/actions/applications";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 import {

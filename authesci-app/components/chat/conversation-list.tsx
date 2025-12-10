@@ -88,7 +88,7 @@ export function ConversationList({
 
     return (
         <>
-            <div className="flex items-center justify-between gap-3 px-5 pt-5 pb-4">
+            <div className="flex flex-col gap-3 px-5 pt-5 pb-2">
                 <div className="flex items-center gap-3 min-w-0">
                     <div className="relative shrink-0">
                         <Avatar className="h-10 w-10 border border-neutral-200 dark:border-neutral-700">
@@ -106,9 +106,13 @@ export function ConversationList({
                         <p className="text-xs text-green-600 dark:text-green-400 truncate">Available</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                    <NewChatModal currentUserId={currentUserId} />
-                    <AskAiButton userId={currentUserId} />
+                <div className="flex items-center gap-2 w-full">
+                    <div className="flex-1">
+                        <NewChatModal currentUserId={currentUserId} />
+                    </div>
+                    <div className="flex-1">
+                        <AskAiButton userId={currentUserId} />
+                    </div>
                 </div>
             </div>
 

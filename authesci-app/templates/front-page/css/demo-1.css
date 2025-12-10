@@ -1,0 +1,30 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap');
+
+ :root {
+     --pbmit-global-color:  #4540df;
+     --pbmit-secondary-color: #030304;
+     --pbmit-light-color: #e9edf3;
+     --pbmit-white-color:#ffffff;
+     --pbmit-blackish-color: #03030a;
+     --pbmit-link-color-normal: #030304;
+     --pbmit-link-color-hover:#4540df;
+     --pbmit-global-color-rgb:rgb(69, 64, 223);
+     --pbmit-secondary-color-rgb: rgb(3, 3, 4);
+     --pbmit-responsive-breakpoint: 1200px;
+     --pbmit-body-typography-font-family: 'Jost', sans-serif;
+     --pbmit-body-typography-variant: 400;
+     --pbmit-body-typography-font-size: 16px;
+     --pbmit-body-typography-line-height: 28px;
+     --pbmit-body-typography-color: #666;
+     --pbmit-heading-typography-font-family: 'Jost', sans-serif;
+     --pbmit-heading-color: #030304;
+     --pbmit-heading-font-variant: 600;
+     --pbmit-btn-typography-font-family: 'Jost', sans-serif;
+     --pbmit-btn-typography-variant: 600;
+     --pbmit-btn-typography-font-size: 14px;
+     --pbmit-btn-typography-line-height: 24px;
+	 --pbmit-box-shadow: 0px 2px 0px 0px rgb(0 0 0 / 10%);
+	 --border-radius: 0px;
+}
+

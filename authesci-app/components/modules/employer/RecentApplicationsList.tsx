@@ -42,7 +42,7 @@ export async function RecentApplicationsList({ employerId }: { employerId: strin
                                 <div className="flex items-start justify-between mb-3">
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-10 w-10 border border-neutral-200 dark:border-neutral-700">
-                                            <AvatarImage src={app.applicant.profilePicture || ""} />
+                                            <AvatarImage src={app.applicant.avatarUrl || ""} />
                                             <AvatarFallback>{app.applicant.fullName[0]}</AvatarFallback>
                                         </Avatar>
                                         <div>

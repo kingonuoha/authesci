@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Plus, Search, Loader2, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { searchContacts, createConversation } from '@/app/actions/chat';
+import { searchContacts, createConversation } from '@/app/(app)/actions/chat';
 import { useEffect } from 'react';
 
 interface NewChatModalProps {

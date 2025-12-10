@@ -24,6 +24,27 @@ export async function logActivity(
     });
   } catch (error) {
     console.error("Failed to create system log:", error);
+// ... existing code ...
     // Fail silently to not disrupt the main flow
+  }
+}
+
+export async function logProjectActivity(
+  projectId: string,
+  userId: string,
+  action: string,
+  metadata?: Record<string, any>
+) {
+  try {
+    await prisma.projectActivity.create({
+      data: {
+        projectId,
+        userId,
+        action,
+        metadata: metadata || {},
+      },
+    });
+  } catch (error) {
+    console.error("Failed to log project activity:", error);
   }
 }

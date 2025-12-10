@@ -773,7 +773,7 @@ Add the following models to your schema.prisma. This implementation decouples "M
 🎨 Batch 11: Code refinement and fixes
 details at docs\initial-docs\Chat Doc.md
 
-🎨 Batch 12: UI Polish & Static Pages
+🎨 Batch 13: UI Polish & Static Pages
 Goal: Finalize the "Premium" look and add missing static pages. Context: Covers Week 5 "In-Lab Mode Preview" and "UI Responsiveness."
 
 Key Features:
@@ -798,7 +798,7 @@ Ensure tables scroll horizontally on small screens.
 
 Dependencies: Batch 9 Duration: 2 days
 
-🚀 Batch 12: Testing, Docs & Deployment
+🚀 Batch 14: Testing, Docs & Deployment
 Goal: Go live. Context: Covers Week 5 "End-to-End Testing" and "Deployment."
 
 Key Features:

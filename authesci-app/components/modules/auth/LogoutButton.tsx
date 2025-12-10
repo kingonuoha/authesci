@@ -1,7 +1,7 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { logout } from "@/app/actions/auth";
+import { logout } from "@/app/(app)/actions/auth";
 
 export function LogoutButton() {
   const handleLogout = async () => {
@@ -11,7 +11,7 @@ export function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="flex items-center gap-4 px-0 py-2 text-black hover:text-danger-600 w-full"
+      className="flex items-center gap-4 px-0 py-2 text-neutral-900 dark:text-white hover:text-danger-600 dark:hover:text-danger-400 w-full"
     >
       <LogOut className="icon text-xl" />
       Log Out

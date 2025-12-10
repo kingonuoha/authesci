@@ -57,16 +57,21 @@ export function JobCard({ job, isEmployer = false, applications = [] }: JobCardP
       <div className={`card-header border-b border-neutral-200 dark:border-neutral-700 py-4 px-6 flex justify-between items-start ${isRecommended ? 'bg-gradient-to-r from-purple-50/50 to-transparent dark:from-purple-900/10' : ''}`}>
         <div className="pr-12 flex gap-3 items-start">
           {/* Company Logo */}
-          {(job.employer as any).companyLogoUrl && (
-            <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 flex-shrink-0 bg-neutral-50 dark:bg-neutral-900">
-              <Image
-                src={(job.employer as any).companyLogoUrl}
-                alt={job.employer.institution || "Company Logo"}
-                fill
-                className="object-cover"
-              />
-            </div>
-          )}
+          {/* Company Logo */}
+          <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 flex-shrink-0 bg-neutral-50 dark:bg-neutral-900">
+            <Image
+              src={
+                (job.employer as any).companyLogoUrl ||
+                (job.employer as any).avatarUrl ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  job.employer.institution || job.employer.fullName
+                )}&background=random`
+              }
+              alt={job.employer.institution || "Company Logo"}
+              fill
+              className="object-cover"
+            />
+          </div>
 
           <div>
             <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -144,7 +149,7 @@ export function JobCard({ job, isEmployer = false, applications = [] }: JobCardP
                 {(job.status === "PENDING_PAYMENT" || job.status === "DRAFT") && (
                   <button
                     onClick={async () => {
-                      const { initiateJobPayment } = await import("@/app/actions/jobs");
+                      const { initiateJobPayment } = await import("@/app/(app)/actions/jobs");
                       const result = await initiateJobPayment(job.id);
                       if (result.status === "success" && result.paystackUrl) {
                         window.location.href = result.paystackUrl;
@@ -216,7 +221,7 @@ function RemixButton({ jobId }: { jobId: string }) {
     if (!result.isConfirmed) return;
     setLoading(true);
     try {
-      const { remixJob } = await import("@/app/actions/jobs");
+      const { remixJob } = await import("@/app/(app)/actions/jobs");
       const result = await remixJob(jobId);
       if (result.status === "success") {
         toast.success(result.message);
@@ -252,7 +257,7 @@ function ViewProjectButton({ jobId }: { jobId: string }) {
   const handleViewProject = async () => {
     setLoading(true);
     try {
-      const { getProjectForJob } = await import("@/app/actions/jobs");
+      const { getProjectForJob } = await import("@/app/(app)/actions/jobs");
       const result = await getProjectForJob(jobId);
       if (result.status === "success" && result.projectId) {
         router.push(`/project/${result.projectId}`);

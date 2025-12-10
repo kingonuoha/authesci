@@ -36,7 +36,7 @@ export function StatsWidget({ data }: StatsWidgetProps) {
   const formatCurrency = (amount: number | Prisma.Decimal) => {
     // Check if amount is a Prisma.Decimal and convert if necessary
     const numAmount = typeof amount === 'object' && 'toNumber' in amount ? amount.toNumber() : amount;
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(numAmount);
+    return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(numAmount);
   };
 
   return (

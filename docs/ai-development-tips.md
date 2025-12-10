@@ -150,3 +150,50 @@ This document captures key learnings, patterns, and best practices discovered du
 
 ### Prisma Seeding
 - **Analytics:** When seeding analytics data (PageViews, Logs), ensure you generate data with realistic timestamps (backdated) to populate charts effectively for testing.
+
+## 10. Public Frontend Refactoring & Architecture (Batch 12)
+
+### Multiple Root Layouts
+- **Pattern:** To isolate the Dashboard's heavy assets/CSS from the Public Marketing site, we use Next.js **Route Groups** with separate root layouts.
+- **Structure:**
+  - `app/(app)/layout.tsx`: Root layout for the authenticated app (Dashboard, Auth). Loads `globals.css` (Tailwind/Shadcn).
+  - `app/(public)/layout.tsx`: Root layout for the public site. Loads `public.css` (Marketing template styles).
+- **Crucial:** Both layouts must define their own `<html>` and `<body>` tags. There should be no top-level `app/layout.tsx` if all routes are covered by these groups.
+
+### Import Path Fixes
+- **Issue:** Moving files into `app/(app)` breaks absolute imports that assume `app/actions` or `app/profile`.
+- **Solution:** Update import paths to reflect the new structure.
+  - `@/app/actions/...` -> `@/app/(app)/actions/...`
+  - `@/app/profile/ProfilePage` -> `@/app/(app)/profile/ProfilePage`
+- **Tip:** When refactoring directory structure, always check for absolute imports starting with `@/app/...`.
+
+### Asset Management
+- **Separation:** Public assets (images, CSS, JS) for the marketing site should be kept in a dedicated folder (e.g., `public/front-assets/`) to avoid clutter and conflicts with the main app assets.
+
+### Template Switching
+- **Clean Slate:** When switching frontend templates, it is often cleaner to remove the old public pages and components entirely rather than trying to patch them. This ensures no legacy styles or scripts interfere with the new design.
+
+## 11. Responsive UI & Template Integration (Batch 13)
+
+### Template Integration
+- **Structure Over Wrappers:** When using third-party HTML templates (e.g., `freeio-html`), prefer standard Bootstrap classes (like `d-flex`, `container`, `row`) over the template's custom wrappers (like `home1_style`) if they cause layout issues. The custom classes often have hidden `position: absolute` or specific display properties that break in modern React/Next.js flows.
+- **Dependency Isolation:** Avoid importing template-specific JS files globally if they manipulate the DOM aggressively (like some complex mega-menu scripts). Re-implement the logic in React or use simplified HTML structures.
+
+### Authentication State in Global Components
+- **Server-Side Fetching:** For global components like `PublicNavbar` that render on every page, fetch user data (session/profile) in the server-side Layout (`layout.tsx`) and pass it down as props.
+- **Benefits:** This prevents "flicker" on client-side state checks and avoids making the Navbar an `async` component (which can be problematic if imported into other client components).
+- **Pattern:**
+  ```tsx
+  // app/(public)/layout.tsx
+  const { data: { user } } = await supabase.auth.getUser();
+  const profile = user ? await prisma.profile.findUnique(...) : null;
+  return <PublicNavbar user={user} profile={profile} />
+  ```
+
+### Bootstrap vs Tailwind
+- **Consistency:** If a section of the app (like the Public Marketing site) uses Bootstrap via a template, stick to Bootstrap utility classes for overrides. Mixing Tailwind classes into a Bootstrap-heavy DOM can lead to unpredictable specificity wars, especially with `!important` flags in template CSS.
+- **Grid System:** Respect the template's grid. If it uses `col-lg-8`, don't try to force a Tailwind `w-2/3` alongside it unless you are rewriting the entire container.
+
+### Visual Polish
+- **Image Fallbacks:** Always implement a 3-tier fallback for user/company avatars: `Company Logo` -> `User Avatar` -> `Default Placeholder` (like UI Avatars). This ensures the UI never looks broken for new users.
+- **Navigation:** Simplify dropdowns for mobile. Complex nested menus from HTML templates often rely on jQuery. For React, a simple flat list or a single-level Accordion is often more robust and accessible.

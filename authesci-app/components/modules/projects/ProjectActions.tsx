@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { markProjectAsComplete, confirmProjectCompletion } from "@/app/actions/projects";
+import { markProjectAsComplete, confirmProjectCompletion } from "@/app/(app)/actions/projects";
 import { toast } from "react-hot-toast";
 import {
     AlertDialog,

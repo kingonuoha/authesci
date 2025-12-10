@@ -3,7 +3,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { X, Kanban, FileText, Settings, ArrowLeft, LayoutDashboard } from 'lucide-react';
+import { X, Kanban, FileText, Settings, ArrowLeft, LayoutDashboard, Activity } from 'lucide-react';
 import { Project } from '@prisma/client';
 
 interface ProjectSidebarProps {
@@ -24,6 +24,7 @@ const ProjectSidebar = ({ project, userRole, isSidebarOpen, toggleSidebar, isMob
     { label: 'Overview', href: baseUrl, icon: LayoutDashboard },
     { label: 'Kanban Board', href: `${baseUrl}/kanban`, icon: Kanban },
     { label: 'Documents', href: `${baseUrl}/files`, icon: FileText },
+    { label: 'Activity', href: `${baseUrl}/activity`, icon: Activity },
     // { label: 'Settings', href: `${baseUrl}/settings`, icon: Settings }, // Future
   ];
 

@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Role } from '@prisma/client'; // Assuming Role enum is available from Prisma client
 import { Users } from 'lucide-react'; // Icon for role switching
-import { updateRole } from '@/app/actions/role'; // Server Action to update role
+import { updateRole } from '@/app/(app)/actions/role'; // Server Action to update role
 
 interface RoleSwitcherProps {
   currentRole: Role;
@@ -36,8 +36,8 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ currentRole }) => {
 
   return (
     <li>
-      <div className="flex items-center gap-4 px-0 py-2 text-black">
-        <Users className="icon text-xl" />
+      <div className="flex items-center gap-3 px-3 py-2 text-sm text-neutral-900 dark:text-white">
+        <Users className="h-4 w-4" />
         <select
           value={currentRole}
           onChange={(e) => handleRoleChange(e.target.value as Role)}

@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState, useRef, ReactNode } fro
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { RealtimeChannel } from '@supabase/supabase-js';
-import { updateLastSeen } from '@/app/actions/chat';
+import { updateLastSeen } from '@/app/(app)/actions/chat';
 
 interface RealtimeContextType {
     onlineUsers: Set<string>;

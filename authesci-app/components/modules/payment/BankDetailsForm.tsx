@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { saveBankDetails, resolveAccount, deleteBankDetails } from "@/app/actions/payment";
+import { useState, useEffect, useActionState } from "react";
+import { useFormStatus } from "react-dom";
+import { saveBankDetails, resolveAccount, deleteBankDetails } from "@/app/(app)/actions/payment";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -65,7 +65,7 @@ function SubmitButton() {
 }
 
 export default function BankDetailsForm({ banks, initialData }: BankDetailsFormProps) {
-  const [state, formAction] = useFormState(saveBankDetails, initialState);
+  const [state, formAction] = useActionState(saveBankDetails, initialState);
   const [selectedBank, setSelectedBank] = useState<string>(
     banks.find((b) => b.name === initialData?.bankName)?.code || ""
   );
@@ -101,9 +101,9 @@ export default function BankDetailsForm({ banks, initialData }: BankDetailsFormP
         setIsResolving(true);
         setResolveError("");
         setAccountName(""); // Clear previous name while resolving
-        
+
         const result = await resolveAccount(accountNumber, selectedBank);
-        
+
         setIsResolving(false);
         if (result.success) {
           setAccountName(result.account_name);
@@ -135,23 +135,23 @@ export default function BankDetailsForm({ banks, initialData }: BankDetailsFormP
     });
 
     if (!result.isConfirmed) return;
-    
+
     setIsDeleting(true);
     try {
-        const result = await deleteBankDetails();
-        if (result.status === "success") {
-            toast.success(result.message);
-            setSelectedBank("");
-            setAccountNumber("");
-            setAccountName("");
-            setIsViewMode(false);
-        } else {
-            toast.error(result.message);
-        }
+      const result = await deleteBankDetails();
+      if (result.status === "success") {
+        toast.success(result.message);
+        setSelectedBank("");
+        setAccountNumber("");
+        setAccountName("");
+        setIsViewMode(false);
+      } else {
+        toast.error(result.message);
+      }
     } catch (error) {
-        toast.error("Failed to delete bank details");
+      toast.error("Failed to delete bank details");
     } finally {
-        setIsDeleting(false);
+      setIsDeleting(false);
     }
   };
 
@@ -159,62 +159,62 @@ export default function BankDetailsForm({ banks, initialData }: BankDetailsFormP
 
   if (isViewMode && initialData?.accountNumber) {
     return (
-        <div className="relative overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 p-6">
-            <div className="absolute top-0 right-0 p-4">
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="text-neutral-400 hover:text-destructive hover:bg-destructive/10"
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                >
-                    {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-5 w-5" />}
-                </Button>
-            </div>
-            
-            <div className="flex flex-col h-full justify-between gap-6">
-                <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-white dark:bg-neutral-800 flex items-center justify-center shadow-sm text-primary-600 overflow-hidden">
-                        {banks.find(b => b.name === initialData.bankName)?.slug ? (
-                             <img 
-                                src={`https://nigerianbanks.xyz/logo/${banks.find(b => b.name === initialData.bankName)?.slug}.png`} 
-                                alt={initialData.bankName || "Bank"}
-                                className="w-full h-full object-contain"
-                                onError={(e) => {
-                                    (e.target as HTMLImageElement).style.display = 'none';
-                                    (e.target as HTMLImageElement).parentElement!.innerHTML = '<svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>';
-                                }}
-                            />
-                        ) : (
-                            <Building2 className="h-6 w-6" />
-                        )}
-                    </div>
-                    <div>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium uppercase tracking-wider">Bank Name</p>
-                        <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{initialData.bankName}</h3>
-                    </div>
-                </div>
-
-                <div className="space-y-4">
-                    <div>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium uppercase tracking-wider">Account Name</p>
-                        <p className="text-base font-medium text-neutral-900 dark:text-white">{initialData.accountName}</p>
-                    </div>
-                    
-                    <div>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium uppercase tracking-wider">Account Number</p>
-                        <div className="flex items-center gap-2">
-                            <p className="text-xl font-mono font-semibold text-neutral-900 dark:text-white tracking-widest">
-                                {initialData.accountNumber}
-                            </p>
-                            <div className="px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold uppercase">
-                                Verified
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div className="relative overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 p-6">
+        <div className="absolute top-0 right-0 p-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-neutral-400 hover:text-destructive hover:bg-destructive/10"
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-5 w-5" />}
+          </Button>
         </div>
+
+        <div className="flex flex-col h-full justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-white dark:bg-neutral-800 flex items-center justify-center shadow-sm text-primary-600 overflow-hidden">
+              {banks.find(b => b.name === initialData.bankName)?.slug ? (
+                <img
+                  src={`https://nigerianbanks.xyz/logo/${banks.find(b => b.name === initialData.bankName)?.slug}.png`}
+                  alt={initialData.bankName || "Bank"}
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                    (e.target as HTMLImageElement).parentElement!.innerHTML = '<svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>';
+                  }}
+                />
+              ) : (
+                <Building2 className="h-6 w-6" />
+              )}
+            </div>
+            <div>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium uppercase tracking-wider">Bank Name</p>
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{initialData.bankName}</h3>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium uppercase tracking-wider">Account Name</p>
+              <p className="text-base font-medium text-neutral-900 dark:text-white">{initialData.accountName}</p>
+            </div>
+
+            <div>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium uppercase tracking-wider">Account Number</p>
+              <div className="flex items-center gap-2">
+                <p className="text-xl font-mono font-semibold text-neutral-900 dark:text-white tracking-widest">
+                  {initialData.accountNumber}
+                </p>
+                <div className="px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold uppercase">
+                  Verified
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -227,60 +227,60 @@ export default function BankDetailsForm({ banks, initialData }: BankDetailsFormP
       <div className="space-y-2">
         <Label htmlFor="bank">Bank Name</Label>
         <div className="relative">
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-full justify-between"
-                >
-                  {selectedBank
-                    ? banks.find((bank) => bank.code === selectedBank)?.name
-                    : "Select your bank..."}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[400px] p-0 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-md">
-                <Command className="bg-transparent">
-                  <CommandInput placeholder="Search bank..." />
-                  <CommandList>
-                    <CommandEmpty>No bank found.</CommandEmpty>
-                    <CommandGroup>
-                      {banks.map((bank) => (
-                        <CommandItem
-                          key={bank.id}
-                          value={bank.name}
-                          onSelect={() => {
-                            setSelectedBank(bank.code);
-                            setOpen(false);
-                          }}
-                          className="aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800"
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              selectedBank === bank.code ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          {bank.slug && (
-                            <img 
-                                src={`https://nigerianbanks.xyz/logo/${bank.slug}.png`} 
-                                alt={bank.name}
-                                className="w-6 h-6 mr-2 object-contain rounded-full bg-white"
-                                onError={(e) => {
-                                    (e.target as HTMLImageElement).style.display = 'none';
-                                }}
-                            />
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={open}
+                className="w-full justify-between"
+              >
+                {selectedBank
+                  ? banks.find((bank) => bank.code === selectedBank)?.name
+                  : "Select your bank..."}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[400px] p-0 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-md">
+              <Command className="bg-transparent">
+                <CommandInput placeholder="Search bank..." />
+                <CommandList>
+                  <CommandEmpty>No bank found.</CommandEmpty>
+                  <CommandGroup>
+                    {banks.map((bank) => (
+                      <CommandItem
+                        key={bank.id}
+                        value={bank.name}
+                        onSelect={() => {
+                          setSelectedBank(bank.code);
+                          setOpen(false);
+                        }}
+                        className="aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800"
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            selectedBank === bank.code ? "opacity-100" : "opacity-0"
                           )}
-                          {bank.name}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+                        />
+                        {bank.slug && (
+                          <img
+                            src={`https://nigerianbanks.xyz/logo/${bank.slug}.png`}
+                            alt={bank.name}
+                            className="w-6 h-6 mr-2 object-contain rounded-full bg-white"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        )}
+                        {bank.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
@@ -292,8 +292,8 @@ export default function BankDetailsForm({ banks, initialData }: BankDetailsFormP
           placeholder="0123456789"
           value={accountNumber}
           onChange={(e) => {
-             const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-             setAccountNumber(val);
+            const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+            setAccountNumber(val);
           }}
           maxLength={10}
         />
@@ -305,25 +305,25 @@ export default function BankDetailsForm({ banks, initialData }: BankDetailsFormP
             Account Name
           </span>
         </div>
-        
+
         <div className="min-h-[24px]">
-            {isResolving ? (
-                <Skeleton className="h-6 w-3/4" />
-            ) : accountName ? (
-                <div className="flex items-center text-success-600 gap-2 font-medium">
-                    <CheckCircle2 className="h-4 w-4" />
-                    {accountName}
-                </div>
-            ) : resolveError ? (
-                <div className="flex items-center text-destructive gap-2 text-sm">
-                    <AlertCircle className="h-4 w-4" />
-                    {resolveError}
-                </div>
-            ) : (
-                <span className="text-neutral-400 text-sm italic">
-                    Enter bank and account number to verify
-                </span>
-            )}
+          {isResolving ? (
+            <Skeleton className="h-6 w-3/4" />
+          ) : accountName ? (
+            <div className="flex items-center text-success-600 gap-2 font-medium">
+              <CheckCircle2 className="h-4 w-4" />
+              {accountName}
+            </div>
+          ) : resolveError ? (
+            <div className="flex items-center text-destructive gap-2 text-sm">
+              <AlertCircle className="h-4 w-4" />
+              {resolveError}
+            </div>
+          ) : (
+            <span className="text-neutral-400 text-sm italic">
+              Enter bank and account number to verify
+            </span>
+          )}
         </div>
       </div>
 

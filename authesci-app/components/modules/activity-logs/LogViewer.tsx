@@ -35,7 +35,7 @@ export default async function LogViewer({ userId, limit = 50, isAdminView = fals
     });
 
     return (
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
             <Table>
                 <TableHeader>
                     <TableRow>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getLogsAction } from "@/app/actions/logs";
+import { getLogsAction } from "@/app/(app)/actions/logs";
 import { formatDistanceToNow } from "date-fns";
 import {
     Table,
@@ -42,7 +42,7 @@ export default function LogViewerClient({ userId, limit = 50, isAdminView = fals
     }
 
     return (
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
             <Table>
                 <TableHeader>
                     <TableRow>

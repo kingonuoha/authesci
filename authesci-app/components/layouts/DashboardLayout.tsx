@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Sidebar from '@/components/modules/Sidebar';
+import { MobileSidebar } from '@/components/modules/MobileSidebar';
 import Header from '@/components/modules/Header';
 import Breadcrumb from '@/components/modules/Breadcrumb';
 import Footer from '@/components/modules/Footer'; // Import Footer
@@ -29,10 +30,20 @@ const DashboardLayout = ({ children, profile, activeProjectCount }: DashboardLay
   return (
     <RealtimeProvider userId={profile.id}>
       <div >
-        <Sidebar
+        {/* Desktop Sidebar - Hidden on Mobile */}
+        {/* Desktop Sidebar - Hidden on Mobile */}
+        <div >
+          <Sidebar
+            role={profile.role}
+            isSidebarOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+            activeProjectCount={activeProjectCount}
+          />
+        </div>
+
+        {/* Mobile Sidebar - Sheet based */}
+        <MobileSidebar
           role={profile.role}
-          isSidebarOpen={isSidebarOpen}
-          toggleSidebar={toggleSidebar}
           isMobileSidebarOpen={isMobileSidebarOpen}
           toggleMobileSidebar={toggleMobileSidebar}
           activeProjectCount={activeProjectCount}

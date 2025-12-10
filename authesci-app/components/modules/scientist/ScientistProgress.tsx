@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+import { Link as LinkIcon, CheckCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { getProfileId } from "@/lib/auth-utils";
 
 export async function ScientistProgress() {
@@ -42,9 +45,24 @@ export async function ScientistProgress() {
                     </span>
                 </div>
                 <Progress value={percentage} className="h-2" />
-                <p className="text-xs text-muted-foreground mt-2">
-                    Complete your profile to increase your chances of being hired.
-                </p>
+
+                {percentage === 100 ? (
+                    <div className="flex items-center gap-2 mt-3 text-green-600 dark:text-green-400">
+                        <CheckCircle className="w-4 h-4" />
+                        <span className="text-sm font-medium">Profile Complete!</span>
+                    </div>
+                ) : (
+                    <div className="mt-3">
+                        <p className="text-xs text-muted-foreground mb-2">
+                            Complete your profile to increase your chances of being hired.
+                        </p>
+                        <Button asChild variant="outline" size="sm" className="w-full text-xs h-7">
+                            <Link href="/scientist/profile">
+                                Finish Profile
+                            </Link>
+                        </Button>
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

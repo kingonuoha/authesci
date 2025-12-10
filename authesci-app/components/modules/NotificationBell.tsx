@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Bell } from 'lucide-react';
-import { getNotificationsAction, getUnreadCountAction, markReadAction, markAllReadAction, getUserRoleAction, getProfileIdAction } from '@/app/actions/notifications';
+import { getNotificationsAction, getUnreadCountAction, markReadAction, markAllReadAction, getUserRoleAction, getProfileIdAction } from '@/app/(app)/actions/notifications';
 import { createClient } from '@/lib/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';

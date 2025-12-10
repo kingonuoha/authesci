@@ -21,7 +21,7 @@ export default function EscrowCard({ totalAmount, platformFee, scientistAmount, 
   const isCompleted = projectStatus === 'COMPLETED';
 
   return (
-    <div className="card border-0 p-0 rounded-xl h-full">
+    <div className="card border-0 p-0 rounded-xl">
       <div className="card-header border-b border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 py-4 px-6">
         <h6 className="text-lg font-semibold mb-0">Escrow Status</h6>
       </div>

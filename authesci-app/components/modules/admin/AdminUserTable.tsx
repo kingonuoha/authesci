@@ -10,11 +10,12 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { banUserAction, unbanUserAction } from "@/app/actions/admin";
+import { banUserAction, unbanUserAction } from "@/app/(app)/actions/admin";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { UserAvatar } from "@/components/modules/common/UserAvatar";
 
 const MySwal = withReactContent(Swal);
 
@@ -35,7 +36,7 @@ export function AdminUserTable({ users }: AdminUserTableProps) {
     const handleBanToggle = async (userId: string, isBanned: boolean) => {
         if (isBanned) {
             const result = await unbanUserAction(userId);
-            if (result.success) toast.success("User unbanned");
+            if (result.status === 'success') toast.success("User unbanned");
             else toast.error("Failed to unban user");
         } else {
             const result = await MySwal.fire({
@@ -55,7 +56,7 @@ export function AdminUserTable({ users }: AdminUserTableProps) {
 
             if (result.isConfirmed) {
                 const actionResult = await banUserAction(userId);
-                if (actionResult.success) toast.success("User banned");
+                if (actionResult.status === 'success') toast.success("User banned");
                 else toast.error("Failed to ban user");
             }
         }
@@ -67,13 +68,21 @@ export function AdminUserTable({ users }: AdminUserTableProps) {
                 <div key={user.id} className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                     <div className="p-5">
                         <div className="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 className="font-semibold text-lg text-neutral-900 dark:text-white truncate" title={user.fullName}>
-                                    {user.fullName}
-                                </h3>
-                                <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate" title={user.email}>
-                                    {user.email}
-                                </p>
+                            <div className="flex items-center gap-3 overflow-hidden">
+                                <UserAvatar
+                                    userId={user.id}
+                                    name={user.fullName}
+                                    className="h-10 w-10 flex-shrink-0"
+                                    showStatus={true}
+                                />
+                                <div className="min-w-0">
+                                    <h3 className="font-semibold text-lg text-neutral-900 dark:text-white truncate" title={user.fullName}>
+                                        {user.fullName}
+                                    </h3>
+                                    <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate" title={user.email}>
+                                        {user.email}
+                                    </p>
+                                </div>
                             </div>
                             <Badge variant={user.isBanned ? "destructive" : "default"}>
                                 {user.isBanned ? "Banned" : "Active"}
@@ -112,9 +121,9 @@ export function AdminUserTable({ users }: AdminUserTableProps) {
                                     });
 
                                     if (result.isConfirmed) {
-                                        const { promoteUserToAdminAction } = await import("@/app/actions/admin");
+                                        const { promoteUserToAdminAction } = await import("@/app/(app)/actions/admin");
                                         const actionResult = await promoteUserToAdminAction(user.id);
-                                        if (actionResult.success) toast.success("User promoted to Admin");
+                                        if (actionResult.status === 'success') toast.success("User promoted to Admin");
                                         else toast.error("Failed to promote user");
                                     }
                                 }}

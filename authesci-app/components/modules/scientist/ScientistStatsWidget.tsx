@@ -30,7 +30,7 @@ export async function ScientistStatsWidget() {
                 title="Applications Sent"
                 value={applicationsSent}
                 icon={Send}
-                variant="blue"
+                variant="cyan"
             />
             <StatsCard
                 title="Shortlisted"

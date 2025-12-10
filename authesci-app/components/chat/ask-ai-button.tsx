@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Bot } from 'lucide-react';
-import { createAiConversation } from '@/app/actions/chat';
+import { createAiConversation } from '@/app/(app)/actions/chat';
 import { useRouter } from 'next/navigation';
 
 export function AskAiButton({ userId }: { userId: string }) {
@@ -16,8 +16,8 @@ export function AskAiButton({ userId }: { userId: string }) {
     };
 
     return (
-        <Button variant="outline" size="sm" className="w-full mt-2" onClick={handleClick}>
-            <Bot className="mr-2 h-4 w-4" /> Ask AI Assistant
+        <Button variant="outline" size="sm" onClick={handleClick} className="w-full">
+            <Bot className="mr-2 h-4 w-4" /> Ask AI
         </Button>
     );
 }

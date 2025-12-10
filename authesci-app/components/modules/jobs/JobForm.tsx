@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { createJob, updateJob } from "@/app/actions/jobs";
+import { createJob, updateJob } from "@/app/(app)/actions/jobs";
 import { JobType, Job } from "@prisma/client";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -239,7 +239,7 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
       if (key === "salaryFixed" || key === "salaryMin" || key === "salaryMax" || key === "salaryMode" || key === "screeningQuestions") {
         // Skip these, we handle them separately
       } else if (value) {
-        formData.append(key, value);
+        formData.append(key, value as string);
       }
     });
 

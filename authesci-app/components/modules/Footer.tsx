@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
     <footer className="d-footer">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <p className="mb-0 text-neutral-600">&copy; {new Date().getFullYear()} Authesci. All Rights Reserved.</p>
-        <p className="mb-0">Made by <a href="https://themeforest.net/user/wowtheme7/portfolio" className="text-primary-600 dark:text-primary-600 hover:underline">Authesci Team</a></p>
+        <p className="mb-0">Made by <a href="https://github.com/kingonuoha/authesci" className="text-primary-600 dark:text-primary-600 hover:underline">Authesci Team</a></p>
       </div>
     </footer>
   );

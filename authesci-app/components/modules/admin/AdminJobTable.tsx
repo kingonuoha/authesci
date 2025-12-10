@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { deleteJobAction } from "@/app/actions/admin";
+import { deleteJobAction } from "@/app/(app)/actions/admin";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -53,7 +53,7 @@ export function AdminJobTable({ jobs }: AdminJobTableProps) {
 
         if (result.isConfirmed) {
             const deleteResult = await deleteJobAction(jobId);
-            if (deleteResult.success) {
+            if (deleteResult.status === 'success') {
                 toast.success("Job deleted");
             } else {
                 toast.error("Failed to delete job");

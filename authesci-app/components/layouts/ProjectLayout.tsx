@@ -45,7 +45,7 @@ const ProjectLayout = ({ children, profile, project }: ProjectLayoutProps) => {
           <Breadcrumb pageTitle={project.title} activePage="Workspace" />
           {children}
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </main>
 
       {/* Mobile Overlay */}

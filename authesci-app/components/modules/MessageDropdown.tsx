@@ -6,13 +6,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
-import { getUnreadMessages } from '@/app/actions/chat';
+import { getRecentMessages } from '@/app/(app)/actions/chat';
 
-interface UnreadMessage {
+interface RecentMessage {
     id: string;
     content: string;
     createdAt: Date;
     conversationId: string;
+    isRead: boolean;
     sender: {
         fullName: string;
         avatarUrl: string | null;
@@ -21,21 +22,21 @@ interface UnreadMessage {
 
 export function MessageDropdown() {
     const [isOpen, setIsOpen] = useState(false);
-    const [unreadMessages, setUnreadMessages] = useState<UnreadMessage[]>([]);
+    const [messages, setMessages] = useState<RecentMessage[]>([]);
     const supabase = createClient();
 
     useEffect(() => {
-        const fetchUnread = async () => {
+        const fetchMessages = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
 
-            const res = await getUnreadMessages(user.id);
+            const res = await getRecentMessages(user.id);
             if (res.success && res.data) {
-                setUnreadMessages(res.data);
+                setMessages(res.data);
             }
         };
 
-        fetchUnread();
+        fetchMessages();
 
         // Subscribe to new messages
         const channel = supabase.channel('global-messages')
@@ -51,8 +52,8 @@ export function MessageDropdown() {
                     const { data: { user } } = await supabase.auth.getUser();
 
                     if (user && newMessage.sender_id !== user.id) {
-                        // Refresh unread list
-                        fetchUnread();
+                        // Refresh list
+                        fetchMessages();
                     }
                 }
             )
@@ -62,6 +63,8 @@ export function MessageDropdown() {
             supabase.removeChannel(channel);
         };
     }, [supabase]);
+
+    const unreadCount = messages.filter(m => !m.isRead).length;
 
     return (
         <div className="relative">
@@ -74,9 +77,9 @@ export function MessageDropdown() {
                 aria-label="View messages"
             >
                 <Mail className="text-xl text-neutral-900 dark:text-white" />
-                {unreadMessages.length > 0 && (
+                {unreadCount > 0 && (
                     <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-danger-600 text-[10px] text-white">
-                        {unreadMessages.length}
+                        {unreadCount}
                     </span>
                 )}
             </button>
@@ -85,21 +88,21 @@ export function MessageDropdown() {
                     <div className="m-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
                         <h6 className="mb-0 text-lg font-semibold text-neutral-900">Messages</h6>
                         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white font-bold text-primary-600 dark:bg-neutral-600 dark:text-white text-xs">
-                            {unreadMessages.length}
+                            {unreadCount}
                         </span>
                     </div>
                     <div className="scroll-sm !border-t-0">
                         <div className="max-h-[400px] overflow-y-auto">
-                            {unreadMessages.length === 0 ? (
+                            {messages.length === 0 ? (
                                 <div className="p-4 text-center text-muted-foreground text-sm">
-                                    No new messages
+                                    No messages
                                 </div>
                             ) : (
-                                unreadMessages.map((msg) => (
+                                messages.map((msg) => (
                                     <Link
                                         key={msg.id}
                                         href={`/messages?id=${msg.conversationId}`}
-                                        className="flex justify-between gap-1 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        className={`flex justify-between gap-1 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600 ${!msg.isRead ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                                         onClick={() => setIsOpen(false)}
                                     >
                                         <div className="flex items-center gap-3">
@@ -111,10 +114,13 @@ export function MessageDropdown() {
                                                     width={44}
                                                     height={44}
                                                 />
+                                                {!msg.isRead && (
+                                                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-primary-600 border-2 border-white dark:border-neutral-800"></span>
+                                                )}
                                             </div>
                                             <div>
-                                                <h6 className="fw-semibold mb-1 text-sm">{msg.sender.fullName}</h6>
-                                                <p className="mb-0 line-clamp-1 text-sm text-neutral-500">{msg.content}</p>
+                                                <h6 className={`mb-1 text-sm ${!msg.isRead ? 'font-bold text-neutral-900 dark:text-white' : 'font-semibold text-neutral-700 dark:text-neutral-200'}`}>{msg.sender.fullName}</h6>
+                                                <p className={`mb-0 line-clamp-1 text-sm ${!msg.isRead ? 'text-neutral-800 dark:text-neutral-100 font-medium' : 'text-neutral-500'}`}>{msg.content}</p>
                                             </div>
                                         </div>
                                         <div className="flex shrink-0 flex-col items-end gap-1">

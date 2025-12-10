@@ -20,7 +20,7 @@ import { KanbanCard } from './KanbanCard';
 import { KanbanModal } from './KanbanModal';
 import { KanbanDetailsModal } from './KanbanDetailsModal';
 import { RealtimeCursors } from './RealtimeCursors';
-import { createTask, updateTaskStatus, updateTask, deleteTask } from '@/app/actions/kanban';
+import { createTask, updateTaskStatus, updateTask, deleteTask } from '@/app/(app)/actions/kanban';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -407,7 +407,7 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators, re
       </div>
 
       <div className="overflow-x-auto scroll-sm pb-8 h-full">
-        <div className="kanban-wrapper min-w-[1000px] lg:min-w-0 lg:w-full relative">
+        <div className="kanban-wrapper w-full relative">
           {currentUser && (
             <RealtimeCursors
               projectId={projectId}
@@ -423,7 +423,7 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators, re
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
           >
-            <div className="flex items-start gap-6 pb-4" id="sortable-wrapper">
+            <div className="flex items-start gap-4 md:gap-6 pb-4 snap-x snap-mandatory px-4 md:px-0" id="sortable-wrapper">
               {COLUMNS.map((col) => (
                 <KanbanColumn
                   key={col.id}

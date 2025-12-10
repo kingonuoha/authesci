@@ -32,7 +32,7 @@ export function KanbanColumn({ id, title, tasks, onAddTask, onEditTask, onDelete
   // except for the wrapper div width which is set in parent
 
   return (
-    <div className="kanban-item rounded-xl w-[300px] md:w-[350px] flex-shrink-0">
+    <div className="kanban-item rounded-xl w-[85vw] sm:w-[300px] md:w-[350px] flex-shrink-0 snap-center">
       <div className="card p-0 rounded-xl overflow-hidden shadow-none border-0 bg-white dark:bg-neutral-900">
         <div className="card-body p-0 pb-6">
           <div className="flex items-center gap-2 justify-between ps-6 pt-6 pe-6 mb-6">

@@ -12,6 +12,7 @@ import {
   Shield,
   MessageSquare,
   BarChart,
+  BookOpen,
 } from 'lucide-react';
 
 export const NAV_LINKS = {
@@ -20,14 +21,16 @@ export const NAV_LINKS = {
     { href: '/messages', label: 'Chat', icon: MessageSquare },
     { href: '/employer/jobs', label: 'Manage Jobs', icon: Briefcase },
     { href: '/employer/profile', label: 'Company Profile', icon: Building },
-    { href: '/employer/settings', label: 'Settings', icon: Settings },
+    { href: '/settings', label: 'Settings', icon: Settings },
+    { href: '/in-lab', label: 'In-Lab Mode', icon: FlaskConical },
   ],
   SCIENTIST: [
     { href: '/scientist/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/messages', label: 'Chat', icon: MessageSquare },
     { href: '/jobs', label: 'Browse Jobs', icon: Briefcase },
     { href: '/scientist/profile', label: 'My Profile', icon: User },
-    { href: '/scientist/settings', label: 'Settings', icon: Settings },
+    { href: '/settings', label: 'Settings', icon: Settings },
+    { href: '/in-lab', label: 'In-Lab Mode', icon: FlaskConical },
   ],
   COLLABORATOR: [
     { href: '/collaborator/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -35,7 +38,7 @@ export const NAV_LINKS = {
     { href: '/collaborator/projects', label: 'Projects', icon: FlaskConical },
     { href: '/collaborator/tasks', label: 'My Tasks', icon: ClipboardCheck },
     { href: '/collaborator/profile', label: 'My Profile', icon: User },
-    { href: '/collaborator/settings', label: 'Settings', icon: Settings },
+    { href: '/settings', label: 'Settings', icon: Settings },
   ],
   ADMIN: [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -45,6 +48,7 @@ export const NAV_LINKS = {
     { href: '/admin/analytics', label: 'Analytics', icon: BarChart },
     { href: '/admin/system-logs', label: 'System Logs', icon: FileText },
     { href: '/admin/payroll', label: 'Payroll', icon: Shield },
+    { href: '/admin/blog', label: 'Blog', icon: BookOpen },
     { href: '/admin/notifications', label: 'Notifications', icon: Bell },
   ],
 };

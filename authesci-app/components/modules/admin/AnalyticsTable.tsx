@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getAnalyticsLogs } from "@/app/actions/admin";
+import { getAnalyticsLogs } from "@/app/(app)/actions/admin";
 import {
     Table,
     TableBody,
@@ -235,7 +235,7 @@ export default function AnalyticsTable() {
                 </div>
             </div>
 
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>

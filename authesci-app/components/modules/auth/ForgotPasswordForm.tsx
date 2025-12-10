@@ -1,11 +1,11 @@
 "use client";
 
-import { requestPasswordReset } from "@/app/actions/auth";
+import { requestPasswordReset } from "@/app/(app)/actions/auth";
 import { Mail } from "lucide-react";
 import FormInput from "./FormInput";
 import { useEffect, useRef, useState } from "react";
 import { showToast } from "@/lib/utils";
-import { ActionResult } from "@/app/actions/auth"; // Import ActionResult type
+import { ActionResult } from "@/app/(app)/actions/auth"; // Import ActionResult type
 
 const ForgotPasswordForm = () => {
   const formRef = useRef<HTMLFormElement>(null);

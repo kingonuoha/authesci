@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-import { Menu, ArrowRight, Search, Bell, User, Settings, XCircle } from 'lucide-react';
+import { Menu, ArrowRight, Search, Bell, User, Settings, XCircle, Mail } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Profile } from '@prisma/client';
@@ -72,35 +72,60 @@ const Header = ({ toggleSidebar, toggleMobileSidebar, user }: HeaderProps) => {
               {isProfileDropdownOpen && (
                 <div
                   id="dropdownProfile"
-                  className="dropdown-menu-sm z-10 absolute right-0 mt-2 w-60 rounded-lg bg-white p-3 shadow-lg dark:bg-neutral-700"
+                  className="absolute right-0 top-full mt-3 w-64 rounded-xl bg-white p-3 shadow-xl z-50 dark:bg-neutral-700 border border-neutral-100 dark:border-neutral-600"
                 >
-                  <div className="mb-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
-                    <div>
-                      <h6 className="mb-0 text-lg font-semibold text-neutral-900">{user.fullName || "User"}</h6>
-                      <span className="text-neutral-500">{user.role}</span>
+                  <div className="mb-3 flex items-center justify-between gap-3 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
+                    <div className="overflow-hidden">
+                      <h6 className="mb-0 text-base font-semibold text-neutral-900 dark:text-white truncate" title={user.fullName || "User"}>
+                        {user.fullName || "User"}
+                      </h6>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-300 capitalize truncate">{user.role.toLowerCase()}</p>
                     </div>
-                    <button type="button" className="hover:text-danger-600">
-                      <XCircle className="icon text-xl" />
+                    <button
+                      type="button"
+                      className="shrink-0 text-neutral-500 hover:text-danger-600 dark:text-neutral-400 dark:hover:text-danger-400"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      aria-label="Close profile menu"
+                    >
+                      <XCircle className="h-5 w-5" />
                     </button>
                   </div>
 
-                  <div className="scroll-sm max-h-[400px] overflow-y-auto pe-2">
-                    <ul className="flex flex-col">
+                  <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                    <ul className="flex flex-col gap-1">
                       {/* RoleSwitcher component will be rendered here */}
                       <RoleSwitcher currentRole={user.role} />
                       <li>
-                        <Link className="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600" href="/profile">
-                          <User className="icon text-xl" />
+                        <Link
+                          className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-600 rounded-md transition-colors"
+                          href="/profile"
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                        >
+                          <User className="h-4 w-4" />
                           My Profile
                         </Link>
                       </li>
                       <li>
-                        <Link className="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600" href="/settings">
-                          <Settings className="icon text-xl" />
-                          Setting
+                        <Link
+                          className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-600 rounded-md transition-colors"
+                          href="/messages"
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                        >
+                          <Mail className="h-4 w-4" />
+                          Inbox
                         </Link>
                       </li>
                       <li>
+                        <Link
+                          className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-600 rounded-md transition-colors"
+                          href="/settings"
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                        >
+                          <Settings className="h-4 w-4" />
+                          Settings
+                        </Link>
+                      </li>
+                      <li className="pt-2 mt-2 border-t border-neutral-100 dark:border-neutral-600">
                         <LogoutButton />
                       </li>
                     </ul>

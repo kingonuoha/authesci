@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { FileText, Upload, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'react-hot-toast';
-import { saveFileRecord } from '@/app/actions/files';
+import { saveFileRecord } from '@/app/(app)/actions/files';
 import { Progress } from '@/components/ui/progress';
 
 interface FileManagerProps {
@@ -125,7 +125,7 @@ export default function FileManager({ projectId, initialFiles, readOnly }: FileM
         <Progress value={uploadProgress} className="w-full" />
       )}
 
-      <div className="border rounded-md">
+      <div className="border rounded-md overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

@@ -3,7 +3,7 @@
 import { ApexChartWrapper } from "@/components/ui/ApexChartWrapper";
 import { Card } from "@/components/ui/card";
 import React, { useState, useEffect } from "react";
-import { getAnalyticsChartData } from "@/app/actions/admin";
+import { getAnalyticsChartData } from "@/app/(app)/actions/admin";
 
 interface AdminChartsProps {
   userRoleDistribution: { name: string; value: number }[];

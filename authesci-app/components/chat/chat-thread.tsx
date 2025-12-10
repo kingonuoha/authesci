@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { MessageBubble } from './message-bubble';
 import { MessageInput } from './message-input';
-import { sendMessage, getUploadSignature, markAsRead, updateConversation, deleteConversation } from '@/app/actions/chat';
+import { sendMessage, getUploadSignature, markAsRead, updateConversation, deleteConversation } from '@/app/(app)/actions/chat';
 import { useRealtime } from './realtime-provider';
 import { Loader2, Pencil, Trash2, Users, MoreVertical, Bot, Phone, Video } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -75,6 +75,27 @@ export function ChatThread({
     const [isEditingName, setIsEditingName] = useState(false);
     const [groupName, setGroupName] = useState(conversation?.name || 'Group Chat');
 
+    const isUserScrolledUp = useRef(false);
+    const [isAiTyping, setIsAiTyping] = useState(false);
+    const [suggestions, setSuggestions] = useState<string[]>([]);
+
+    const ALL_SUGGESTIONS = [
+        "How do I apply for a research grant?",
+        "What are the best practices for lab safety?",
+        "Explain the latest trends in biotechnology.",
+        "Help me draft a funding proposal.",
+        "How can I collaborate with other scientists?",
+        "What are the requirements for becoming a verified scientist?",
+        "Summarize the peer review process.",
+        "Tips for managing a research project budget."
+    ];
+
+    useEffect(() => {
+        // Randomly select 4 suggestions
+        const shuffled = [...ALL_SUGGESTIONS].sort(() => 0.5 - Math.random());
+        setSuggestions(shuffled.slice(0, 4));
+    }, []);
+
     const isTyping = typingUsers[conversationId]?.size > 0;
     const isOnline = otherParticipant ? onlineUsers.has(otherParticipant.id) : false;
 
@@ -117,17 +138,63 @@ export function ChatThread({
         return () => observer.disconnect();
     }, [messages, conversationId, currentUserId]);
 
+    // Parse suggestions from the last AI message
     useEffect(() => {
-        if (scrollRef.current) {
+        if (conversation?.type !== 'AI_SUPPORT') return;
+        if (messages.length === 0) {
+            // Initial random suggestions are already set by the other useEffect
+            return;
+        }
+
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage?.senderId) {
+            // Last message is from user, hide suggestions until AI replies
+            setSuggestions([]);
+            return;
+        }
+
+        // Last message is from AI (senderId is null/undefined usually for AI in this app context, or we check content)
+        // In this app, we treat AI messages as having senderId as null or 'ai-bot' in optimistic updates.
+        // Let's check the content for our specific delimiter.
+        if (lastMessage?.content?.includes('||SUGGESTIONS:')) {
+            try {
+                const parts = lastMessage.content.split('||SUGGESTIONS:');
+                if (parts[1]) {
+                    const jsonStr = parts[1].split('||')[0]; // Extract the JSON array part
+                    const parsed = JSON.parse(jsonStr);
+                    if (Array.isArray(parsed)) {
+                        setSuggestions(parsed);
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to parse AI suggestions', e);
+            }
+        }
+    }, [messages, conversation?.type]);
+
+    useEffect(() => {
+        const lastMessage = messages[messages.length - 1];
+        const isMyMessage = lastMessage?.senderId === currentUserId;
+
+        if (scrollRef.current && (!isUserScrolledUp.current || isMyMessage)) {
             scrollRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [messages, isTyping]);
+    }, [messages, isTyping, isAiTyping, currentUserId]);
+
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+        isUserScrolledUp.current = !isAtBottom;
+    };
 
     useEffect(() => {
         // Mark as read when opening the thread
         markAsRead(conversationId, currentUserId);
 
-        // Subscribe to new messages and participant updates
+        // Subscribe... (rest of the code unchanged, but need to match the closing of the previous useEffect to avoid syntax errors)
+        // Wait, I am replacing a block.
+        // Let's ensure I include the full block I am replacing.
+
         const channel = supabase.channel(`chat:${conversationId}`)
             .on(
                 'postgres_changes',
@@ -139,6 +206,12 @@ export function ChatThread({
                 },
                 (payload) => {
                     const newMessage = payload.new as any;
+
+                    // If we receive a message from AI (or anyone else really), stop AI typing indicator
+                    if (conversation?.type === 'AI_SUPPORT' && newMessage.sender_id !== currentUserId) {
+                        setIsAiTyping(false);
+                    }
+
                     // Optimistically append if not already present (though ID check is good)
                     setMessages((prev) => {
                         // Check if message already exists
@@ -167,6 +240,10 @@ export function ChatThread({
                                 id: newMessage.sender_id,
                                 fullName: conversation.participants.find(p => p.id === newMessage.sender_id)?.fullName || 'Unknown',
                                 avatarUrl: conversation.participants.find(p => p.id === newMessage.sender_id)?.avatarUrl || null
+                            } : conversation?.type === 'AI_SUPPORT' && !newMessage.sender_id ? {
+                                id: 'ai-bot',
+                                fullName: 'Authesci AI',
+                                avatarUrl: null
                             } : null
                         }];
                     });
@@ -236,6 +313,10 @@ export function ChatThread({
     const handleSendMessage = async (content: string, file?: File) => {
         let attachment = undefined;
 
+        if (conversation?.type === 'AI_SUPPORT') {
+            setIsAiTyping(true);
+        }
+
         // Optimistic update
         const tempId = `temp-${Date.now()}`;
         const optimisticMessage: Message = {
@@ -288,6 +369,7 @@ export function ChatThread({
                 // Remove optimistic message on failure
                 setMessages(prev => prev.filter(m => m.id !== tempId));
                 toast.error('Failed to upload attachment');
+                if (conversation?.type === 'AI_SUPPORT') setIsAiTyping(false);
                 return;
             }
         }
@@ -316,6 +398,7 @@ export function ChatThread({
             // Remove optimistic message on failure
             setMessages(prev => prev.filter(m => m.id !== tempId));
             toast.error('Failed to send message');
+            if (conversation?.type === 'AI_SUPPORT') setIsAiTyping(false);
         }
     };
 
@@ -402,18 +485,28 @@ export function ChatThread({
                     )}
                 </div>
 
-                <div className="action inline-flex items-center gap-3">
-                    <button type="button" className="text-xl text-neutral-600 dark:text-neutral-200">
+                <div className="action inline-flex items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={() => toast('Call feature coming soon!', { icon: '🚧' })}
+                        className="p-2 text-neutral-600 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors"
+                        title="Voice Call"
+                    >
                         <Phone className="w-5 h-5" />
                     </button>
-                    <button type="button" className="text-xl text-neutral-600 dark:text-neutral-200">
+                    <button
+                        type="button"
+                        onClick={() => toast('Video call feature coming soon!', { icon: '🚧' })}
+                        className="p-2 text-neutral-600 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors"
+                        title="Video Call"
+                    >
                         <Video className="w-5 h-5" />
                     </button>
 
                     {conversation?.type === 'GROUP' && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className="text-neutral-800 dark:text-white text-xl" type="button">
+                                <button className="p-2 text-neutral-800 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors" type="button">
                                     <MoreVertical className="w-5 h-5" />
                                 </button>
                             </DropdownMenuTrigger>
@@ -432,26 +525,74 @@ export function ChatThread({
                 </div>
             </div>
 
-            <div className="chat-message-list flex-1 overflow-y-auto flex flex-col p-6 gap-6 bg-neutral-50/30 dark:bg-neutral-900/10">
-                <div className="flex flex-col justify-end gap-4 mt-auto">
-                    {messages.map((message, index) => {
-                        const isRead = lastReadAt ? new Date(message.createdAt) <= lastReadAt : false;
-                        const isLastMessage = index === messages.length - 1;
-
-                        return (
-                            <div key={message.id} ref={isLastMessage ? lastMessageRef : null}>
-                                <MessageBubble
-                                    message={message}
-                                    isCurrentUser={message.senderId === currentUserId}
-                                    isRead={isRead}
-                                />
+            <div
+                className="chat-message-list flex-1 overflow-y-auto flex flex-col p-6 gap-6 bg-neutral-50/30 dark:bg-neutral-900/10"
+                onScroll={handleScroll}
+            >
+                <div className={`flex flex-col ${messages.length === 0 && conversation?.type === 'AI_SUPPORT' ? 'justify-center items-center h-full' : 'justify-end mt-auto'} gap-4`}>
+                    {messages.length === 0 && conversation?.type === 'AI_SUPPORT' ? (
+                        <div className="flex flex-col items-center justify-center gap-6 w-full max-w-2xl animate-in fade-in zoom-in-95 duration-500 my-auto">
+                            <div className="flex flex-col items-center gap-2 text-center">
+                                <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-2">
+                                    <Bot className="h-8 w-8 text-primary" />
+                                </div>
+                                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
+                                    Hi, I'm Authesci AI
+                                </h3>
+                                <p className="text-sm text-muted-foreground max-w-xs">
+                                    Ask me anything about your research, grants, or platform features.
+                                </p>
                             </div>
-                        );
-                    })}
-                    {isTyping && (
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full px-4">
+                                {suggestions.map((suggestion, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => handleSendMessage(suggestion)}
+                                        className="text-left text-sm p-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800/50 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all hover:border-primary/50 hover:shadow-sm"
+                                    >
+                                        {suggestion}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            {messages.map((message, index) => {
+                                const isRead = lastReadAt ? new Date(message.createdAt) <= lastReadAt : false;
+                                const isLastMessage = index === messages.length - 1;
+
+                                return (
+                                    <div key={message.id} ref={isLastMessage ? lastMessageRef : null}>
+                                        <MessageBubble
+                                            message={message}
+                                            isCurrentUser={message.senderId === currentUserId}
+                                            isRead={isRead}
+                                        />
+                                    </div>
+                                );
+                            })}
+
+                            {/* Dynamic Suggestions for ongoing chat */}
+                            {suggestions.length > 0 && conversation?.type === 'AI_SUPPORT' && !isAiTyping && (
+                                <div className="flex flex-wrap gap-2 mt-2 ml-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                    {suggestions.map((suggestion, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => handleSendMessage(suggestion)}
+                                            className="text-xs px-3 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
+                                        >
+                                            {suggestion}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    )}
+                    {(isTyping || isAiTyping) && (
                         <div className="flex items-center gap-2 text-xs text-muted-foreground ml-4 mb-2">
                             <Loader2 className="h-3 w-3 animate-spin" />
-                            Someone is typing...
+                            {isAiTyping ? 'Authesci AI is typing...' : 'Someone is typing...'}
                         </div>
                     )}
                     <div ref={scrollRef} />

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { processPayout } from "@/app/actions/payment";
+import { processPayout } from "@/app/(app)/actions/payment";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 import Swal from "sweetalert2";

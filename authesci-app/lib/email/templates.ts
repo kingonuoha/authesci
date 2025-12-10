@@ -417,3 +417,34 @@ export const newJobAlertEmail = (scientistName: string, jobTitle: string, jobId:
     true
   );
 };
+
+
+export const employerMessageEmail = (applicantName: string, employerName: string, jobTitle: string, conversationId: string) => {
+  const content = `
+    <p>Hi ${applicantName},</p>
+    <p><strong>${employerName}</strong>, the employer for <strong>${jobTitle}</strong>, has sent you a message to ask a few questions about your application.</p>
+    <p>Please log in to respond and continue the conversation.</p>
+  `;
+  return getTransactionalEmail(
+    "New Message from Employer",
+    content,
+    "Go to Messages",
+    `${APP_URL}/messages?id=${conversationId}`,
+    true
+  );
+};
+
+export const projectInvitationEmail = (inviteeName: string, inviterName: string, projectTitle: string, projectId: string) => {
+  const content = `
+    <p>Hi ${inviteeName},</p>
+    <p><strong>${inviterName}</strong> has invited you to collaborate on the project <strong>${projectTitle}</strong>.</p>
+    <p>Click the button below to view the project details and join the team.</p>
+  `;
+  return getTransactionalEmail(
+    "Project Collaboration Invitation",
+    content,
+    "View Project",
+    `${APP_URL}/project/${projectId}`,
+    true
+  );
+};

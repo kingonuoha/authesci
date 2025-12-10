@@ -109,6 +109,7 @@ model Profile {
   cvIntel         Json?
   aiFeatureVector Unsupported("vector")?
   isPremium       Boolean         @default(false)
+  settings        Json?
 
   // Batch 9: Admin & Logs
   isBanned        Boolean         @default(false) @map("is_banned")

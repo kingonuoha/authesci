@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format } from 'date-fns';
 import { Bot } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface MessageBubbleProps {
     message: {
@@ -51,12 +53,16 @@ export function MessageBubble({ message, isCurrentUser, isRead }: MessageBubbleP
                     ? "bg-primary rounded-br-none"
                     : "bg-white dark:bg-neutral-700 rounded-bl-none border border-neutral-100 dark:border-neutral-600"
             )}>
-                <p className={cn(
-                    "mb-2 text-sm md:text-base leading-relaxed whitespace-pre-wrap break-words",
-                    isCurrentUser ? "text-primary-foreground" : "text-neutral-700 dark:text-neutral-200"
+                <div className={cn(
+                    "mb-2 text-sm md:text-base leading-relaxed break-words prose dark:prose-invert max-w-none",
+                    isCurrentUser
+                        ? "text-primary-foreground prose-headings:text-primary-foreground prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-ul:text-primary-foreground prose-ol:text-primary-foreground prose-a:text-primary-foreground prose-code:text-primary-foreground prose-pre:bg-primary-800 prose-pre:text-primary-foreground"
+                        : "text-neutral-700 dark:text-neutral-200 prose-headings:text-neutral-900 dark:prose-headings:text-white prose-p:text-neutral-700 dark:prose-p:text-neutral-200 prose-strong:text-neutral-900 dark:prose-strong:text-white prose-a:text-primary prose-pre:bg-neutral-100 dark:prose-pre:bg-neutral-800"
                 )}>
-                    {message.content}
-                </p>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {message.content.split('||SUGGESTIONS')[0]}
+                    </ReactMarkdown>
+                </div>
 
                 {message.attachmentUrl && (
                     <div className="mt-3 mb-1">

@@ -18,13 +18,13 @@ export function StatsCard({ title, value, icon: Icon, trend, variant = "default"
     const getVariantStyles = () => {
         switch (variant) {
             case "purple":
-                return "bg-gradient-to-br from-purple-700 to-purple-400 text-white";
+                return "bg-gradient-to-b from-purple-700 to-purple-400 text-white";
             case "cyan":
-                return "bg-gradient-to-br from-cyan-400 to-blue-500 text-white";
+                return "bg-gradient-to-b from-info-700 to-info-400 text-white";
             case "warning":
-                return "bg-gradient-to-br from-orange-400 to-red-500 text-white";
+                return "bg-gradient-to-b from-warning-700 to-warning-400 text-white";
             case "success":
-                return "bg-gradient-to-br from-green-500 to-emerald-600 text-white";
+                return "bg-gradient-to-b from-success-700 to-success-400 text-white";
             default:
                 return "bg-white dark:bg-neutral-800";
         }

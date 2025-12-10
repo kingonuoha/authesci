@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useActionState } from 'react';
 import { showToast } from '@/lib/utils';
-import { logout } from '@/app/actions/auth';
+import { logout } from '@/app/(app)/actions/auth';
 import { NotificationBell } from '@/components/modules/NotificationBell';
 import { MessageDropdown } from '@/components/modules/MessageDropdown';
 
