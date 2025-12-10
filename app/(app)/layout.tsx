@@ -20,11 +20,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://authesci.com"),
   title: "Authesci | Dashboard",
-  description: "Manage your research projects, applications, and profile on Authesci.",
+  description:
+    "Manage your research projects, applications, and profile on Authesci.",
   openGraph: {
     title: "Authesci | Dashboard",
-    description: "Manage your research projects, applications, and profile on Authesci.",
+    description:
+      "Manage your research projects, applications, and profile on Authesci.",
     url: "https://authesci.com",
     siteName: "Authesci",
     images: [
@@ -41,7 +44,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Authesci | Dashboard",
-    description: "Manage your research projects, applications, and profile on Authesci.",
+    description:
+      "Manage your research projects, applications, and profile on Authesci.",
     images: ["/assets/images/og_image.png"],
   },
 };
@@ -57,7 +61,9 @@ export default async function RootLayout({
   // Skip check if already on the banned page to avoid infinite redirect
   if (!pathname.startsWith("/banned")) {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (user) {
       const profile = await prisma.profile.findUnique({
@@ -74,17 +80,30 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" type="image/png" href="/assets/images/favicon.png" sizes="16x16" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+        <link
+          rel="icon"
+          type="image/png"
+          href="/assets/images/favicon.png"
+          sizes="16x16"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+          rel="stylesheet"
+        />
         <link rel="stylesheet" href="/assets/css/remixicon.css" />
-        <link rel="stylesheet" href="/assets/css/lib/apexcharts.css" />
         <link rel="stylesheet" href="/assets/css/lib/dataTables.min.css" />
         <link rel="stylesheet" href="/assets/css/lib/editor-katex.min.css" />
-        <link rel="stylesheet" href="/assets/css/lib/editor.atom-one-dark.min.css" />
+        <link
+          rel="stylesheet"
+          href="/assets/css/lib/editor.atom-one-dark.min.css"
+        />
         <link rel="stylesheet" href="/assets/css/lib/editor.quill.snow.css" />
         <link rel="stylesheet" href="/assets/css/lib/flatpickr.min.css" />
         <link rel="stylesheet" href="/assets/css/lib/full-calendar.css" />
-        <link rel="stylesheet" href="/assets/css/lib/jquery-jvectormap-2.0.5.css" />
+        <link
+          rel="stylesheet"
+          href="/assets/css/lib/jquery-jvectormap-2.0.5.css"
+        />
         <link rel="stylesheet" href="/assets/css/lib/magnific-popup.css" />
         <link rel="stylesheet" href="/assets/css/lib/slick.css" />
         <link rel="stylesheet" href="/assets/css/lib/prism.css" />
@@ -95,13 +114,14 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-100 dark:bg-neutral-800 dark:text-white`}
       >
-        <AnalyticsProvider> {/* Wrap children with AnalyticsProvider */}
+        <AnalyticsProvider>
+          {" "}
+          {/* Wrap children with AnalyticsProvider */}
           {children}
         </AnalyticsProvider>
         <ToasterProvider />
 
         <Script src="/assets/js/lib/jquery-3.7.1.min.js"></Script>
-        <Script src="/assets/js/lib/apexcharts.min.js"></Script>
         <Script src="/assets/js/lib/simple-datatables.min.js"></Script>
 
         <Script src="/assets/js/lib/jquery-ui.min.js"></Script>
