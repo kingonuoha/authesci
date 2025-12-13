@@ -107,3 +107,16 @@
 .d-footer {
   margin-top: auto;
 }
+
+/* Fix for mobile sidebar links not showing */
+.sidebar.sidebar-open .sidebar-menu-link-text {
+  display: inline-block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: auto !important;
+}
+
+.sidebar.sidebar-open .sidebar-menu li a .menu-icon {
+  margin-inline-end: 0.5rem !important;
+  display: inline-block !important;
+}

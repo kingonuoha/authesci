@@ -123,6 +123,9 @@ model Profile {
   // Batch 11: Transactions
   transactions   Transaction[]
 
+  // Storage tracking
+  storageUsed    BigInt?         @default(0) @map("storage_used") // in bytes
+
   pageViews      PageView[]
 
   @@map("profiles")

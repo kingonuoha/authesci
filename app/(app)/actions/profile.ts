@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import cloudinary from "@/lib/cloudinary";
 import { getProfileCompletion } from "@/lib/helpers/getProfileCompletion";
+import { checkStorageCapacity, updateStorageUsage } from "./storage";
 
 const profileSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
@@ -34,6 +35,12 @@ export async function uploadFile(formData: FormData): Promise<{ url?: string; er
     return { error: "No file provided" };
   }
 
+  // Check storage capacity before proceeding
+  const storageCheck = await checkStorageCapacity(file.size);
+  if (!storageCheck.hasCapacity) {
+    return { error: storageCheck.message };
+  }
+
   try {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -41,7 +48,7 @@ export async function uploadFile(formData: FormData): Promise<{ url?: string; er
     const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
     const resourceType = isPdf ? "raw" : "auto";
 
-    return new Promise((resolve, reject) => {
+    const uploadPromise = new Promise<{ url?: string; error?: string }>((resolve) => {
       cloudinary.uploader.upload_stream(
         { 
           folder, 
@@ -61,11 +68,27 @@ export async function uploadFile(formData: FormData): Promise<{ url?: string; er
         }
       ).end(buffer);
     });
+
+    const uploadResult = await uploadPromise;
+
+    if (uploadResult.url) {
+      // If upload is successful, update storage usage
+      const updateResult = await updateStorageUsage(file.size);
+      if (!updateResult.success) {
+        // Log the error, but don't fail the whole operation since the
+        // file is already on Cloudinary. This is a trade-off.
+        console.warn(`Failed to update storage usage for user after upload: ${updateResult.message}`);
+      }
+    }
+
+    return uploadResult;
+
   } catch (error) {
     console.error("File processing error:", error);
     return { error: "File processing failed" };
   }
 }
+
 
 export async function updateProfile(
   prevState: ProfileState,
@@ -186,5 +209,23 @@ export async function updateProfile(
       status: "error",
       message: "Failed to update profile. Please try again.",
     };
+  }
+}
+
+export async function updateLastSeen(): Promise<void> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      await prisma.profile.update({
+        where: { userId: user.id },
+        data: { lastSeenAt: new Date() },
+      });
+    }
+  } catch (error) {
+    // It's a background task, so we don't want to throw errors that might
+    // interrupt the user. We'll just log it for debugging.
+    console.error("Failed to update last seen:", error);
   }
 }

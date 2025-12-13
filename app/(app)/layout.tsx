@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import ToasterProvider from "@/components/providers/ToasterProvider";
 import { AnalyticsProvider } from "@/components/providers/AnalyticsProvider"; // Import the AnalyticsProvider
+import { ActivityUpdater } from "@/components/providers/ActivityUpdater";
 import "./globals.css";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
@@ -135,7 +136,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <link rel="stylesheet" href="/assets/css/style.css" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-100 dark:bg-neutral-800 dark:text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-100 dark:bg-neutral-800 dark:text-white overflow-x-hidden`}
       >
         <AnalyticsProvider>
           {" "}
@@ -143,6 +144,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           {children}
         </AnalyticsProvider>
         <ToasterProvider />
+        <ActivityUpdater />
 
         {/* Google Tag Manager (noscript) */}
         <noscript
