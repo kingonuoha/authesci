@@ -168,7 +168,7 @@ export async function getAdminDashboardMetrics() {
     _sum: {
       storageUsed: true,
     },
-  });
+  }) as any;
   const totalStorageUsed = Number(totalStorageUsedResult._sum.storageUsed || 0);
   const totalStorageCapacity = totalUsers * MAX_STORAGE_PER_USER;
 
