@@ -10,7 +10,12 @@ import { Loader2, Camera, X, Building2 } from "lucide-react";
 import Image from "next/image";
 
 import BankDetailsForm from "@/components/modules/payment/BankDetailsForm";
-import ImageCropper from "@/components/ui/ImageCropper";
+import dynamic from "next/dynamic";
+
+const ImageCropper = dynamic(() => import("@/components/ui/ImageCropper"), {
+  ssr: false,
+});
+
 
 interface ProfileEditFormProps {
   profile: Profile;
@@ -226,19 +231,56 @@ export function ProfileEditForm({ profile, onCancel, banks }: ProfileEditFormPro
             </div>
 
             <div className="col-span-12 sm:col-span-6">
-              <label htmlFor="institution" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Institution / Company</label>
+              <label htmlFor="institution" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">
+                {profile.role === "SCIENTIST" ? "Education Background (Institution)" : "Institution / Company"}
+              </label>
               <input
                 type="text"
                 id="institution"
                 name="institution"
                 defaultValue={profile.institution || ""}
                 className="w-full h-[48px] px-4 border border-neutral-200 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-primary-600 dark:focus:border-primary-500 transition-colors"
-                placeholder="Enter Institution"
+                placeholder={profile.role === "SCIENTIST" ? "e.g. University of Lagos" : "Enter Institution"}
               />
               {state.errors?.institution && (
                 <p className="text-sm text-red-600 mt-1">{state.errors.institution[0]}</p>
               )}
             </div>
+
+            {profile.role === "SCIENTIST" && (
+              <>
+                <div className="col-span-12 sm:col-span-6">
+                  <label htmlFor="degree" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Degree</label>
+                  <input
+                    type="text"
+                    name="degree"
+                    defaultValue={(profile.education as any)?.degree || ""}
+                    className="w-full h-[48px] px-4 border border-neutral-200 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-800"
+                    placeholder="e.g. PhD, MSc"
+                  />
+                </div>
+                <div className="col-span-12 sm:col-span-6">
+                  <label htmlFor="courseOfStudy" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Course of Study</label>
+                  <input
+                    type="text"
+                    name="courseOfStudy"
+                    defaultValue={(profile.education as any)?.courseOfStudy || ""}
+                    className="w-full h-[48px] px-4 border border-neutral-200 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-800"
+                    placeholder="e.g. Computer Science"
+                  />
+                </div>
+                <div className="col-span-12 sm:col-span-6">
+                  <label htmlFor="duration" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Duration (Year)</label>
+                  <input
+                    type="text"
+                    name="duration"
+                    defaultValue={(profile.education as any)?.duration || ""}
+                    className="w-full h-[48px] px-4 border border-neutral-200 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-800"
+                    placeholder="e.g. 2018 - 2022"
+                  />
+                </div>
+              </>
+            )}
 
             <div className="col-span-12">
               <label htmlFor="bio" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Bio</label>
@@ -254,27 +296,31 @@ export function ProfileEditForm({ profile, onCancel, banks }: ProfileEditFormPro
               )}
             </div>
 
-            <div className="col-span-12">
-              <label className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Skills</label>
-              <SkillsInput value={skills} onChange={setSkills} />
-              {state.errors?.skills && (
-                <p className="text-sm text-red-600 mt-1">{state.errors.skills[0]}</p>
-              )}
-            </div>
+            {profile.role !== "EMPLOYER" && (
+              <>
+                <div className="col-span-12">
+                  <label className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Skills</label>
+                  <SkillsInput value={skills} onChange={setSkills} />
+                  {state.errors?.skills && (
+                    <p className="text-sm text-red-600 mt-1">{state.errors.skills[0]}</p>
+                  )}
+                </div>
 
-            <div className="col-span-12">
-              <label htmlFor="experience" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Experience</label>
-              <textarea
-                id="experience"
-                name="experience"
-                defaultValue={profile.experience || ""}
-                className="w-full p-4 border border-neutral-200 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-primary-600 dark:focus:border-primary-500 transition-colors min-h-[100px]"
-                placeholder="Describe your experience..."
-              ></textarea>
-              {state.errors?.experience && (
-                <p className="text-sm text-red-600 mt-1">{state.errors.experience[0]}</p>
-              )}
-            </div>
+                <div className="col-span-12">
+                  <label htmlFor="experience" className="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Experience</label>
+                  <textarea
+                    id="experience"
+                    name="experience"
+                    defaultValue={profile.experience || ""}
+                    className="w-full p-4 border border-neutral-200 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-primary-600 dark:focus:border-primary-500 transition-colors min-h-[100px]"
+                    placeholder="Describe your experience..."
+                  ></textarea>
+                  {state.errors?.experience && (
+                    <p className="text-sm text-red-600 mt-1">{state.errors.experience[0]}</p>
+                  )}
+                </div>
+              </>
+            )}
 
             {profile.role === "SCIENTIST" && (
               <div className="col-span-12">

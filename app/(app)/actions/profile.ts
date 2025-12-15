@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import cloudinary from "@/lib/cloudinary";
 import { getProfileCompletion } from "@/lib/helpers/getProfileCompletion";
+import { checkStorageCapacity, updateStorageUsage } from "./storage";
 
 const profileSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
@@ -18,6 +19,11 @@ const profileSchema = z.object({
   avatarUrl: z.string().optional(),
   companyLogoUrl: z.string().optional(),
   cvUrl: z.string().optional(),
+  education: z.object({
+      degree: z.string().optional(),
+      courseOfStudy: z.string().optional(),
+      duration: z.string().optional(),
+  }).optional(),
 });
 
 export type ProfileState = {
@@ -34,6 +40,12 @@ export async function uploadFile(formData: FormData): Promise<{ url?: string; er
     return { error: "No file provided" };
   }
 
+  // Check storage capacity before proceeding
+  const storageCheck = await checkStorageCapacity(file.size);
+  if (!storageCheck.hasCapacity) {
+    return { error: storageCheck.message };
+  }
+
   try {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -41,7 +53,7 @@ export async function uploadFile(formData: FormData): Promise<{ url?: string; er
     const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
     const resourceType = isPdf ? "raw" : "auto";
 
-    return new Promise((resolve, reject) => {
+    const uploadPromise = new Promise<{ url?: string; error?: string }>((resolve) => {
       cloudinary.uploader.upload_stream(
         { 
           folder, 
@@ -61,11 +73,52 @@ export async function uploadFile(formData: FormData): Promise<{ url?: string; er
         }
       ).end(buffer);
     });
+
+    const uploadResult = await uploadPromise;
+
+    if (uploadResult.url) {
+      // If upload is successful, update storage usage
+      const updateResult = await updateStorageUsage(file.size);
+      if (!updateResult.success) {
+        console.warn(`Failed to update storage usage: ${updateResult.message}`);
+      }
+
+      // FIX: Generate Signed URL for immediate access if it's a raw file (PDF) to prevent 401
+      if (resourceType === "raw") {
+         // The uploadResult.url is the unsigned one.
+         // We can generate a signed one using the known public_id or filename
+         // Cloudinary upload response usually contains public_id
+         // But here uploadPromise resolves { url }. We should resolve more info.
+      }
+    }
+
+    // Let's modify the uploadPromise to return public_id
+    // Wait, I can't easily modify the promise return type without changing the signature above.
+    // Instead, I'll just rely on the stored URL logic:
+    // Actually, I should change the promise to return the whole result.
+    
+    // Quick Fix: If it's a raw file, we sign the URL using the URL we just got.
+    if (uploadResult.url && resourceType === "raw") {
+         const matches = uploadResult.url.match(/\/upload\/(?:v\d+\/)?(.+)$/);
+         if (matches && matches[1]) {
+             const publicId = matches[1];
+             const signedUrl = cloudinary.url(publicId, {
+                 resource_type: "raw",
+                 sign_url: true,
+                 expires_at: Math.floor(Date.now() / 1000) + 3600
+             });
+             uploadResult.url = signedUrl;
+         }
+    }
+
+    return uploadResult;
+
   } catch (error) {
     console.error("File processing error:", error);
     return { error: "File processing failed" };
   }
 }
+
 
 export async function updateProfile(
   prevState: ProfileState,
@@ -83,7 +136,13 @@ export async function updateProfile(
     };
   }
 
-  const rawData = {
+
+
+  // Manually construct education object from formData before validation if needed, or better:
+  // Since 'education' is a nested object in our schema but comes as flat fields from the form:
+  // We need to preprocess formData -> rawData structure.
+  
+  const rawData: any = {
     fullName: formData.get("fullName"),
     bio: formData.get("bio") || undefined,
     institution: formData.get("institution") || undefined,
@@ -95,6 +154,18 @@ export async function updateProfile(
     companyLogoUrl: formData.get("companyLogoUrl") || undefined,
     cvUrl: formData.get("cvUrl") || undefined,
   };
+
+  const degree = formData.get("degree");
+  const courseOfStudy = formData.get("courseOfStudy");
+  const duration = formData.get("duration");
+
+  if (degree || courseOfStudy || duration) {
+      rawData.education = {
+          degree: degree || "",
+          courseOfStudy: courseOfStudy || "",
+          duration: duration || ""
+      };
+  }
 
   const validatedFields = profileSchema.safeParse(rawData);
 
@@ -112,7 +183,7 @@ export async function updateProfile(
     };
   }
 
-  const { fullName, bio, institution, experience, skills, publications, certifications, avatarUrl, companyLogoUrl, cvUrl } = validatedFields.data;
+  const { fullName, bio, institution, experience, skills, publications, certifications, avatarUrl, companyLogoUrl, cvUrl, education } = validatedFields.data;
 
   // Helper to parse arrays
   const parseArray = (input?: string) => {
@@ -143,6 +214,7 @@ export async function updateProfile(
         avatarUrl: avatarUrl || undefined, // Only update if provided
         companyLogoUrl: companyLogoUrl || undefined, // Only update if provided
         cvUrl: cvUrl || undefined, // Only update if provided
+        education: education || undefined, 
       },
     });
 
@@ -186,5 +258,23 @@ export async function updateProfile(
       status: "error",
       message: "Failed to update profile. Please try again.",
     };
+  }
+}
+
+export async function updateLastSeen(): Promise<void> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      await prisma.profile.update({
+        where: { userId: user.id },
+        data: { lastSeenAt: new Date() },
+      });
+    }
+  } catch (error) {
+    // It's a background task, so we don't want to throw errors that might
+    // interrupt the user. We'll just log it for debugging.
+    console.error("Failed to update last seen:", error);
   }
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format } from 'date-fns';
@@ -22,9 +23,50 @@ interface MessageBubbleProps {
     };
     isCurrentUser: boolean;
     isRead?: boolean;
+    animateTyping?: boolean;
 }
 
-export function MessageBubble({ message, isCurrentUser, isRead }: MessageBubbleProps) {
+export function MessageBubble({ message, isCurrentUser, isRead, animateTyping = false }: MessageBubbleProps) {
+    const [displayedContent, setDisplayedContent] = React.useState(animateTyping ? "" : message.content);
+    const [isTypingComplete, setIsTypingComplete] = React.useState(!animateTyping);
+
+    // Reset if content changes or animation prop changes
+    React.useEffect(() => {
+        if (!animateTyping) {
+            setDisplayedContent(message.content);
+            setIsTypingComplete(true);
+            return;
+        }
+
+        // If we already typed this specific content, don't re-type (unless we want to force it)
+        // But here we rely on the parent to only pass animateTyping=true for new messages.
+        // For safety, if displayedContent matches, stop.
+        if (displayedContent === message.content) {
+            setIsTypingComplete(true);
+            return;
+        }
+
+        setDisplayedContent("");
+        setIsTypingComplete(false);
+
+        const words = message.content.split(" ");
+        let currentIndex = 0;
+        const interval = setInterval(() => {
+            if (currentIndex >= words.length) {
+                clearInterval(interval);
+                setIsTypingComplete(true);
+                return;
+            }
+            // Add next word
+            setDisplayedContent(prev => prev ? prev + " " + words[currentIndex] : words[currentIndex]);
+            currentIndex++;
+        }, 30); // Speed of typing
+
+        return () => clearInterval(interval);
+    }, [message.content, animateTyping]);
+
+    const contentToShow = isTypingComplete ? message.content : displayedContent;
+
     return (
         <div className={cn(
             "max-w-[85%] md:max-w-[70%] flex gap-3",
@@ -57,10 +99,10 @@ export function MessageBubble({ message, isCurrentUser, isRead }: MessageBubbleP
                     "mb-2 text-sm md:text-base leading-relaxed break-words prose dark:prose-invert max-w-none",
                     isCurrentUser
                         ? "text-primary-foreground prose-headings:text-primary-foreground prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-ul:text-primary-foreground prose-ol:text-primary-foreground prose-a:text-primary-foreground prose-code:text-primary-foreground prose-pre:bg-primary-800 prose-pre:text-primary-foreground"
-                        : "text-neutral-700 dark:text-neutral-200 prose-headings:text-neutral-900 dark:prose-headings:text-white prose-p:text-neutral-700 dark:prose-p:text-neutral-200 prose-strong:text-neutral-900 dark:prose-strong:text-white prose-a:text-primary prose-pre:bg-neutral-100 dark:prose-pre:bg-neutral-800"
+                        : "text-neutral-700 dark:text-neutral-100 prose-headings:text-neutral-900 dark:prose-headings:text-neutral-100 prose-p:text-neutral-700 dark:prose-p:text-neutral-200 prose-strong:text-neutral-900 dark:prose-strong:text-white prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:bg-neutral-100 dark:prose-pre:bg-neutral-800 prose-code:text-neutral-800 dark:prose-code:text-neutral-200"
                 )}>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {message.content.split('||SUGGESTIONS')[0]}
+                        {contentToShow.split('||SUGGESTIONS')[0]}
                     </ReactMarkdown>
                 </div>
 

@@ -51,6 +51,7 @@ export default async function AdminUsersPage({
                 role: true,
                 isBanned: true,
                 createdAt: true,
+                lastSeenAt: true,
             },
             take: pageSize,
             skip: skip,

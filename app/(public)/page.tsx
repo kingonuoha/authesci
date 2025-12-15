@@ -101,7 +101,7 @@ export default async function HomePage() {
                                                 <img className="wa" src="/front-assets/images/team/ea-1.png" alt="" />
                                             </div>
                                             <div className="flex-grow-1 ml20">
-                                                <h6 className="title mb-0">Dr. Sarah Jenkins</h6>
+                                                <h6 className="title mb-0">Dr. Amara Okeke</h6>
                                                 <p className="fz14 mb-0">Molecular Biologist</p>
                                             </div>
                                         </div>
@@ -110,7 +110,7 @@ export default async function HomePage() {
                                                 <img className="wa" src="/front-assets/images/team/ea-2.png" alt="" />
                                             </div>
                                             <div className="flex-grow-1 ml20">
-                                                <h6 className="title mb-0">Prof. David Lee</h6>
+                                                <h6 className="title mb-0">Prof. David Oseyi</h6>
                                                 <p className="fz14 mb-0">Data Scientist</p>
                                             </div>
                                         </div>
@@ -119,7 +119,7 @@ export default async function HomePage() {
                                                 <img className="wa" src="/front-assets/images/team/ea-3.png" alt="" />
                                             </div>
                                             <div className="flex-grow-1 ml20">
-                                                <h6 className="title mb-0">Dr. Emily Chen</h6>
+                                                <h6 className="title mb-0">Dr. Adanna Nwachukwu</h6>
                                                 <p className="fz14 mb-0">Neuroscientist</p>
                                             </div>
                                         </div>
@@ -130,7 +130,7 @@ export default async function HomePage() {
                                             <span className="online"></span>
                                         </div>
                                         <div className="details">
-                                            <h5 className="title mb-1">Dr. Michael Ross</h5>
+                                            <h5 className="title mb-1">Dr. Tunde Bakare</h5>
                                             <p className="mb-0">Bioinformatics Expert</p>
                                             <div className="review"><p><i className="fas fa-star fz10 review-color pr10"></i><span className="dark-color">4.9</span> (59 reviews)</p></div>
                                             <div className="skill-tags d-flex align-items-center justify-content-center mb20">
@@ -140,7 +140,7 @@ export default async function HomePage() {
                                             </div>
                                             <hr className="opacity-100" />
                                             <div className="fl-meta d-flex align-items-center justify-content-between">
-                                                <a className="meta fw500 text-start">Location<br /><span className="fz14 fw400">Boston, MA</span></a>
+                                                <a className="meta fw500 text-start">Location<br /><span className="fz14 fw400">Lagos, NG</span></a>
                                                 <a className="meta fw500 text-start">Rate<br /><span className="fz14 fw400">$120 / hr</span></a>
                                                 <a className="meta fw500 text-start">Success<br /><span className="fz14 fw400">98%</span></a>
                                             </div>
@@ -160,22 +160,22 @@ export default async function HomePage() {
                                     <div className="list-one d-flex align-items-start mb30">
                                         <span className="list-icon flex-shrink-0 flaticon-badge"></span>
                                         <div className="list-content flex-grow-1 ml20">
-                                            <h4 className="mb-1">1. Sign Up & Upload Credentials</h4>
-                                            <p className="text mb-0 fz15">Scientists create a profile and upload their academic degrees and publication history.</p>
+                                            <h4 className="mb-1">1. Sign Up & Complete Profile</h4>
+                                            <p className="text mb-0 fz15">Scientists create a profile and provide details about their academic background, skills, and publication history.</p>
                                         </div>
                                     </div>
                                     <div className="list-one d-flex align-items-start mb30">
                                         <span className="list-icon flex-shrink-0 flaticon-money"></span>
                                         <div className="list-content flex-grow-1 ml20">
-                                            <h4 className="mb-1">2. Manual Vetting Process</h4>
-                                            <p className="text mb-0 fz15">Our team verifies the documents with the issuing institutions.</p>
+                                            <h4 className="mb-1">2. Profile Review & Authenticity Check</h4>
+                                            <p className="text mb-0 fz15">Our team reviews each profile for completeness, consistency, and publicly verifiable information such as publication links or online academic records.</p>
                                         </div>
                                     </div>
                                     <div className="list-one d-flex align-items-start mb30">
                                         <span className="list-icon flex-shrink-0 flaticon-security"></span>
                                         <div className="list-content flex-grow-1 ml20">
                                             <h4 className="mb-1">3. Get Verified Badge</h4>
-                                            <p className="text mb-0 fz15">Successful verification earns a badge, unlocking access to paid projects.</p>
+                                            <p className="text mb-0 fz15">Once authenticity checks are completed, the scientist receives a verification badge and can apply for paid projects.</p>
                                         </div>
                                     </div>
                                 </div>

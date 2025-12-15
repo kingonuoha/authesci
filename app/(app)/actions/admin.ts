@@ -162,6 +162,30 @@ export async function getAdminDashboardMetrics() {
   const totalProjects = await prisma.project.count();
   const activeProjects = await prisma.project.count({ where: { status: "ACTIVE" } });
 
+  // --- Storage Analytics ---
+  const MAX_STORAGE_PER_USER = 1.5 * 1024 * 1024 * 1024;
+  const totalStorageUsedResult = await prisma.profile.aggregate({
+    _sum: {
+      storageUsed: true,
+    },
+  }) as any;
+  const totalStorageUsed = Number(totalStorageUsedResult._sum.storageUsed || 0);
+  const totalStorageCapacity = totalUsers * MAX_STORAGE_PER_USER;
+
+  const topUsersByStorage = await prisma.profile.findMany({
+    orderBy: {
+      storageUsed: 'desc',
+    },
+    take: 5,
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+      storageUsed: true,
+    },
+  });
+
+
   return {
     statCards: {
       totalUsers,
@@ -182,6 +206,11 @@ export async function getAdminDashboardMetrics() {
       jobs: { total: totalJobs, active: activeJobs },
       scientists: { total: totalUsers, count: scientistCount },
       projects: { total: totalProjects, active: activeProjects },
+    },
+    storageAnalytics: {
+      totalStorageUsed,
+      totalStorageCapacity,
+      topUsersByStorage: topUsersByStorage.map(u => ({ ...u, storageUsed: Number(u.storageUsed || 0) })),
     }
   };
 }

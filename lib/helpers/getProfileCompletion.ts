@@ -9,8 +9,8 @@ export interface ProfileCompletion {
 const COMMON_FIELDS = ["fullName", "bio", "avatarUrl", "skills"];
 
 const ROLE_FIELDS: Record<Role, string[]> = {
-  SCIENTIST: [...COMMON_FIELDS, "institution", "experience", "cvUrl"], // CV required for scientists
-  EMPLOYER: [...COMMON_FIELDS, "institution"], // No CV needed for employers
+  SCIENTIST: [...COMMON_FIELDS, "institution", "experience", "cvUrl", "education"], // Added education
+  EMPLOYER: ["fullName", "bio", "avatarUrl", "institution"], // Removed skills
   COLLABORATOR: [...COMMON_FIELDS], // Minimal requirements for collaborators
   ADMIN: [...COMMON_FIELDS],
 };
@@ -25,6 +25,7 @@ const FIELD_LABELS: Record<string, string> = {
   publications: "Publications",
   cvUrl: "CV/Resume",
   certifications: "Certifications",
+  education: "Education Details",
 };
 
 export function getProfileCompletion(profile: Profile): ProfileCompletion {
@@ -40,6 +41,9 @@ export function getProfileCompletion(profile: Profile): ProfileCompletion {
       isFilled = value.length > 0;
     } else if (typeof value === "string") {
       isFilled = value.trim().length > 0;
+    } else if (typeof value === "object" && value !== null) {
+      // Check if object has any non-empty keys (basic check for non-empty education object)
+      isFilled = Object.keys(value).length > 0;
     } else {
       isFilled = !!value;
     }

@@ -1,11 +1,17 @@
 import { getAuthenticatedUser } from "@/lib/services/auth-service";
 import { Role } from "@prisma/client";
 import Link from "next/link";
+import { Metadata } from "next";
 import { ProfileCompletionCard } from "@/components/modules/profile/ProfileCompletionCard";
 import { getProfileCompletion } from "@/lib/helpers/getProfileCompletion";
 import { EmployerStatsWidget } from "@/components/modules/employer/EmployerStatsWidget";
 import { RecentApplicationsList } from "@/components/modules/employer/RecentApplicationsList";
 import { FeaturedCarousel } from "@/components/modules/common/FeaturedCarousel";
+
+export const metadata: Metadata = {
+  title: "Employer Dashboard | Authesci",
+  description: "Manage your job listings and applicants.",
+};
 
 export default async function EmployerDashboardPage() {
   const { profile } = await getAuthenticatedUser({
@@ -26,13 +32,13 @@ export default async function EmployerDashboardPage() {
         </Link>
       </div>
 
-     
+
 
       <ProfileCompletionCard percentage={percentage} missingFields={missingFields} role={profile.role} />
 
       <EmployerStatsWidget employerId={profile.id} />
 
- <FeaturedCarousel
+      <FeaturedCarousel
         query="business meeting office team"
         captions={[
           { title: "Verified Experts", subtitle: "Hire pre-vetted scientists for your needs." },

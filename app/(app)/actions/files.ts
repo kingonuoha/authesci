@@ -41,6 +41,16 @@ export async function saveFileRecord(projectId: string, fileName: string, fileUr
       },
     });
 
+    // Update user storage usage
+    await prisma.profile.update({
+      where: { id: profile.id },
+      data: {
+        storageUsed: {
+          increment: fileSize,
+        },
+      },
+    });
+
     await logProjectActivity(projectId, profile.id, "FILE_UPLOADED", { fileId: file.id, fileName, fileSize });
 
     // RAG Integration: Extract text and generate embedding asynchronously

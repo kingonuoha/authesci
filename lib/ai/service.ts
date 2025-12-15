@@ -2,7 +2,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SYSTEM_PROMPTS } from "./prompts";
 import mammoth from "mammoth";
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
+import { createNotification } from "@/lib/notifications/service";
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
@@ -10,7 +11,66 @@ if (!apiKey) {
 }
 
 const genAI = new GoogleGenerativeAI(apiKey || "dummy_key");
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+
+// Define model hierarchy for failover
+const FALLBACK_MODELS = [
+  "gemini-2.5-flash", 
+  "gemini-2.0-flash", 
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash-lite"
+];
+
+// Helper to notify admin about model overload
+async function notifyAdminOfOverload(modelName: string, error: any) {
+  try {
+    const admins = await prisma.profile.findMany({
+      where: { role: Role.ADMIN },
+      select: { id: true }
+    });
+    
+    for (const admin of admins) {
+      await createNotification(
+        admin.id,
+        "SYSTEM_ALERT",
+        `AI Model ${modelName} overloaded. Switching to backup. Error: ${error.message || 'Unknown'}`,
+        "AI Model Overload",
+        "/admin/logs"
+      );
+    }
+  } catch (e) {
+    console.error("Failed to notify admin of AI overload", e);
+  }
+}
+
+// Helper to generate content with retry and failover
+async function generateContentWithRetry(prompt: string, attempt = 0): Promise<string> {
+  const modelName = FALLBACK_MODELS[attempt];
+  if (!modelName) {
+    throw new Error("All AI models are currently overloaded. Please try again later.");
+  }
+
+  const currentModel = genAI.getGenerativeModel({ model: modelName });
+
+  try {
+    const result = await currentModel.generateContent(prompt);
+    return result.response.text();
+  } catch (error: any) {
+    // Check for overload (503) or Rate Limit (429)
+    if (error.status === 503 || error.status === 429 || (error.message && (error.message.includes("overloaded") || error.message.includes("quota") || error.message.includes("429")))) {
+      console.warn(`Model ${modelName} failed (Status: ${error.status}). Switching to backup...`);
+      
+      // Notify Admin
+      await notifyAdminOfOverload(modelName, error);
+
+      // Recursive retry with next model
+      return generateContentWithRetry(prompt, attempt + 1);
+    }
+    
+    // If it's another error, throw it
+    throw error;
+  }
+}
+
 const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
 
 export const isAIEnabled = () => process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES;
@@ -30,12 +90,15 @@ export async function generateEmbeddings(text: string) {
 export async function generateCoverLetter(profile: any, job: any) {
   if (!isAIEnabled()) throw new Error("AI features are disabled");
   
-  const prompt = SYSTEM_PROMPTS.GENERATE_COVER_LETTER
-    .replace("{profile}", JSON.stringify(profile))
-    .replace("{job}", JSON.stringify(job));
+  const jsonInfo = (data: any) => JSON.stringify(data, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+  );
 
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+  const prompt = SYSTEM_PROMPTS.GENERATE_COVER_LETTER
+    .replace("{profile}", jsonInfo(profile))
+    .replace("{job}", jsonInfo(job));
+
+  return await generateContentWithRetry(prompt);
 }
 
 export async function rankApplicants(candidates: any[], jobDescription: string) {
@@ -54,8 +117,7 @@ export async function rankApplicants(candidates: any[], jobDescription: string) 
     .replace("{candidates}", JSON.stringify(simplifiedCandidates));
 
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const text = await generateContentWithRetry(prompt);
     // Attempt to parse JSON from the response
     const jsonMatch = text.match(/\[[\s\S]*\]/);
     if (jsonMatch) {
@@ -81,6 +143,10 @@ export async function extractCvText(cvUrl: string): Promise<string> {
     const contentType = response.headers.get("content-type");
 
     if (contentType?.includes("application/pdf") || cvUrl.endsWith(".pdf")) {
+      // Polyfill DOMMatrix for pdf-parse in Node
+      if (typeof DOMMatrix === 'undefined') {
+          (global as any).DOMMatrix = class DOMMatrix {};
+      }
       const pdf = require("pdf-parse");
       const data = await pdf(buffer);
       return data.text;
@@ -112,8 +178,7 @@ export async function calculateMatchScore(profile: any, jobDescription: string) 
     .replace("{jobDescription}", jobDescription);
 
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const text = await generateContentWithRetry(prompt);
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       return JSON.parse(jsonMatch[0]);

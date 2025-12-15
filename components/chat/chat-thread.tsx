@@ -406,6 +406,15 @@ export function ChatThread({
         sendTypingEvent(conversationId);
     };
 
+    // Safety: Turn off AI typing if the last message is from AI
+    useEffect(() => {
+        const lastMessage = messages[messages.length - 1];
+        if (conversation?.type === 'AI_SUPPORT' && lastMessage && lastMessage.senderId !== currentUserId) {
+            // Use a small timeout to allow UI update before removing spinner if needed, or just immediate.
+            setIsAiTyping(false);
+        }
+    }, [messages, conversation?.type, currentUserId]);
+
     return (
         <div className="card border-0 overflow-hidden flex flex-col h-full bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700">
             {/* Chat Header */}
@@ -562,12 +571,23 @@ export function ChatThread({
                                 const isRead = lastReadAt ? new Date(message.createdAt) <= lastReadAt : false;
                                 const isLastMessage = index === messages.length - 1;
 
+                                // Only animate if:
+                                // 1. It is the last message
+                                // 2. It is NOT from the current user
+                                // 3. It is an AI chat
+                                // 4. It was created very recently (< 10 seconds ago) to avoid re-animating old messages on refresh
+                                const shouldAnimate = isLastMessage &&
+                                    message.senderId !== currentUserId &&
+                                    conversation?.type === 'AI_SUPPORT' &&
+                                    (new Date().getTime() - new Date(message.createdAt).getTime() < 10000);
+
                                 return (
                                     <div key={message.id} ref={isLastMessage ? lastMessageRef : null}>
                                         <MessageBubble
                                             message={message}
                                             isCurrentUser={message.senderId === currentUserId}
                                             isRead={isRead}
+                                            animateTyping={shouldAnimate}
                                         />
                                     </div>
                                 );

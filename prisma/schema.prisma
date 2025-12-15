@@ -84,6 +84,7 @@ model Profile {
   avatarUrl        String?         @map("avatar_url")
   companyLogoUrl   String?         @map("company_logo_url")
   institution      String?
+  education        Json?
   publications     String[]        @default([])
   certifications   String[]        @default([])
   completionScore  Int             @default(0) @map("completion_score")
@@ -122,6 +123,9 @@ model Profile {
 
   // Batch 11: Transactions
   transactions   Transaction[]
+
+  // Storage tracking
+  storageUsed    BigInt?         @default(0) @map("storage_used") // in bytes
 
   pageViews      PageView[]
 
@@ -168,6 +172,7 @@ model Job {
 
   // Batch 11: Screening Questions
   screeningQuestions      Json?
+  projectType             String?       @map("project_type") // Values: "Short-term", "Long-term", "One-time task"
 
   @@map("jobs")
 }

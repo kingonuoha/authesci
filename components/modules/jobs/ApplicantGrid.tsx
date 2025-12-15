@@ -29,6 +29,12 @@ interface Applicant {
   appliedAt: Date;
   coverLetter?: string | null;
   aiMatchScore?: number | null;
+  aiIntel?: {
+    matchScore?: number;
+    keyMatches?: string[];
+    missingSkills?: string[];
+    reasoning?: string;
+  } | null;
 }
 
 interface ApplicantGridProps {
@@ -126,6 +132,59 @@ export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
     });
   };
 
+  const showAiReasoning = (applicantName: string, intel: Applicant['aiIntel']) => {
+    if (!intel) return;
+
+    const keyMatchesHtml = intel.keyMatches?.length
+      ? `<div class="mb-3 text-left">
+           <strong class="text-green-600 dark:text-green-400 block mb-1">✅ Key Matches</strong>
+           <ul class="list-disc pl-5 text-sm space-y-1 text-neutral-600 dark:text-neutral-300">
+             ${intel.keyMatches.map(m => `<li>${m}</li>`).join('')}
+           </ul>
+         </div>`
+      : '';
+
+    const missingSkillsHtml = intel.missingSkills?.length
+      ? `<div class="mb-3 text-left">
+           <strong class="text-red-500 dark:text-red-400 block mb-1">⚠️ Missing / Gaps</strong>
+           <ul class="list-disc pl-5 text-sm space-y-1 text-neutral-600 dark:text-neutral-300">
+             ${intel.missingSkills.map(m => `<li>${m}</li>`).join('')}
+           </ul>
+         </div>`
+      : '';
+
+    const reasoningHtml = intel.reasoning
+      ? `<div class="text-left bg-neutral-50 dark:bg-neutral-900 p-3 rounded-lg mb-4 text-sm text-neutral-700 dark:text-neutral-300">
+           ${intel.reasoning}
+         </div>`
+      : '';
+
+    Swal.fire({
+      title: `AI Analysis: ${applicantName}`,
+      html: `
+        <div class="flex items-center justify-center mb-4">
+           <div class="text-3xl font-bold ${intel.matchScore && intel.matchScore >= 70 ? 'text-purple-600' : 'text-neutral-600'}">
+             ${intel.matchScore}%
+           </div>
+           <span class="ml-2 text-sm text-neutral-500">Match Score</span>
+        </div>
+        ${reasoningHtml}
+        <div class="grid grid-cols-1 gap-4">
+          ${keyMatchesHtml}
+          ${missingSkillsHtml}
+        </div>
+      `,
+      showCloseButton: true,
+      showConfirmButton: false,
+      width: '600px',
+      customClass: {
+        popup: 'dark:bg-neutral-800 dark:text-white',
+        title: 'dark:text-white',
+        htmlContainer: 'dark:text-neutral-300'
+      }
+    });
+  };
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 gap-6">
@@ -180,7 +239,7 @@ export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
 
                     {applicant.status === "ACCEPTED" && (
                       <DropdownMenuItem disabled className="px-4 py-2 text-sm text-neutral-400">
-                        Accepted
+                        Hired
                       </DropdownMenuItem>
                     )}
                     {applicant.status === "REJECTED" && (
@@ -207,24 +266,26 @@ export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
                 <h6 className="text-lg font-semibold mb-1 text-neutral-900 dark:text-white">
                   {applicant.user.name || "Unknown Applicant"}
                 </h6>
-                <span className="text-sm text-neutral-500 dark:text-neutral-400 block mb-4">
-                  {applicant.user.email}
-                </span>
 
                 {/* AI Match Score Badge */}
-                {applicant.aiMatchScore && (
-                  <div className="mb-4 flex justify-center">
-                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${applicant.aiMatchScore >= 80
-                      ? "bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800"
-                      : applicant.aiMatchScore >= 60
-                        ? "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
-                        : "bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700"
-                      }`}>
-                      <span className="text-lg">✨</span>
-                      {applicant.aiMatchScore}% AI Match
+                {
+                  applicant.aiMatchScore && (
+                    <div className="mb-4 flex justify-center">
+                      <button
+                        onClick={() => applicant.aiIntel && showAiReasoning(applicant.user.name || "Applicant", applicant.aiIntel)}
+                        disabled={!applicant.aiIntel}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-transform hover:scale-105 active:scale-95 cursor-pointer ${applicant.aiMatchScore >= 80
+                          ? "bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800 hover:bg-purple-200 dark:hover:bg-purple-900/50"
+                          : applicant.aiMatchScore >= 60
+                            ? "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800 hover:bg-blue-200 dark:hover:bg-blue-900/50"
+                            : "bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                          }`}>
+                        <span className="text-lg">✨</span>
+                        {applicant.aiMatchScore}% AI Match
+                      </button>
                     </div>
-                  </div>
-                )}
+                  )
+                }
 
                 {/* Info Section - Matches 'center-border' style */}
                 <div className="relative bg-gradient-to-r from-primary-50 to-primary-50/50 dark:from-primary-900/10 dark:to-primary-900/5 rounded-lg p-3 flex items-center justify-between gap-4 mb-6 border border-primary-100 dark:border-primary-900/20">
@@ -246,15 +307,17 @@ export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
                   </div>
                 </div>
 
-                {applicant.coverLetter && (
-                  <button
-                    onClick={() => showCoverLetter(applicant.user.name || "Applicant", applicant.coverLetter!)}
-                    className="mb-4 text-sm text-primary-600 dark:text-primary-400 hover:underline font-medium flex items-center justify-center gap-1 mx-auto"
-                  >
-                    <MessageSquare className="w-3 h-3" />
-                    Read Cover Letter
-                  </button>
-                )}
+                {
+                  applicant.coverLetter && (
+                    <button
+                      onClick={() => showCoverLetter(applicant.user.name || "Applicant", applicant.coverLetter!)}
+                      className="mb-4 text-sm text-primary-600 dark:text-primary-400 hover:underline font-medium flex items-center justify-center gap-1 mx-auto"
+                    >
+                      <MessageSquare className="w-3 h-3" />
+                      Read Cover Letter
+                    </button>
+                  )
+                }
 
                 {/* View Profile Button */}
                 <Link
@@ -274,11 +337,11 @@ export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
                   <MessageSquare className="w-4 h-4" />
                   {chatLoadingId === applicant.id ? "Starting..." : "Chat"}
                 </button>
-              </div>
-            </div>
+              </div >
+            </div >
           );
         })}
-      </div>
+      </div >
     </>
   );
 };

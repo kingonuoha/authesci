@@ -5,7 +5,8 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
 export async function generateAiResponse(
   message: string, 
   context?: string, 
-  userProfile?: { fullName: string | null; role?: string | null }
+  userProfile?: { fullName: string | null; role?: string | null },
+  userSpecificData?: string | null // New parameter
 ) {
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
@@ -34,6 +35,10 @@ export async function generateAiResponse(
     Do not include the suggestions in the main body text, only at the very end in that specific format.
 
     User Message: ${message}`;
+
+    if (userSpecificData) { // Add user-specific data to the prompt
+      prompt += `\n\nAdditional User Data:\n${userSpecificData}`;
+    }
 
     if (context) {
       prompt += `\n\nContext:\n${context}`;

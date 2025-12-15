@@ -87,7 +87,7 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
     const amountInKobo = paymentAmount ? parseFloat(paymentAmount.toString()) * 100 : 5000 * 100; 
     const finalPrice = amountInKobo / 100;
 
-    // Create job with PENDING_PAYMENT status by default for now (or DRAFT)
+    // Create job with ACTIVE status immediately (payment happens later on applicant selection)
     const job = await prisma.job.create({
       data: {
         employerId: profile.id,
@@ -99,63 +99,24 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
         location,
         salaryRange,
         finalPrice,
-        status: JobStatus.PENDING_PAYMENT,
+        status: JobStatus.ACTIVE, // Directly active
         screeningQuestions: screeningQuestionsJson || undefined,
       },
     });
 
-    // Initialize Paystack Transaction
-    const paystackSecret = process.env.PAYSTACK_SECRET_KEY;
-    if (!paystackSecret) {
-        // Fallback for dev without keys or if free posting is allowed
-        console.warn("PAYSTACK_SECRET_KEY not found. Creating job as ACTIVE (Dev Mode).");
-        await prisma.job.update({
-            where: { id: job.id },
-            data: { status: JobStatus.ACTIVE }
-        });
-        revalidatePath("/jobs");
-        revalidatePath("/employer/jobs");
-        return { status: "success", message: "Job posted successfully!", jobId: job.id };
-    }
-    
-    const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/employer/jobs/${job.id}/verify-payment`;
-
-    const paystackResponse = await fetch("https://api.paystack.co/transaction/initialize", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${paystackSecret}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: profile.email,
-        amount: amountInKobo,
-        callback_url: callbackUrl,
-        metadata: {
-          jobId: job.id,
-          employerId: profile.id,
-        },
-      }),
-    });
-
-    const paystackData = await paystackResponse.json();
-
-    if (!paystackData.status) {
-      throw new Error("Paystack initialization failed: " + paystackData.message);
-    }
-
-    // Notify employer about pending payment
+    // Notify employer about job creation
     await createNotification(
         profile.id,
         "SYSTEM_ALERT",
-        `Job "${job.title}" created. Please complete payment to activate.`,
+        `Job "${job.title}" created successfully.`,
         "Job Created",
-        `/employer/jobs/${job.id}/verify-payment`
+        `/employer/jobs/${job.id}`
     );
 
     await logActivity(profile.id, "CREATE_JOB", "SUCCESS", `Job "${title}" created`, { jobId: job.id });
 
     // Generate and store embedding
-    if (process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES) {
+    if (process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES === "true") {
         try {
             const { generateEmbeddings } = await import("@/lib/ai/service");
             const textToEmbed = `${title} ${description} ${requirementsArray.join(" ")}`;
@@ -173,11 +134,13 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
         }
     }
 
+    // Determine return path - redirect to the job dashboard or job details
+    revalidatePath("/employer/jobs");
     return {
       status: "success",
-      message: "Job created. Redirecting to payment...",
+      message: "Job posted successfully!",
       jobId: job.id,
-      paystackUrl: paystackData.data.authorization_url,
+      // No paystackUrl returned
     };
 
   } catch (error) {

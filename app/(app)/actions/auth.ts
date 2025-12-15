@@ -265,11 +265,16 @@ export async function login(
   await logActivity(profile.id, "LOGIN", "SUCCESS", "User logged in");
 
   // Redirect directly to dashboard based on role
-  if (profile.role) {
-    redirect(`/${profile.role.toLowerCase()}/dashboard`);
-  } else {
-    redirect("/dashboard");
-  }
+  // Redirect directly to dashboard based on role
+  // We return the URL so the client can show a toast before redirecting
+  const redirectUrl = profile.role ? `/${profile.role.toLowerCase()}/dashboard` : "/dashboard";
+  
+  return {
+    status: "success",
+    message: "Successfully logged in, redirecting...",
+    error: null,
+    formData: { email, redirectUrl } as any // Adding redirectUrl to formData as a hack transport or better, update interface
+  };
 }
 
 export async function requestPasswordReset(formData: FormData): Promise<ActionResult> {

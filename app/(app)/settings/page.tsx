@@ -5,7 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GeneralTab } from "@/components/modules/settings/GeneralTab";
 import { NotificationsTab } from "@/components/modules/settings/NotificationsTab";
 import { SecurityTab } from "@/components/modules/settings/SecurityTab";
-import Breadcrumb from "@/components/modules/Breadcrumb";
+import { StorageInfo } from "@/components/modules/settings/StorageInfo";
+import { checkStorageCapacity } from "@/app/(app)/actions/storage";
 
 export const metadata: Metadata = {
     title: "Settings | Authesci",
@@ -15,10 +16,14 @@ export const metadata: Metadata = {
 export default async function SettingsPage() {
     const { user } = await getAuthenticatedUser();
 
-    const profile = await prisma.profile.findUnique({
-        where: { userId: user.id },
-        select: { settings: true },
-    });
+    // This is a server component, so we can fetch data directly.
+    const [profile, storageData] = await Promise.all([
+        prisma.profile.findUnique({
+            where: { userId: user.id },
+            select: { settings: true },
+        }),
+        checkStorageCapacity(0) // Call with 0 to just get current usage
+    ]);
 
     const settings = (profile?.settings as any) || {};
 
@@ -30,6 +35,12 @@ export default async function SettingsPage() {
 
             <div className="card border-0 bg-white dark:bg-neutral-700 rounded-2xl shadow-sm">
                 <div className="card-body p-6">
+                    
+                    <StorageInfo 
+                        storageUsed={storageData.storageUsed}
+                        storageCapacity={storageData.storageCapacity}
+                    />
+
                     <Tabs defaultValue="general" className="w-full">
                         <TabsList className="mb-8 w-full justify-start bg-transparent border-b border-neutral-200 dark:border-neutral-600 rounded-none h-auto p-0 space-x-6">
                             <TabsTrigger
@@ -69,3 +80,4 @@ export default async function SettingsPage() {
         </div>
     );
 }
+
