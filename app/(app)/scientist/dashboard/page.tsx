@@ -1,6 +1,7 @@
 import { getAuthenticatedUser } from "@/lib/services/auth-service";
 import { Role } from "@prisma/client";
 import Link from "next/link";
+import { Metadata } from "next";
 import { ScientistProgress } from "@/components/modules/scientist/ScientistProgress";
 import { ScientistFinanceWidget } from "@/components/modules/scientist/ScientistFinanceWidget";
 import { OngoingProjectsList } from "@/components/modules/scientist/OngoingProjectsList";
@@ -9,6 +10,11 @@ import LogViewer from "@/components/modules/activity-logs/LogViewer";
 import { CreditCard } from "lucide-react";
 import { FeaturedCarousel } from "@/components/modules/common/FeaturedCarousel";
 import { ProWidget } from "@/components/modules/admin/ProWidget";
+
+export const metadata: Metadata = {
+  title: "Scientist Dashboard | Authesci",
+  description: "Manage your research projects and applications.",
+};
 
 export default async function ScientistDashboardPage() {
   const { profile } = await getAuthenticatedUser({
@@ -36,6 +42,7 @@ export default async function ScientistDashboardPage() {
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
+
           <ScientistStatsWidget />
           <ScientistFinanceWidget />
 

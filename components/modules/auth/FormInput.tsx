@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { cn } from "@/lib/utils";
 
 interface FormInputProps {
   type: string;
@@ -12,9 +13,10 @@ interface FormInputProps {
   error?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string; // Add className prop
 }
 
-const FormInput: React.FC<FormInputProps> = ({ type, placeholder, icon, id, name, defaultValue, error, value, onChange }) => {
+const FormInput: React.FC<FormInputProps> = ({ type, placeholder, icon, id, name, defaultValue, error, value, onChange, className }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const isPassword = type === 'password';
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
@@ -34,7 +36,11 @@ const FormInput: React.FC<FormInputProps> = ({ type, placeholder, icon, id, name
           id={inputId}
           name={name}
           type={isPassword ? (isPasswordVisible ? 'text' : 'password') : type}
-          className={`form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 rounded-xl ${error ? 'border-red-500' : ''}`}
+          className={cn(
+            "form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 rounded-xl",
+            error ? "border-red-500" : "",
+            className
+          )}
           placeholder={placeholder}
           defaultValue={defaultValue}
           value={value}

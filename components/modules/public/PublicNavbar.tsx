@@ -177,7 +177,7 @@ export default function PublicNavbar({ user, profile }: PublicNavbarProps) {
                       </Link>
                       <Link
                         className="ud-btn btn-white add-joining bdrs50 text-thm2"
-                        href="/register"
+                        href="/signup"
                       >
                         Join
                       </Link>
@@ -207,8 +207,8 @@ export default function PublicNavbar({ user, profile }: PublicNavbarProps) {
                 </Link>
                 <div className="right-side text-end">
                   {!user && (
-                    <Link className="" href="/login">
-                      join
+                    <Link className="" href="/signup">
+                      Join
                     </Link>
                   )}
                   <a
@@ -343,7 +343,7 @@ export default function PublicNavbar({ user, profile }: PublicNavbarProps) {
                   </li>
                   <li className="border-bottom py-3">
                     <Link
-                      href="/register"
+                      href="/signup"
                       className="text-dark text-decoration-none d-block px-3"
                       onClick={() => setMobileMenuOpen(false)}
                     >

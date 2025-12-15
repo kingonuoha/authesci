@@ -20,7 +20,7 @@ export const NAV_LINKS = {
     { href: '/employer/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/messages', label: 'Chat', icon: MessageSquare },
     { href: '/employer/jobs', label: 'Manage Jobs', icon: Briefcase },
-    { href: '/employer/profile', label: 'Company Profile', icon: Building },
+    { href: '/employer/profile', label: 'Profile Settings', icon: Building },
     { href: '/settings', label: 'Settings', icon: Settings },
     { href: '/in-lab', label: 'In-Lab Mode', icon: FlaskConical },
   ],

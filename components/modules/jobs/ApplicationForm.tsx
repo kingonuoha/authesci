@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -41,13 +41,37 @@ interface ApplicationFormProps {
   screeningQuestions?: string[];
 }
 
-export function ApplicationForm({ jobId, userProfile, screeningQuestions = [] }: ApplicationFormProps) {
+const LOADING_PHRASES = [
+  "Calibrating pipettes...",
+  "Analyzing data sets...",
+  "Peer reviewing your request...",
+  "Synthesizing cover letter...",
+  "Running electrophoresis...",
+  "Preparing petri dishes...",
+  "Calculating p-values...",
+  "Consulting the literature...",
+  "Optimizing yield...",
+];
+
+export function ApplicationForm({ jobId, userProfile, screeningQuestions: rawScreeningQuestions }: ApplicationFormProps) {
+  const screeningQuestions = rawScreeningQuestions || [];
+  const [loadingPhrase, setLoadingPhrase] = useState(LOADING_PHRASES[0]);
   const [isPending, startTransition] = useTransition();
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [useProfileResume, setUseProfileResume] = useState(!!userProfile?.cvUrl);
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isGeneratingAi) {
+      interval = setInterval(() => {
+        setLoadingPhrase(LOADING_PHRASES[Math.floor(Math.random() * LOADING_PHRASES.length)]);
+      }, 2000);
+    }
+    return () => clearInterval(interval);
+  }, [isGeneratingAi]);
 
   const {
     register,
@@ -134,9 +158,9 @@ export function ApplicationForm({ jobId, userProfile, screeningQuestions = [] }:
   const onInvalid = (errors: any) => {
     console.error("Form validation errors:", errors);
     if (errors.coverLetter) {
-        toast.error(errors.coverLetter.message);
+      toast.error(errors.coverLetter.message);
     } else {
-        toast.error("Please fill in all required fields correctly.");
+      toast.error("Please fill in all required fields correctly.");
     }
   };
 
@@ -201,7 +225,7 @@ export function ApplicationForm({ jobId, userProfile, screeningQuestions = [] }:
                 Cover Letter
               </Label>
               <div className="flex items-center gap-2">
-                {isGeneratingAi && <span className="text-xs text-slate-500 flex items-center gap-1"><Loader2 size={12} className="animate-spin" /> Writing...</span>}
+                {isGeneratingAi && <span className="text-xs text-slate-500 flex items-center gap-1"><Loader2 size={12} className="animate-spin" /> {loadingPhrase}</span>}
                 <AiFillButton
                   onClick={handleAiFill}
                   disabled={isGeneratingAi}
@@ -302,10 +326,10 @@ export function ApplicationForm({ jobId, userProfile, screeningQuestions = [] }:
           <div className="pt-4 border-t dark:border-slate-800">
             <Button
               type="submit"
-              disabled={isSubmitLoading}
+              disabled={isSubmitLoading || isPending}
               className="w-full h-12 text-base font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500"
             >
-              {isSubmitLoading ? (
+              {isSubmitLoading || isPending ? (
                 <>
                   <Loader2 size={18} className="animate-spin mr-2" />
                   Sending Application...

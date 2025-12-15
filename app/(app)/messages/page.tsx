@@ -1,10 +1,16 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { Metadata } from 'next';
 import { getMessages } from '@/app/(app)/actions/chat';
 import { ChatThread } from '@/components/chat/chat-thread';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+    title: "Messages | Authesci",
+    description: "Your conversations.",
+};
 
 export default async function MessagesPage({
     searchParams,

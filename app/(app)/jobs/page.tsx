@@ -164,8 +164,8 @@ export default async function JobsPage({
 
     return (
         <div className="container py-10">
-            <Link href="/" className="inline-flex items-center gap-2 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white mb-6 transition-colors">
-                <ArrowLeft className="w-4 h-4" /> Back to Home
+            <Link href="/scientist/dashboard" className="inline-flex items-center gap-2 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white mb-6 transition-colors">
+                <ArrowLeft className="w-4 h-4" /> Back to Dashboard
             </Link>
             <div className="mb-8 flex items-center justify-between">
                 <div>

@@ -10,7 +10,7 @@ if (!apiKey) {
 }
 
 const genAI = new GoogleGenerativeAI(apiKey || "dummy_key");
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
 
 export const isAIEnabled = () => process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES;
@@ -30,9 +30,13 @@ export async function generateEmbeddings(text: string) {
 export async function generateCoverLetter(profile: any, job: any) {
   if (!isAIEnabled()) throw new Error("AI features are disabled");
   
+  const jsonInfo = (data: any) => JSON.stringify(data, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+  );
+
   const prompt = SYSTEM_PROMPTS.GENERATE_COVER_LETTER
-    .replace("{profile}", JSON.stringify(profile))
-    .replace("{job}", JSON.stringify(job));
+    .replace("{profile}", jsonInfo(profile))
+    .replace("{job}", jsonInfo(job));
 
   const result = await model.generateContent(prompt);
   return result.response.text();
@@ -81,6 +85,10 @@ export async function extractCvText(cvUrl: string): Promise<string> {
     const contentType = response.headers.get("content-type");
 
     if (contentType?.includes("application/pdf") || cvUrl.endsWith(".pdf")) {
+      // Polyfill DOMMatrix for pdf-parse in Node
+      if (typeof DOMMatrix === 'undefined') {
+          (global as any).DOMMatrix = class DOMMatrix {};
+      }
       const pdf = require("pdf-parse");
       const data = await pdf(buffer);
       return data.text;

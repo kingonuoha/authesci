@@ -8,19 +8,23 @@ export function CheckEmailContent() {
   const email = searchParams.get('email');
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-dark-1 p-4">
-      <div className="bg-white dark:bg-dark-2 p-8 rounded-xl shadow-lg text-center max-w-md w-full">
-        <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-4">Check Your Email</h2>
-        <p className="text-neutral-600 dark:text-neutral-300 mb-6">
-          A password reset link has been sent to <span className="font-semibold text-primary-600">{email || 'your email address'}</span>.
-          Please check your inbox (and spam folder) to reset your password.
+    <div className="bg-white/50 backdrop-blur-md border border-white/20 shadow-2xl rounded-3xl p-8 lg:p-10 w-full animate-in fade-in zoom-in duration-500">
+      <div className="mb-8 text-center">
+        <h4 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white drop-shadow-sm">Check Your Email</h4>
+        <p className="text-gray-700 dark:text-gray-200 text-lg font-medium drop-shadow-sm">
+          A password reset link has been sent to <span className="font-semibold text-primary-700 dark:text-primary-400">{email || 'your email address'}</span>.
         </p>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
-          If you don't receive the email within a few minutes, please check your spam folder or try again.
+      </div>
+
+      <div className="text-center space-y-4">
+        <p className="text-sm text-gray-600 dark:text-gray-300">
+          Please check your inbox (and spam folder) to reset your password. If you don't receive the email within a few minutes, please check your spam folder or try again.
         </p>
-        <Link href="/forgot-password" className="text-primary-600 font-semibold hover:underline">
-          Resend Password Reset Email
-        </Link>
+        <div className="pt-4">
+          <Link href="/forgot-password" className="text-primary-700 dark:text-primary-400 font-bold hover:underline">
+            Resend Password Reset Email
+          </Link>
+        </div>
       </div>
     </div>
   );

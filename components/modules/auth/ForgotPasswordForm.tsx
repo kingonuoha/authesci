@@ -32,22 +32,37 @@ const ForgotPasswordForm = () => {
   };
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit}>
-      <FormInput type="email" name="email" placeholder="Email" icon={<Mail />} id="email" />
-      <button
-        type="submit"
-        className="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl"
-        disabled={pending}
-      >
-        {pending ? 'Sending...' : 'Continue'}
-      </button>
-
-      <div className="text-center">
-        <a href="/login" className="text-primary-600 font-bold mt-6 hover:underline">
-          Back to Sign In
-        </a>
+    <div className="bg-white/50 backdrop-blur-md border border-white/20 shadow-2xl rounded-3xl p-8 lg:p-10 w-full animate-in fade-in zoom-in duration-500">
+      <div className="mb-8 text-center lg:text-left">
+        <h4 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white drop-shadow-sm">Forgot Password?</h4>
+        <p className="text-gray-700 dark:text-gray-200 text-lg font-medium drop-shadow-sm">
+          Enter your email to reset your password.
+        </p>
       </div>
-    </form>
+      <form ref={formRef} onSubmit={handleSubmit}>
+        <FormInput
+          type="email"
+          name="email"
+          placeholder="Email"
+          icon={<Mail />}
+          id="email"
+          className="bg-white/50 border-white/40 focus:bg-white/80"
+        />
+        <button
+          type="submit"
+          className="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl shadow-lg hover:shadow-primary-500/30 transition-all font-bold"
+          disabled={pending}
+        >
+          {pending ? 'Sending...' : 'Continue'}
+        </button>
+
+        <div className="text-center mt-8">
+          <a href="/login" className="text-primary-700 dark:text-primary-400 font-bold hover:underline">
+            Back to Sign In
+          </a>
+        </div>
+      </form>
+    </div>
   );
 };
 

@@ -19,6 +19,11 @@ const profileSchema = z.object({
   avatarUrl: z.string().optional(),
   companyLogoUrl: z.string().optional(),
   cvUrl: z.string().optional(),
+  education: z.object({
+      degree: z.string().optional(),
+      courseOfStudy: z.string().optional(),
+      duration: z.string().optional(),
+  }).optional(),
 });
 
 export type ProfileState = {
@@ -75,10 +80,35 @@ export async function uploadFile(formData: FormData): Promise<{ url?: string; er
       // If upload is successful, update storage usage
       const updateResult = await updateStorageUsage(file.size);
       if (!updateResult.success) {
-        // Log the error, but don't fail the whole operation since the
-        // file is already on Cloudinary. This is a trade-off.
-        console.warn(`Failed to update storage usage for user after upload: ${updateResult.message}`);
+        console.warn(`Failed to update storage usage: ${updateResult.message}`);
       }
+
+      // FIX: Generate Signed URL for immediate access if it's a raw file (PDF) to prevent 401
+      if (resourceType === "raw") {
+         // The uploadResult.url is the unsigned one.
+         // We can generate a signed one using the known public_id or filename
+         // Cloudinary upload response usually contains public_id
+         // But here uploadPromise resolves { url }. We should resolve more info.
+      }
+    }
+
+    // Let's modify the uploadPromise to return public_id
+    // Wait, I can't easily modify the promise return type without changing the signature above.
+    // Instead, I'll just rely on the stored URL logic:
+    // Actually, I should change the promise to return the whole result.
+    
+    // Quick Fix: If it's a raw file, we sign the URL using the URL we just got.
+    if (uploadResult.url && resourceType === "raw") {
+         const matches = uploadResult.url.match(/\/upload\/(?:v\d+\/)?(.+)$/);
+         if (matches && matches[1]) {
+             const publicId = matches[1];
+             const signedUrl = cloudinary.url(publicId, {
+                 resource_type: "raw",
+                 sign_url: true,
+                 expires_at: Math.floor(Date.now() / 1000) + 3600
+             });
+             uploadResult.url = signedUrl;
+         }
     }
 
     return uploadResult;
@@ -106,7 +136,13 @@ export async function updateProfile(
     };
   }
 
-  const rawData = {
+
+
+  // Manually construct education object from formData before validation if needed, or better:
+  // Since 'education' is a nested object in our schema but comes as flat fields from the form:
+  // We need to preprocess formData -> rawData structure.
+  
+  const rawData: any = {
     fullName: formData.get("fullName"),
     bio: formData.get("bio") || undefined,
     institution: formData.get("institution") || undefined,
@@ -118,6 +154,18 @@ export async function updateProfile(
     companyLogoUrl: formData.get("companyLogoUrl") || undefined,
     cvUrl: formData.get("cvUrl") || undefined,
   };
+
+  const degree = formData.get("degree");
+  const courseOfStudy = formData.get("courseOfStudy");
+  const duration = formData.get("duration");
+
+  if (degree || courseOfStudy || duration) {
+      rawData.education = {
+          degree: degree || "",
+          courseOfStudy: courseOfStudy || "",
+          duration: duration || ""
+      };
+  }
 
   const validatedFields = profileSchema.safeParse(rawData);
 
@@ -135,7 +183,7 @@ export async function updateProfile(
     };
   }
 
-  const { fullName, bio, institution, experience, skills, publications, certifications, avatarUrl, companyLogoUrl, cvUrl } = validatedFields.data;
+  const { fullName, bio, institution, experience, skills, publications, certifications, avatarUrl, companyLogoUrl, cvUrl, education } = validatedFields.data;
 
   // Helper to parse arrays
   const parseArray = (input?: string) => {
@@ -166,6 +214,7 @@ export async function updateProfile(
         avatarUrl: avatarUrl || undefined, // Only update if provided
         companyLogoUrl: companyLogoUrl || undefined, // Only update if provided
         cvUrl: cvUrl || undefined, // Only update if provided
+        education: education || undefined, 
       },
     });
 
