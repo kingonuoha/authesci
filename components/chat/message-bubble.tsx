@@ -99,7 +99,7 @@ export function MessageBubble({ message, isCurrentUser, isRead, animateTyping = 
                     "mb-2 text-sm md:text-base leading-relaxed break-words prose dark:prose-invert max-w-none",
                     isCurrentUser
                         ? "text-primary-foreground prose-headings:text-primary-foreground prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-ul:text-primary-foreground prose-ol:text-primary-foreground prose-a:text-primary-foreground prose-code:text-primary-foreground prose-pre:bg-primary-800 prose-pre:text-primary-foreground"
-                        : "text-neutral-700 dark:text-neutral-200 prose-headings:text-neutral-900 dark:prose-headings:text-white prose-p:text-neutral-700 dark:prose-p:text-neutral-200 prose-strong:text-neutral-900 dark:prose-strong:text-white prose-a:text-primary prose-pre:bg-neutral-100 dark:prose-pre:bg-neutral-800"
+                        : "text-neutral-700 dark:text-neutral-100 prose-headings:text-neutral-900 dark:prose-headings:text-neutral-100 prose-p:text-neutral-700 dark:prose-p:text-neutral-200 prose-strong:text-neutral-900 dark:prose-strong:text-white prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:bg-neutral-100 dark:prose-pre:bg-neutral-800 prose-code:text-neutral-800 dark:prose-code:text-neutral-200"
                 )}>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {contentToShow.split('||SUGGESTIONS')[0]}

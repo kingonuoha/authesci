@@ -34,7 +34,7 @@ export default async function JobsPage({
     // If not logged in OR not a scientist
     if (!profile || profile.role !== Role.SCIENTIST) {
         return (
-            <div className="container py-20 max-w-7xl mx-auto text-center space-y-8 min-h-[60vh] flex flex-col justify-center items-center animate-in fade-in duration-700">
+            <div className="container py-20 max-w-7xl mx-auto text-center space-y-8 min-h-[60vh] flex flex-col justify-center items-center animate-in fade-in duration-700 bg-white dark:bg-neutral-900 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-800">
                 <div className="h-24 w-24 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg shadow-blue-500/10">
                     <Lock size={48} />
                 </div>
@@ -56,7 +56,7 @@ export default async function JobsPage({
                                 </p>
                             </div>
                             <Link href={`/${profile.role.toLowerCase()}/dashboard`} className="w-full sm:w-auto">
-                                <Button size="lg" className="w-full text-lg h-12 px-8 font-semibold shadow-lg transition-all">
+                                <Button size="lg" className="w-full text-lg h-12 px-8 font-semibold shadow-lg transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
                                     Go to {profile.role} Dashboard
                                 </Button>
                             </Link>
@@ -64,12 +64,12 @@ export default async function JobsPage({
                     ) : (
                         <>
                             <Link href="/login?next=/jobs" className="w-full sm:w-auto">
-                                <Button size="lg" className="w-full text-lg h-12 px-8 font-semibold shadow-lg hover:shadow-blue-500/25 transition-all">
+                                <Button size="lg" className="w-full text-lg h-12 px-8 font-semibold shadow-lg hover:shadow-blue-500/25 transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
                                     Sign In
                                 </Button>
                             </Link>
                             <Link href="/register?role=SCIENTIST" className="w-full sm:w-auto">
-                                <Button variant="outline" size="lg" className="w-full text-lg h-12 px-8 flex items-center gap-2 border-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                <Button variant="outline" size="lg" className="w-full text-lg h-12 px-8 flex items-center gap-2 border-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors dark:border-neutral-700 dark:text-white">
                                     Join as Scientist
                                     <ArrowRight size={20} />
                                 </Button>
@@ -79,9 +79,9 @@ export default async function JobsPage({
                 </div>
 
                 {!user && (
-                    <p className="text-sm text-slate-500 mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 w-full max-w-md mx-auto">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 w-full max-w-md mx-auto">
                         Are you an Institution or Employer? <br />
-                        <Link href="/register?type=employer" className="text-blue-600 hover:underline font-bold inline-flex items-center gap-1 mt-1">
+                        <Link href="/register?type=employer" className="text-blue-600 dark:text-blue-400 hover:underline font-bold inline-flex items-center gap-1 mt-1">
                             Post a Project Here
                         </Link>
                     </p>
