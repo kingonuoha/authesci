@@ -86,6 +86,8 @@ If you’d like to contribute to improving Authesci:
 3. Commit and push your changes  
 4. Open a pull request  
 
+Stacks:
+[![My Skills](https://skillicons.dev/icons?i=js,nextjs,tailwind,ts,css,supabase,prisma,bootstrap,tensorflow,git)](https://authesci.com)
 ---
 
 ## 📄 License
