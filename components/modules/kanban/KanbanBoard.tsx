@@ -387,7 +387,7 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators, re
   );
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col w-full">
       <div className="flex items-center gap-2 px-6 mb-4 flex-shrink-0">
         <span className="text-sm text-neutral-500 font-medium">Online:</span>
         <div className="flex -space-x-2">
@@ -406,7 +406,7 @@ export default function KanbanBoard({ projectId, initialTasks, collaborators, re
         </div>
       </div>
 
-      <div className="overflow-x-auto scroll-sm pb-8 h-full">
+      <div className="overflow-x-auto scroll-sm pb-8 h-full w-full">
         <div className="kanban-wrapper w-full relative">
           {currentUser && (
             <RealtimeCursors

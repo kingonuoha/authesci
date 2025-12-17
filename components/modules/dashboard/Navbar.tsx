@@ -10,12 +10,26 @@ import { logout } from '@/app/(app)/actions/auth';
 import { NotificationBell } from '@/components/modules/NotificationBell';
 import { MessageDropdown } from '@/components/modules/MessageDropdown';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getCurrentUserProfile } from '@/app/(app)/actions/user';
+
 const Navbar = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => void, toggleMobileSidebar: () => void }) => {
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [user, setUser] = useState<{ fullName: string | null; avatarUrl: string | null; role: string | null } | null>(null);
 
   const [logoutState, logoutAction] = useActionState(logout, null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const profile = await getCurrentUserProfile();
+      if (profile) {
+        setUser(profile);
+      }
+    };
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     if (logoutState?.status === 'error') {
@@ -108,8 +122,6 @@ const Navbar = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
             </div>
             {/* Language Dropdown End  */}
 
-            {/* Language Dropdown End  */}
-
             {/* Message Dropdown Start  */}
             <MessageDropdown />
             {/* Message Dropdown End  */}
@@ -130,25 +142,29 @@ const Navbar = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                 aria-controls="dropdownProfile"
                 aria-label="User profile menu"
               >
-                <Image
-                  src="/assets/images/user.png"
-                  alt="User profile picture"
-                  width={40}
-                  height={40}
-                  className="object-fit-cover h-10 w-10 rounded-full"
-                />
+                <Avatar className="h-10 w-10 border border-neutral-200 dark:border-neutral-600 cursor-pointer">
+                  <AvatarImage src={user?.avatarUrl || ''} alt={user?.fullName || 'User'} className="object-cover" />
+                  <AvatarFallback className="bg-primary-100 text-primary-600 font-semibold">
+                    {user?.fullName?.charAt(0) || <User className="h-5 w-5" />}
+                  </AvatarFallback>
+                </Avatar>
               </button>
               {isProfileDropdownOpen && (
                 <div
                   id="dropdownProfile"
-                  className="dropdown-menu-sm z-10 absolute right-0 mt-2 w-60 rounded-lg bg-white p-3 shadow-lg dark:bg-neutral-700"
+                  className="dropdown-menu-sm z-10 absolute right-0 mt-2 w-60 rounded-lg bg-white p-3 shadow-lg dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600"
                 >
                   <div className="mb-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
                     <div>
-                      <h6 className="mb-0 text-lg font-semibold text-neutral-900">Robiul Hasan</h6>
-                      <span className="text-neutral-500">Admin</span>
+                      <h6 className="mb-0 text-lg font-semibold text-neutral-900 dark:text-white">{user?.fullName || 'User'}</h6>
+                      <span className="text-neutral-500 dark:text-neutral-400 text-sm capitalize">{user?.role?.toLowerCase() || 'Guest'}</span>
                     </div>
-                    <button type="button" className="hover:text-danger-600" aria-label="Close profile menu">
+                    <button
+                      type="button"
+                      className="hover:text-danger-600 dark:text-neutral-400 dark:hover:text-red-500"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      aria-label="Close profile menu"
+                    >
                       <XCircle className="icon text-xl" />
                     </button>
                   </div>
@@ -156,26 +172,26 @@ const Navbar = ({ toggleSidebar, toggleMobileSidebar }: { toggleSidebar: () => v
                   <div className="scroll-sm max-h-[400px] overflow-y-auto pe-2">
                     <ul className="flex flex-col">
                       <li>
-                        <Link className="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600" href="/view-profile">
+                        <Link className="flex items-center gap-4 px-0 py-2 text-black dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400" href="/profile">
                           <User className="icon text-xl" />
                           My Profile
                         </Link>
                       </li>
                       <li>
-                        <Link className="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600" href="/messages">
+                        <Link className="flex items-center gap-4 px-0 py-2 text-black dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400" href="/messages">
                           <Mail className="icon text-xl" />
                           Inbox
                         </Link>
                       </li>
                       <li>
-                        <Link className="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600" href="/company">
+                        <Link className="flex items-center gap-4 px-0 py-2 text-black dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400" href="/settings">
                           <Settings className="icon text-xl" />
-                          Setting
+                          Settings
                         </Link>
                       </li>
                       <li>
-                        <form action="/auth/logout" method="post">
-                          <button type="submit" className="flex items-center gap-4 px-0 py-2 text-black hover:text-danger-600">
+                        <form action={logoutAction}>
+                          <button type="submit" className="flex items-center gap-4 px-0 py-2 text-black dark:text-neutral-200 hover:text-danger-600 dark:hover:text-red-500 w-full text-left">
                             <LogOut className="icon text-xl" />
                             Log Out
                           </button>

@@ -4,7 +4,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format } from 'date-fns';
-import { Bot } from 'lucide-react';
+import { Bot, FileText, Download } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -108,7 +108,7 @@ export function MessageBubble({ message, isCurrentUser, isRead, animateTyping = 
 
                 {message.attachmentUrl && (
                     <div className="mt-3 mb-1">
-                        {message.attachmentType === 'IMAGE' ? (
+                        {message.attachmentType === 'IMAGE' && !message.attachmentUrl.toLowerCase().endsWith('.pdf') ? (
                             <div className="relative aspect-square max-w-[240px] overflow-hidden rounded-xl border border-white/20">
                                 <img
                                     src={message.attachmentUrl}
@@ -122,12 +122,36 @@ export function MessageBubble({ message, isCurrentUser, isRead, animateTyping = 
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={cn(
-                                    "text-xs underline flex items-center gap-1.5 p-2 rounded-lg bg-black/5 hover:bg-black/10 transition-colors",
-                                    isCurrentUser ? "text-white" : "text-primary"
+                                    "flex items-center gap-3 p-3 rounded-xl border transition-all group/file text-left",
+                                    isCurrentUser
+                                        ? "bg-white/10 border-white/20 hover:bg-white/20 text-white"
+                                        : "bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 hover:border-blue-500/50 hover:shadow-sm"
                                 )}
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /></svg>
-                                <span>View Attachment</span>
+                                <div className={cn(
+                                    "w-10 h-10 rounded-lg flex items-center justify-center shrink-0",
+                                    isCurrentUser ? "bg-white/20" : "bg-neutral-100 dark:bg-neutral-700"
+                                )}>
+                                    <FileText className={cn("w-5 h-5", isCurrentUser ? "text-white" : "text-neutral-500 dark:text-neutral-400")} />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className={cn(
+                                        "text-sm font-medium truncate max-w-[150px]",
+                                        isCurrentUser ? "text-white" : "text-neutral-900 dark:text-white"
+                                    )}>
+                                        {decodeURIComponent(message.attachmentUrl.split('/').pop()?.split('?')[0] || "Attachment")}
+                                    </p>
+                                    <p className={cn(
+                                        "text-xs opacity-70",
+                                        isCurrentUser ? "text-white/70" : "text-neutral-500 dark:text-neutral-400"
+                                    )}>
+                                        Download File
+                                    </p>
+                                </div>
+                                <Download className={cn(
+                                    "w-4 h-4 opacity-70 group-hover/file:opacity-100 transition-opacity",
+                                    isCurrentUser ? "text-white" : "text-neutral-400"
+                                )} />
                             </a>
                         )}
                     </div>

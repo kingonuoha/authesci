@@ -6,7 +6,7 @@ import { fundProject } from "@/app/(app)/actions/payment";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, AlertCircle, Info } from "lucide-react";
+import { Loader2, Info } from "lucide-react";
 import { toast } from "react-hot-toast";
 import {
   Tooltip,
@@ -30,9 +30,7 @@ export default function InvoiceActions({ applicationId, salaryRange, jobTitle, r
   const [finalPrice, setFinalPrice] = useState<string>(
     fixedPrice ? fixedPrice.toString() : (rangeLimits ? rangeLimits.max.toString() : "")
   );
-  const [couponCode, setCouponCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [couponError, setCouponError] = useState("");
 
   // Calculate fees (Internal split, user pays the full price entered)
   const price = parseFloat(finalPrice) || 0;
@@ -59,14 +57,14 @@ export default function InvoiceActions({ applicationId, salaryRange, jobTitle, r
         return;
       }
     } else if (!finalPrice) {
-        toast.error("Please enter the final agreed price.");
-        return;
+      toast.error("Please enter the final agreed price.");
+      return;
     }
 
     setIsLoading(true);
     try {
       const result = await fundProject(applicationId, parseFloat(finalPrice));
-      
+
       if (result.error) {
         toast.error(result.error);
       } else if (result.url) {
@@ -80,52 +78,40 @@ export default function InvoiceActions({ applicationId, salaryRange, jobTitle, r
     }
   };
 
-  const handleApplyCoupon = () => {
-    if (couponCode) {
-      setCouponError("Coupon invalid: Feature not yet implemented.");
-    } else {
-        setCouponError("");
-    }
-  };
-
   return (
-        <div className="space-y-6">
+    <div className="space-y-6">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-        <Label htmlFor="finalPrice">Final Agreed Price</Label>
-        {salaryRange && !fixedPrice && (
+          <Label htmlFor="finalPrice">Final Agreed Price</Label>
+          {salaryRange && !fixedPrice && (
             <TooltipProvider>
-                <Tooltip>
+              <Tooltip>
                 <TooltipTrigger>
-                    <Info className="h-4 w-4 text-neutral-400" />
+                  <Info className="h-4 w-4 text-neutral-400" />
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>You used a range price ({salaryRange}); please confirm the final agreed amount.</p>
+                  <p>You used a range price ({salaryRange}); please confirm the final agreed amount.</p>
                 </TooltipContent>
-                </Tooltip>
+              </Tooltip>
             </TooltipProvider>
-        )}
+          )}
         </div>
         <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">
-              {formatCurrency(0).charAt(0)}
-            </span>
-        <Input
+          <Input
             id="finalPrice"
             type="number"
             placeholder="0.00"
             value={finalPrice}
             onChange={(e) => setFinalPrice(e.target.value)}
-            className="pl-8"
             min={rangeLimits?.min}
             max={rangeLimits?.max}
             disabled={!!fixedPrice}
-        />
+          />
         </div>
         {rangeLimits && !fixedPrice && (
           <div className="mt-2">
             <div className="h-2 w-full bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
-              <div 
+              <div
                 className={`h-full transition-all duration-300 ${isOutOfRange ? 'bg-red-500' : 'bg-green-500'}`}
                 style={{ width: `${getProgress()}%` }}
               />
@@ -135,35 +121,11 @@ export default function InvoiceActions({ applicationId, salaryRange, jobTitle, r
               <span>Max: {formatCurrency(rangeLimits.max)}</span>
             </div>
             {isOutOfRange && price > 0 && (
-               <p className="text-xs text-red-500 mt-1">
-                 Price is outside the agreed range of {formatCurrency(rangeLimits.min)} - {formatCurrency(rangeLimits.max)}
-               </p>
+              <p className="text-xs text-red-500 mt-1">
+                Price is outside the agreed range of {formatCurrency(rangeLimits.min)} - {formatCurrency(rangeLimits.max)}
+              </p>
             )}
           </div>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="coupon">Coupon Code</Label>
-        <div className="flex gap-2">
-          <Input
-            id="coupon"
-            placeholder="Enter coupon code"
-            value={couponCode}
-            onChange={(e) => {
-                setCouponCode(e.target.value);
-                setCouponError("");
-            }}
-          />
-          <Button type="button" variant="outline" onClick={handleApplyCoupon}>
-            Apply
-          </Button>
-        </div>
-        {couponError && (
-          <p className="text-sm text-destructive flex items-center gap-1">
-            <AlertCircle className="h-4 w-4" />
-            {couponError}
-          </p>
         )}
       </div>
 
@@ -175,11 +137,11 @@ export default function InvoiceActions({ applicationId, salaryRange, jobTitle, r
           </div>
         </div>
 
-        <Button 
-          onClick={handlePay} 
-          className="w-full" 
+        <Button
+          onClick={handlePay}
+          className="w-full"
           size="lg"
-          disabled={isLoading || !finalPrice || isOutOfRange || !!couponError}
+          disabled={isLoading || !finalPrice || isOutOfRange}
         >
           {isLoading ? (
             <>
@@ -191,10 +153,10 @@ export default function InvoiceActions({ applicationId, salaryRange, jobTitle, r
           )}
         </Button>
       </div>
-        
-        <p className="text-center text-xs text-neutral-500 mt-4">
-            Secure payment via Paystack. Funds are held in escrow until project completion.
-        </p>
-      </div>
+
+      <p className="text-center text-xs text-neutral-500 mt-4">
+        Secure payment via Paystack. Funds are held in escrow until project completion.
+      </p>
+    </div>
   );
 }

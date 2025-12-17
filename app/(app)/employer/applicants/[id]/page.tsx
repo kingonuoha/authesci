@@ -6,6 +6,7 @@ import Link from "next/link";
 import cloudinary from "@/lib/cloudinary";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/ui/back-button";
 import { Badge } from "@/components/ui/badge";
 import { DeviceType } from "@prisma/client";
 import { headers } from "next/headers";
@@ -41,9 +42,11 @@ const getSignedUrl = (url: string | null) => {
     }
 };
 
-export default async function ApplicantProfilePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ApplicantProfilePage({ params, searchParams }: { params: Promise<{ id: string }>, searchParams: Promise<{ jobId?: string }> }) {
     const { id } = await params;
+    const { jobId } = await searchParams;
     const supabase = await createClient();
+
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -173,9 +176,11 @@ export default async function ApplicantProfilePage({ params }: { params: Promise
 
     return (
         <div className="container py-10 max-w-4xl">
-            <Link href="/employer/jobs" className="inline-flex items-center gap-2 mb-6 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors">
-                <ArrowLeft className="w-4 h-4" /> Back to Jobs
-            </Link>
+            <BackButton
+                label="Back to Applicants"
+                className="mb-6"
+                fallbackUrl={jobId ? `/employer/jobs/${jobId}/applicants` : "/employer/jobs"}
+            />
 
             <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl overflow-hidden shadow-sm">
                 {/* Banner */}

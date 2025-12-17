@@ -5,6 +5,7 @@ export default async function FilesPage({ params }: { params: Promise<{ projectI
   const { projectId } = await params;
   const files = await prisma.projectFile.findMany({
     where: { projectId: projectId },
+    include: { uploader: true },
     orderBy: { createdAt: 'desc' },
   });
 

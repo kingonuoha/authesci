@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import { MapPin, Briefcase, DollarSign, Clock, Copy, ExternalLink, Sparkles, Info, Building2, Users } from "lucide-react";
+import { MapPin, Briefcase, DollarSign, Clock, Copy, ExternalLink, Sparkles, Info, Building2, Users, Shapes, Trash2 } from "lucide-react";
 import { Job, Profile } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -107,6 +107,12 @@ export function JobCard({ job, isEmployer = false, applications = [] }: JobCardP
             <Briefcase className="w-4 h-4" />
             <span>{job.jobType.replace("_", " ")}</span>
           </div>
+          {job.projectType && (
+            <div className="flex items-center gap-1">
+              <Shapes className="w-4 h-4" />
+              <span>{job.projectType}</span>
+            </div>
+          )}
           {job.location && (
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
@@ -146,21 +152,8 @@ export function JobCard({ job, isEmployer = false, applications = [] }: JobCardP
           <>
             {(job.status === "PENDING_PAYMENT" || job.status === "DRAFT" || job.status === "ACTIVE") && (
               <div className="flex gap-2">
-                {(job.status === "PENDING_PAYMENT" || job.status === "DRAFT") && (
-                  <button
-                    onClick={async () => {
-                      const { initiateJobPayment } = await import("@/app/(app)/actions/jobs");
-                      const result = await initiateJobPayment(job.id);
-                      if (result.status === "success" && result.paystackUrl) {
-                        window.location.href = result.paystackUrl;
-                      } else {
-                        toast.error(result.message || "Payment initialization failed");
-                      }
-                    }}
-                    className="btn btn-primary text-sm px-4 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 transition-colors"
-                  >
-                    Pay Now
-                  </button>
+                {job.status === "ACTIVE" && (
+                  <RetractButton jobId={job.id} />
                 )}
                 <Link
                   href={`/employer/jobs/${job.id}/edit`}
@@ -279,6 +272,56 @@ function ViewProjectButton({ jobId }: { jobId: string }) {
     >
       <ExternalLink className="w-4 h-4" />
       {loading ? "Loading..." : "View Project"}
+    </button>
+  );
+}
+
+function RetractButton({ jobId }: { jobId: string }) {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleRetract = async () => {
+    const result = await MySwal.fire({
+      title: 'Retract Job?',
+      text: "This will remove the job from the marketplace and set it to Draft.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, retract it!',
+      customClass: {
+        popup: 'dark:bg-neutral-800 dark:text-white',
+        title: 'dark:text-white',
+        htmlContainer: 'dark:text-neutral-300'
+      }
+    });
+
+    if (!result.isConfirmed) return;
+    setLoading(true);
+    try {
+      const { deleteJob } = await import("@/app/(app)/actions/jobs");
+      const res = await deleteJob(jobId);
+      if (res.success) {
+        toast.success("Job retracted to drafts");
+        router.refresh();
+      } else {
+        toast.error(res.error || "Failed to retract job");
+      }
+    } catch (error) {
+      toast.error("Failed to retract job");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleRetract}
+      disabled={loading}
+      className="btn btn-outline-danger text-sm px-4 py-2 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2"
+    >
+      <Trash2 className="w-4 h-4" />
+      {loading ? "Retracting..." : "Retract"}
     </button>
   );
 }

@@ -39,6 +39,7 @@ interface Applicant {
 
 interface ApplicantGridProps {
   applicants: Applicant[];
+  jobStatus?: string;
 }
 
 const COVER_IMAGES = [
@@ -56,7 +57,7 @@ const COVER_IMAGES = [
   "/assets/images/user-grid/user-grid-bg12.png",
 ];
 
-export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
+export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants, jobStatus }) => {
   const router = useRouter();
   const [chatLoadingId, setChatLoadingId] = React.useState<string | null>(null);
 
@@ -221,7 +222,13 @@ export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
                       <>
                         <DropdownMenuItem
                           className="cursor-pointer px-4 py-2 hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-600 dark:text-primary-400 rounded-md text-sm font-medium"
-                          onClick={() => window.location.href = `/employer/invoices/${applicant.id}`}
+                          onClick={() => {
+                            if (jobStatus !== "ACTIVE") {
+                              toast.error("You must activate the job before hiring an applicant.");
+                              return;
+                            }
+                            window.location.href = `/employer/invoices/${applicant.id}`;
+                          }}
                         >
                           <CreditCard className="w-4 h-4 mr-2" />
                           Hire Applicant
@@ -337,11 +344,11 @@ export const ApplicantGrid: React.FC<ApplicantGridProps> = ({ applicants }) => {
                   <MessageSquare className="w-4 h-4" />
                   {chatLoadingId === applicant.id ? "Starting..." : "Chat"}
                 </button>
-              </div >
-            </div >
+              </div>
+            </div>
           );
         })}
-      </div >
+      </div>
     </>
   );
 };

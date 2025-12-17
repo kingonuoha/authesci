@@ -89,6 +89,9 @@ export default async function JobApplicantsPage({ params }: { params: Promise<{ 
     redirect("/employer/jobs"); // Unauthorized
   }
 
+  const acceptedApp = job.applications.find(app => app.status === "ACCEPTED");
+  const displayedApplications = acceptedApp ? [acceptedApp] : job.applications;
+
   return (
     <div className="container py-10">
       <Link href="/employer/jobs" className="inline-flex items-center gap-2 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white mb-6 transition-colors">
@@ -97,14 +100,22 @@ export default async function JobApplicantsPage({ params }: { params: Promise<{ 
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Applicants for {job.title}</h1>
-        <p className="text-neutral-500 dark:text-neutral-400">
-          You have {job.applications.length} applicant{job.applications.length !== 1 && 's'} for this position.
-        </p>
+        {acceptedApp ? (
+          <div className="p-4 bg-green-50 text-green-800 rounded-lg border border-green-200">
+            <p className="font-medium">Positon Filled</p>
+            <p className="text-sm">You have hired <strong>{acceptedApp.applicant.fullName}</strong> for this job.</p>
+          </div>
+        ) : (
+          <p className="text-neutral-500 dark:text-neutral-400">
+            You have {job.applications.length} applicant{job.applications.length !== 1 && 's'} for this position.
+          </p>
+        )}
       </div>
 
       <div className="mt-6">
         <ApplicantGrid
-          applicants={job.applications.map(app => ({
+          jobStatus={job.status}
+          applicants={displayedApplications.map(app => ({
             id: app.id,
             user: {
               id: app.applicant.userId,

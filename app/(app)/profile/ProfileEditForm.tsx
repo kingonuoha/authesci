@@ -142,17 +142,37 @@ export function ProfileEditForm({ profile, onCancel, banks }: ProfileEditFormPro
           <h6 className="text-base text-neutral-600 dark:text-neutral-200 mb-4">Profile Image</h6>
           <div className="mb-6 mt-4 flex justify-center sm:justify-start gap-6">
             <div className="relative">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-neutral-600 shadow-sm relative">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-neutral-600 shadow-sm relative group">
                 <Image
                   src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}&background=random`}
                   alt="Profile"
                   fill
                   className="object-cover"
                 />
+
+                {/* Remove Button Overlay */}
+                {avatarUrl && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Optimistic update
+                      setAvatarUrl(null);
+                      // We also need to let the server know to clear it. 
+                      // The form submits `avatarUrl`. If we set it to empty string/null, logic updateProfile should handle it.
+                      // I need to ensure `avatarUrl` input value is empty string.
+                      // Also, toast notification
+                      toast.success("Profile picture removed. Save to apply.");
+                    }}
+                    className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                    title="Remove Profile Picture"
+                  >
+                    <X className="w-8 h-8 text-white bg-red-500/80 p-1.5 rounded-full hover:bg-red-600 transition-colors" />
+                  </button>
+                )}
               </div>
               <label
                 htmlFor="avatar-upload"
-                className="absolute bottom-0 right-0 w-8 h-8 flex justify-center items-center bg-primary-100 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400 border border-primary-600 hover:bg-primary-200 cursor-pointer rounded-full transition-colors"
+                className="absolute bottom-0 right-0 w-8 h-8 flex justify-center items-center bg-primary-100 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400 border border-primary-600 hover:bg-primary-200 cursor-pointer rounded-full transition-colors z-20"
               >
                 {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
                 <input

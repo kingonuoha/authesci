@@ -182,7 +182,13 @@ export async function submitApplication(prevState: ApplicationState, formData: F
         "NEW_APPLICANT",
         `${profile.fullName} applied for ${job.title}`,
         "New Applicant",
-        `/employer/jobs/${job.id}/applicants`
+        `/employer/jobs/${job.id}/applicants`,
+        { 
+            visual_type: "image", 
+            visual_resource: profile.avatarUrl 
+        },
+        "image",
+        profile.avatarUrl || undefined
       );
 
     } catch (emailError) {
@@ -220,6 +226,11 @@ export async function updateApplicationStatus(applicationId: string, newStatus: 
 
     if (!application || application.job.employerId !== profile.id) {
         return { error: "Unauthorized" };
+    }
+
+    // New Check: Cannot hire/select if job is not active
+    if (newStatus === ApplicationStatus.ACCEPTED && application.job.status !== "ACTIVE") {
+        return { error: "You cannot hire an applicant for a job that is not active. Please activate the job first." };
     }
 
     const updatedApplication = await prisma.application.update({

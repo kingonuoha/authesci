@@ -212,10 +212,10 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
       }
   }
 
+  const shouldActivate = formData.get("activate") === "true";
+
   try {
-    await prisma.job.update({
-      where: { id: jobId },
-      data: {
+    const updateData: any = {
         title,
         description,
         requirements: requirementsArray,
@@ -224,7 +224,15 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
         location,
         salaryRange,
         screeningQuestions: screeningQuestionsJson || undefined,
-      },
+    };
+
+    if (shouldActivate) {
+        updateData.status = JobStatus.ACTIVE;
+    }
+
+    await prisma.job.update({
+      where: { id: jobId },
+      data: updateData,
     });
 
     revalidatePath("/employer/jobs");
@@ -340,7 +348,7 @@ export async function deleteJob(jobId: string) {
 
     if (job.employerId !== profile.id) return { error: "Unauthorized" };
 
-    await prisma.job.delete({ where: { id: jobId } });
+    await prisma.job.update({ where: { id: jobId }, data: { status: JobStatus.DRAFT } });
     await logActivity(profile.id, "DELETE_JOB", "SUCCESS", `Job ${jobId} deleted`);
     revalidatePath("/employer/jobs");
     return { success: true };
@@ -438,7 +446,7 @@ export async function remixJob(jobId: string) {
                 jobType: job.jobType,
                 location: job.location,
                 salaryRange: job.salaryRange,
-                status: JobStatus.DRAFT, // Start as draft
+                status: JobStatus.ACTIVE, // Start as active per requirements
             },
         });
 

@@ -261,8 +261,13 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
       formData.append("screeningQuestions", JSON.stringify(questions));
     }
 
+    const isNotActive = initialData && initialData.status !== "ACTIVE";
+
     if (jobId) {
       formData.append("jobId", jobId);
+      if (isNotActive) {
+        formData.append("activate", "true");
+      }
     }
 
     startTransition(async () => {
@@ -289,6 +294,11 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
       }
     });
   }
+
+  const isNotActive = initialData && initialData.status !== "ACTIVE";
+  const buttonText = jobId
+    ? (isNotActive ? "Update & Activate Job" : "Update Job")
+    : "Post Job";
 
   return (
     <div className="card h-full p-0 rounded-xl border-0 overflow-hidden">
@@ -476,7 +486,8 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
               className="btn btn-primary text-sm btn-sm px-4 py-3 w-full md:w-auto rounded-lg flex items-center justify-center gap-2"
             >
               {isPending && <span className="loading loading-spinner loading-sm"></span>}
-              {isPending ? (jobId ? "Updating Job..." : "Creating Job...") : (jobId ? "Update Job" : "Post Job")}
+              {isPending && <span className="loading loading-spinner loading-sm"></span>}
+              {isPending ? (jobId ? (isNotActive ? "Updating & Activating..." : "Updating Job...") : "Creating Job...") : buttonText}
             </button>
           </div>
         </form>

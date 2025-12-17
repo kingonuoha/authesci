@@ -13,6 +13,7 @@ import {
   MessageSquare,
   BarChart,
   BookOpen,
+  HelpCircle,
 } from 'lucide-react';
 
 export const NAV_LINKS = {
@@ -41,7 +42,7 @@ export const NAV_LINKS = {
     { href: '/settings', label: 'Settings', icon: Settings },
   ],
   ADMIN: [
-    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/users', label: 'Manage Users', icon: Users },
     { href: '/admin/jobs', label: 'Manage Jobs', icon: Briefcase },
     { href: '/messages', label: 'Chat', icon: MessageSquare },
@@ -49,6 +50,7 @@ export const NAV_LINKS = {
     { href: '/admin/system-logs', label: 'System Logs', icon: FileText },
     { href: '/admin/payroll', label: 'Payroll', icon: Shield },
     { href: '/admin/blog', label: 'Blog', icon: BookOpen },
+    { href: '/admin/faq', label: 'Manage FAQs', icon: HelpCircle },
     { href: '/admin/notifications', label: 'Notifications', icon: Bell },
   ],
 };

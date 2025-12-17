@@ -127,8 +127,21 @@ export function NotificationBell() {
                                         onClick={() => !note.read && handleMarkRead(note.id)}
                                     >
                                         <div className="flex items-center gap-3 w-full">
-                                            <div className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900/30">
-                                                <Bell size={18} />
+                                            <div className={`relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full overflow-hidden ${note.metadata?.visual_type === 'image' ? '' :
+                                                    note.type === 'SUCCESS' || note.title?.includes('Success') ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
+                                                        note.type === 'ERROR' || note.title?.includes('Failed') ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' :
+                                                            note.type === 'WARNING' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                                                'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                                }`}>
+                                                {note.metadata?.visual_type === 'image' && note.metadata?.visual_resource ? (
+                                                    <img
+                                                        src={note.metadata.visual_resource}
+                                                        alt="User"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <Bell size={18} />
+                                                )}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <h6 className="fw-semibold mb-0.5 text-sm font-medium text-neutral-900 dark:text-white truncate">{note.title || note.type}</h6>

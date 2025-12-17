@@ -150,9 +150,9 @@ export async function updateProfile(
     skills: formData.get("skills") || undefined,
     publications: formData.get("publications") || undefined,
     certifications: formData.get("certifications") || undefined,
-    avatarUrl: formData.get("avatarUrl") || undefined,
-    companyLogoUrl: formData.get("companyLogoUrl") || undefined,
-    cvUrl: formData.get("cvUrl") || undefined,
+    avatarUrl: formData.get("avatarUrl"),
+    companyLogoUrl: formData.get("companyLogoUrl"),
+    cvUrl: formData.get("cvUrl"),
   };
 
   const degree = formData.get("degree");
@@ -211,9 +211,9 @@ export async function updateProfile(
         skills: skillsArray,
         publications: publicationsArray,
         certifications: certificationsArray,
-        avatarUrl: avatarUrl || undefined, // Only update if provided
-        companyLogoUrl: companyLogoUrl || undefined, // Only update if provided
-        cvUrl: cvUrl || undefined, // Only update if provided
+        avatarUrl: avatarUrl === "" ? null : (avatarUrl || undefined),
+        companyLogoUrl: companyLogoUrl === "" ? null : (companyLogoUrl || undefined),
+        cvUrl: cvUrl === "" ? null : (cvUrl || undefined),
         education: education || undefined, 
       },
     });

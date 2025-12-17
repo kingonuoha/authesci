@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MapPin, Briefcase, DollarSign, Clock, ArrowLeft, Building2 } from "lucide-react";
+import { MapPin, Briefcase, DollarSign, Clock, ArrowLeft, Building2, Shapes } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { ApplicantAvatarGroup } from "@/components/modules/jobs/ApplicantAvatarGroup";
@@ -89,6 +89,12 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
                                     <Briefcase className="w-4 h-4" />
                                     <span className="capitalize">{job.jobType.replace("_", " ")}</span>
                                 </div>
+                                {job.projectType && (
+                                    <div className="flex items-center gap-2 bg-neutral-50 dark:bg-neutral-700/50 px-4 py-2 rounded-lg">
+                                        <Shapes className="w-4 h-4" />
+                                        <span>{job.projectType}</span>
+                                    </div>
+                                )}
                                 {job.location && (
                                     <div className="flex items-center gap-2 bg-neutral-50 dark:bg-neutral-700/50 px-4 py-2 rounded-lg">
                                         <MapPin className="w-4 h-4" />

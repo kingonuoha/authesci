@@ -38,6 +38,7 @@ enum ApplicationStatus {
 
 enum ProjectStatus {
   ACTIVE
+  PENDING
   PENDING_COMPLETION
   COMPLETED
   ARCHIVED
@@ -447,4 +448,25 @@ enum DeviceType {
   DESKTOP
   TABLET
   MOBILE
+}
+
+model FAQ {
+  id        String   @id @default(uuid())
+  question  String
+  answer    String   @db.Text
+  category  String   @default("General")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("faqs")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }

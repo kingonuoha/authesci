@@ -98,7 +98,7 @@ export default async function JobsPage({
     const sort = typeof resolvedSearchParams.sort === 'string' ? resolvedSearchParams.sort : 'newest';
 
     const where: Prisma.JobWhereInput = {
-        status: JobStatus.ACTIVE,
+        status: { in: [JobStatus.ACTIVE, JobStatus.CLOSED] },
     };
 
     if (search) {

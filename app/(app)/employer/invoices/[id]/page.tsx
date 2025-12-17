@@ -134,7 +134,7 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
                                     <span className="text-xs text-neutral-500">Escrow deposit for project commencement</span>
                                 </td>
                                 <td className="p-3 text-right font-medium">
-                                    {fixedPrice ? `$${fixedPrice.toLocaleString()}` : (job.salaryRange ? "To be determined" : "TBD")}
+                                    {fixedPrice ? `NGN${fixedPrice.toLocaleString()}` : (job.salaryRange ? "To be determined" : "TBD")}
                                 </td>
                                 </tr>
                             </tbody>
