@@ -71,9 +71,9 @@ It empowers scientists to showcase their expertise, find funded projects, and co
 - ✅ Collaboration workspace  
 - ✅ File upload and document management  
 - ✅ Secure payment workflow  
-- 🔜 AI-based project and job recommendations  
-- 🔜 Admin analytics and reports  
-- 🔜 Real-time messaging  
+- ✅ AI-based project and job recommendations  
+- ✅ Admin analytics and reports  
+- ✅ Real-time messaging  
 
 ---
 
@@ -88,6 +88,8 @@ If you’d like to contribute to improving Authesci:
 
 Stacks:
 [![My Skills](https://skillicons.dev/icons?i=js,nextjs,tailwind,ts,css,supabase,prisma,bootstrap,tensorflow,git)](https://authesci.com)
+
+
 ---
 
 ## 📄 License
