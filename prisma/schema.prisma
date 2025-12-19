@@ -215,7 +215,6 @@ model Project {
   deletedAt    DateTime?      @map("deleted_at")
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
-  projectType  String?        @map("project_type") // Values: "Short-term", "Long-term", "One-time task"
   creator      Profile        @relation("ProjectsCreated", fields: [creatorId], references: [id], onDelete: Cascade)
   collaborators Collaborator[]
   files        ProjectFile[]
