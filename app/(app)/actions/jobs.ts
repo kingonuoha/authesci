@@ -20,6 +20,7 @@ const jobSchema = z.object({
   location: z.string().min(1, "Location is required"),
   salaryRange: z.string().min(1, "Salary is required"),
   screeningQuestions: z.string().optional(),
+  projectType: z.string().optional(),
 });
 
 export type JobState = {
@@ -56,6 +57,7 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
     location: formData.get("location"),
     salaryRange: formData.get("salaryRange"),
     screeningQuestions: formData.get("screeningQuestions"),
+    projectType: formData.get("projectType"),
   };
 
   const validatedFields = jobSchema.safeParse(rawData);
@@ -68,7 +70,7 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
     };
   }
 
-  const { title, description, requirements, category, jobType, location, salaryRange, screeningQuestions } = validatedFields.data;
+  const { title, description, requirements, category, jobType, location, salaryRange, screeningQuestions, projectType } = validatedFields.data;
 
   const requirementsArray = requirements.split("\n").map(r => r.trim()).filter(Boolean);
   
@@ -99,6 +101,7 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
         location,
         salaryRange,
         finalPrice,
+        projectType,
         status: JobStatus.ACTIVE, // Directly active
         screeningQuestions: screeningQuestionsJson || undefined,
       },
@@ -188,6 +191,7 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
     location: formData.get("location"),
     salaryRange: formData.get("salaryRange"),
     screeningQuestions: formData.get("screeningQuestions"),
+    projectType: formData.get("projectType"),
   };
 
   const validatedFields = jobSchema.safeParse(rawData);
@@ -200,7 +204,7 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
     };
   }
 
-  const { title, description, requirements, category, jobType, location, salaryRange, screeningQuestions } = validatedFields.data;
+  const { title, description, requirements, category, jobType, location, salaryRange, screeningQuestions, projectType } = validatedFields.data;
   const requirementsArray = requirements.split("\n").map(r => r.trim()).filter(Boolean);
 
   let screeningQuestionsJson = null;
@@ -223,6 +227,7 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
         jobType,
         location,
         salaryRange,
+        projectType,
         screeningQuestions: screeningQuestionsJson || undefined,
     };
 
@@ -446,6 +451,7 @@ export async function remixJob(jobId: string) {
                 jobType: job.jobType,
                 location: job.location,
                 salaryRange: job.salaryRange,
+                projectType: job.projectType,
                 status: JobStatus.ACTIVE, // Start as active per requirements
             },
         });

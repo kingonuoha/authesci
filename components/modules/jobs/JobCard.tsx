@@ -102,37 +102,45 @@ export function JobCard({ job, isEmployer = false, applications = [] }: JobCardP
       </div>
 
       <div className="card-body p-6 flex-1">
-        <div className="flex flex-wrap gap-4 text-sm text-neutral-500 dark:text-neutral-400 mb-4">
-          <div className="flex items-center gap-1">
-            <Briefcase className="w-4 h-4" />
-            <span>{job.jobType.replace("_", " ")}</span>
+        <div className="flex flex-wrap gap-2 text-xs md:text-sm mb-4">
+          <div className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 px-2 py-1.5 rounded-md font-semibold ring-1 ring-blue-500/10">
+            <Briefcase className="w-3.5 h-3.5" />
+            <span className="capitalize">{job.jobType.toLowerCase().replace("_", " ")}</span>
           </div>
-          {job.projectType && (
-            <div className="flex items-center gap-1">
-              <Shapes className="w-4 h-4" />
-              <span>{job.projectType}</span>
+          <div className="flex items-center gap-1.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 px-2 py-1.5 rounded-md font-semibold ring-1 ring-purple-500/10">
+            <Shapes className="w-3.5 h-3.5" />
+            <span>{job.projectType || "Short-term"}</span>
+          </div>
+          {job.category && (
+            <div className="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 px-2 py-1.5 rounded-md font-medium">
+              <Info className="w-3.5 h-3.5" />
+              <span>{job.category}</span>
             </div>
           )}
           {job.location && (
-            <div className="flex items-center gap-1">
-              <MapPin className="w-4 h-4" />
+            <div className="flex items-center gap-1.5 bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 dark:text-neutral-400 px-2 py-1.5 rounded-md">
+              <MapPin className="w-3.5 h-3.5" />
               <span>{job.location}</span>
             </div>
           )}
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-neutral-500 dark:text-neutral-400 mb-4 border-t border-neutral-100 dark:border-neutral-700/50 pt-3">
           {job.salaryRange && (
             <div className="flex items-center gap-1">
-              <DollarSign className="w-4 h-4" />
-              <span>{job.salaryRange}</span>
+              <DollarSign className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+              <span className="font-medium text-neutral-700 dark:text-neutral-200">
+                {job.salaryRange.replace(/\d+/g, (m) => Number(m).toLocaleString())}
+              </span>
             </div>
           )}
           <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
+            <Clock className="w-3.5 h-3.5" />
             <span>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</span>
           </div>
           {job._count?.applications !== undefined && (
             <div className="flex items-center gap-1 text-purple-600 dark:text-purple-400 font-medium">
-              <Users className="w-4 h-4" />
-              <span>{job._count.applications} Applicants</span>
+              <Users className="w-3.5 h-3.5" />
+              <span>{job._count.applications} Applications</span>
             </div>
           )}
         </div>
