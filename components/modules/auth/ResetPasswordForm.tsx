@@ -85,43 +85,54 @@ const ResetPasswordForm = () => {
 
   if (!hasSetSession) {
     return (
-      <div className="text-center flex flex-col items-center justify-center">
-        <Loader className="animate-spin h-8 w-8 text-blue-500 mb-4" />
-        <p>Validating your reset token...</p>
-        <p>You will be redirected shortly.</p>
+      <div className="bg-white/50 backdrop-blur-md border border-white/20 shadow-2xl rounded-3xl p-8 lg:p-10 w-full animate-in fade-in zoom-in duration-500">
+        <div className="text-center flex flex-col items-center justify-center py-10">
+          <Loader className="animate-spin h-8 w-8 text-blue-500 mb-4" />
+          <p className="text-gray-800 dark:text-gray-200 font-medium">Validating your reset token...</p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">You will be redirected shortly.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <p className="mb-6 text-secondary-light">Please set your new password.</p>
-      <FormInput
-        type="password"
-        name="password"
-        placeholder="New Password"
-        icon={<Lock />}
-        id="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <FormInput
-        type="password"
-        name="confirmPassword"
-        placeholder="Confirm New Password"
-        icon={<Lock />}
-        id="confirmPassword"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-      />
-      <button
-        type="submit"
-        className="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl mt-8"
-        disabled={loading}
-      >
-        {loading ? "Resetting..." : "Reset Password"}
-      </button>
-    </form>
+    <div className="bg-white/50 backdrop-blur-md border border-white/20 shadow-2xl rounded-3xl p-8 lg:p-10 w-full animate-in fade-in zoom-in duration-500">
+      <div className="mb-8 text-center lg:text-left">
+        <h4 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white drop-shadow-sm">Reset Password</h4>
+        <p className="text-gray-700 dark:text-gray-200 text-lg font-medium drop-shadow-sm">
+          Please set your new password.
+        </p>
+      </div>
+      <form onSubmit={handleSubmit}>
+        <FormInput
+          type="password"
+          name="password"
+          placeholder="New Password"
+          icon={<Lock />}
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="bg-white/50 border-white/40 focus:bg-white/80"
+        />
+        <FormInput
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm New Password"
+          icon={<Lock />}
+          id="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="bg-white/50 border-white/40 focus:bg-white/80"
+        />
+        <button
+          type="submit"
+          className="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl mt-8 shadow-lg hover:shadow-primary-500/30 transition-all font-bold"
+          disabled={loading}
+        >
+          {loading ? "Resetting..." : "Reset Password"}
+        </button>
+      </form>
+    </div>
   );
 };
 

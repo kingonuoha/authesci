@@ -2,46 +2,59 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import AuthCarousel from "@/components/modules/auth/AuthCarousel";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  let title = "";
-  let subtitle = "";
-
-  if (pathname.includes("/login")) {
-    title = "Sign In to your Account";
-    subtitle = "Welcome back! please enter your detail";
-  } else if (pathname.includes("/signup")) {
-    title = "Sign Up to your Account";
-    subtitle = "Welcome! please enter your details";
-  }
-
   return (
-    <section className="bg-white dark:bg-dark-2 flex flex-wrap min-h-[100vh]">
-      <div className="lg:w-1/2 lg:block hidden">
-        <div className="flex items-center flex-col h-full justify-center">
-          <Image src="/assets/images/auth/auth-img.png" alt="" width={500} height={500} />
-        </div>
+    <section className="relative w-screen h-screen overflow-hidden bg-neutral-900 grid grid-cols-1 lg:grid-cols-2">
+
+      {/* Background Carousel - Fixed to fill screen */}
+      <div className="fixed inset-0 w-full h-full z-0">
+        <AuthCarousel />
       </div>
-      <div className="lg:w-1/2 py-8 px-6 flex flex-col justify-center">
-        <div className="lg:max-w-[464px] mx-auto w-full">
-          <div>
-            <Link href="/" className="mb-1.5 max-w-[290px]">
-              <Image src="/assets/images/logo_authesci.png" alt="" width={200} height={40} />
-            </Link>
-            <h4 className="mb-3">{title}</h4>
-            <p className="mb-8 text-secondary-light text-lg">
-              {subtitle}
-            </p>
-          </div>
+
+      {/* Desktop Logo - Absolute Top Left (Hidden on Mobile) */}
+      <div className="hidden lg:block absolute top-10 left-10 z-20">
+        <Link href="/">
+          <Image
+            src="/assets/images/logo_authesci.png"
+            alt="Authesci Logo"
+            width={180}
+            height={40}
+            className="brightness-0 invert drop-shadow-md w-[180px]"
+          />
+        </Link>
+      </div>
+
+      {/* Left Column (Desktop Spacer) */}
+      <div className="hidden lg:block"></div>
+
+      {/* Right Content Area */}
+      <div className="relative z-10 w-full h-full flex flex-col justify-center items-center lg:items-end px-4 lg:pr-[10%]">
+
+        {/* Mobile Logo - Centered above card (Hidden on Desktop) */}
+        <div className="lg:hidden mb-10">
+          <Link href="/">
+            <Image
+              src="/assets/images/logo_authesci.png"
+              alt="Authesci Logo"
+              width={160}
+              height={35}
+              className="brightness-0 invert drop-shadow-md"
+            />
+          </Link>
+        </div>
+
+        {/* Form wrapper with max-height for potential scrolling on small screens */}
+        <div className="w-full max-w-[500px] max-h-[90vh] overflow-y-auto custom-scrollbar rounded-3xl p-1">
           {children}
         </div>
       </div>
+
     </section>
   );
 }

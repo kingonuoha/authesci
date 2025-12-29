@@ -20,6 +20,7 @@ const jobSchema = z.object({
   location: z.string().min(1, "Location is required"),
   salaryRange: z.string().min(1, "Salary is required"),
   screeningQuestions: z.string().optional(),
+  projectType: z.string().optional(),
 });
 
 export type JobState = {
@@ -56,6 +57,7 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
     location: formData.get("location"),
     salaryRange: formData.get("salaryRange"),
     screeningQuestions: formData.get("screeningQuestions"),
+    projectType: formData.get("projectType"),
   };
 
   const validatedFields = jobSchema.safeParse(rawData);
@@ -68,7 +70,7 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
     };
   }
 
-  const { title, description, requirements, category, jobType, location, salaryRange, screeningQuestions } = validatedFields.data;
+  const { title, description, requirements, category, jobType, location, salaryRange, screeningQuestions, projectType } = validatedFields.data;
 
   const requirementsArray = requirements.split("\n").map(r => r.trim()).filter(Boolean);
   
@@ -87,7 +89,7 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
     const amountInKobo = paymentAmount ? parseFloat(paymentAmount.toString()) * 100 : 5000 * 100; 
     const finalPrice = amountInKobo / 100;
 
-    // Create job with PENDING_PAYMENT status by default for now (or DRAFT)
+    // Create job with ACTIVE status immediately (payment happens later on applicant selection)
     const job = await prisma.job.create({
       data: {
         employerId: profile.id,
@@ -99,63 +101,25 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
         location,
         salaryRange,
         finalPrice,
-        status: JobStatus.PENDING_PAYMENT,
+        projectType,
+        status: JobStatus.ACTIVE, // Directly active
         screeningQuestions: screeningQuestionsJson || undefined,
       },
     });
 
-    // Initialize Paystack Transaction
-    const paystackSecret = process.env.PAYSTACK_SECRET_KEY;
-    if (!paystackSecret) {
-        // Fallback for dev without keys or if free posting is allowed
-        console.warn("PAYSTACK_SECRET_KEY not found. Creating job as ACTIVE (Dev Mode).");
-        await prisma.job.update({
-            where: { id: job.id },
-            data: { status: JobStatus.ACTIVE }
-        });
-        revalidatePath("/jobs");
-        revalidatePath("/employer/jobs");
-        return { status: "success", message: "Job posted successfully!", jobId: job.id };
-    }
-    
-    const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/employer/jobs/${job.id}/verify-payment`;
-
-    const paystackResponse = await fetch("https://api.paystack.co/transaction/initialize", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${paystackSecret}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: profile.email,
-        amount: amountInKobo,
-        callback_url: callbackUrl,
-        metadata: {
-          jobId: job.id,
-          employerId: profile.id,
-        },
-      }),
-    });
-
-    const paystackData = await paystackResponse.json();
-
-    if (!paystackData.status) {
-      throw new Error("Paystack initialization failed: " + paystackData.message);
-    }
-
-    // Notify employer about pending payment
+    // Notify employer about job creation
     await createNotification(
         profile.id,
         "SYSTEM_ALERT",
-        `Job "${job.title}" created. Please complete payment to activate.`,
+        `Job "${job.title}" created successfully.`,
         "Job Created",
-        `/employer/jobs/${job.id}/verify-payment`
+        `/employer/jobs/${job.id}`
     );
 
     await logActivity(profile.id, "CREATE_JOB", "SUCCESS", `Job "${title}" created`, { jobId: job.id });
 
     // Generate and store embedding
-    if (process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES) {
+    if (process.env.NEXT_PUBLIC_ENABLE_AI_FEATURES === "true") {
         try {
             const { generateEmbeddings } = await import("@/lib/ai/service");
             const textToEmbed = `${title} ${description} ${requirementsArray.join(" ")}`;
@@ -173,11 +137,13 @@ export async function createJob(prevState: JobState, formData: FormData): Promis
         }
     }
 
+    // Determine return path - redirect to the job dashboard or job details
+    revalidatePath("/employer/jobs");
     return {
       status: "success",
-      message: "Job created. Redirecting to payment...",
+      message: "Job posted successfully!",
       jobId: job.id,
-      paystackUrl: paystackData.data.authorization_url,
+      // No paystackUrl returned
     };
 
   } catch (error) {
@@ -225,6 +191,7 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
     location: formData.get("location"),
     salaryRange: formData.get("salaryRange"),
     screeningQuestions: formData.get("screeningQuestions"),
+    projectType: formData.get("projectType"),
   };
 
   const validatedFields = jobSchema.safeParse(rawData);
@@ -237,7 +204,7 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
     };
   }
 
-  const { title, description, requirements, category, jobType, location, salaryRange, screeningQuestions } = validatedFields.data;
+  const { title, description, requirements, category, jobType, location, salaryRange, screeningQuestions, projectType } = validatedFields.data;
   const requirementsArray = requirements.split("\n").map(r => r.trim()).filter(Boolean);
 
   let screeningQuestionsJson = null;
@@ -249,10 +216,10 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
       }
   }
 
+  const shouldActivate = formData.get("activate") === "true";
+
   try {
-    await prisma.job.update({
-      where: { id: jobId },
-      data: {
+    const updateData: any = {
         title,
         description,
         requirements: requirementsArray,
@@ -260,8 +227,17 @@ export async function updateJob(prevState: JobState, formData: FormData): Promis
         jobType,
         location,
         salaryRange,
+        projectType,
         screeningQuestions: screeningQuestionsJson || undefined,
-      },
+    };
+
+    if (shouldActivate) {
+        updateData.status = JobStatus.ACTIVE;
+    }
+
+    await prisma.job.update({
+      where: { id: jobId },
+      data: updateData,
     });
 
     revalidatePath("/employer/jobs");
@@ -377,7 +353,7 @@ export async function deleteJob(jobId: string) {
 
     if (job.employerId !== profile.id) return { error: "Unauthorized" };
 
-    await prisma.job.delete({ where: { id: jobId } });
+    await prisma.job.update({ where: { id: jobId }, data: { status: JobStatus.DRAFT } });
     await logActivity(profile.id, "DELETE_JOB", "SUCCESS", `Job ${jobId} deleted`);
     revalidatePath("/employer/jobs");
     return { success: true };
@@ -475,7 +451,8 @@ export async function remixJob(jobId: string) {
                 jobType: job.jobType,
                 location: job.location,
                 salaryRange: job.salaryRange,
-                status: JobStatus.DRAFT, // Start as draft
+                projectType: job.projectType,
+                status: JobStatus.ACTIVE, // Start as active per requirements
             },
         });
 

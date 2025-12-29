@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import { MapPin, Briefcase, DollarSign, Clock, Copy, ExternalLink, Sparkles, Info, Building2, Users } from "lucide-react";
+import { MapPin, Briefcase, DollarSign, Clock, Copy, ExternalLink, Sparkles, Info, Building2, Users, Shapes, Trash2 } from "lucide-react";
 import { Job, Profile } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -102,31 +102,45 @@ export function JobCard({ job, isEmployer = false, applications = [] }: JobCardP
       </div>
 
       <div className="card-body p-6 flex-1">
-        <div className="flex flex-wrap gap-4 text-sm text-neutral-500 dark:text-neutral-400 mb-4">
-          <div className="flex items-center gap-1">
-            <Briefcase className="w-4 h-4" />
-            <span>{job.jobType.replace("_", " ")}</span>
+        <div className="flex flex-wrap gap-2 text-xs md:text-sm mb-4">
+          <div className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 px-2 py-1.5 rounded-md font-semibold ring-1 ring-blue-500/10">
+            <Briefcase className="w-3.5 h-3.5" />
+            <span className="capitalize">{job.jobType.toLowerCase().replace("_", " ")}</span>
           </div>
+          <div className="flex items-center gap-1.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 px-2 py-1.5 rounded-md font-semibold ring-1 ring-purple-500/10">
+            <Shapes className="w-3.5 h-3.5" />
+            <span>{job.projectType || "Short-term"}</span>
+          </div>
+          {job.category && (
+            <div className="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 px-2 py-1.5 rounded-md font-medium">
+              <Info className="w-3.5 h-3.5" />
+              <span>{job.category}</span>
+            </div>
+          )}
           {job.location && (
-            <div className="flex items-center gap-1">
-              <MapPin className="w-4 h-4" />
+            <div className="flex items-center gap-1.5 bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 dark:text-neutral-400 px-2 py-1.5 rounded-md">
+              <MapPin className="w-3.5 h-3.5" />
               <span>{job.location}</span>
             </div>
           )}
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-neutral-500 dark:text-neutral-400 mb-4 border-t border-neutral-100 dark:border-neutral-700/50 pt-3">
           {job.salaryRange && (
             <div className="flex items-center gap-1">
-              <DollarSign className="w-4 h-4" />
-              <span>{job.salaryRange}</span>
+              <DollarSign className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+              <span className="font-medium text-neutral-700 dark:text-neutral-200">
+                {job.salaryRange.replace(/\d+/g, (m) => Number(m).toLocaleString())}
+              </span>
             </div>
           )}
           <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
+            <Clock className="w-3.5 h-3.5" />
             <span>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</span>
           </div>
           {job._count?.applications !== undefined && (
             <div className="flex items-center gap-1 text-purple-600 dark:text-purple-400 font-medium">
-              <Users className="w-4 h-4" />
-              <span>{job._count.applications} Applicants</span>
+              <Users className="w-3.5 h-3.5" />
+              <span>{job._count.applications} Applications</span>
             </div>
           )}
         </div>
@@ -146,21 +160,8 @@ export function JobCard({ job, isEmployer = false, applications = [] }: JobCardP
           <>
             {(job.status === "PENDING_PAYMENT" || job.status === "DRAFT" || job.status === "ACTIVE") && (
               <div className="flex gap-2">
-                {(job.status === "PENDING_PAYMENT" || job.status === "DRAFT") && (
-                  <button
-                    onClick={async () => {
-                      const { initiateJobPayment } = await import("@/app/(app)/actions/jobs");
-                      const result = await initiateJobPayment(job.id);
-                      if (result.status === "success" && result.paystackUrl) {
-                        window.location.href = result.paystackUrl;
-                      } else {
-                        toast.error(result.message || "Payment initialization failed");
-                      }
-                    }}
-                    className="btn btn-primary text-sm px-4 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 transition-colors"
-                  >
-                    Pay Now
-                  </button>
+                {job.status === "ACTIVE" && (
+                  <RetractButton jobId={job.id} />
                 )}
                 <Link
                   href={`/employer/jobs/${job.id}/edit`}
@@ -279,6 +280,56 @@ function ViewProjectButton({ jobId }: { jobId: string }) {
     >
       <ExternalLink className="w-4 h-4" />
       {loading ? "Loading..." : "View Project"}
+    </button>
+  );
+}
+
+function RetractButton({ jobId }: { jobId: string }) {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleRetract = async () => {
+    const result = await MySwal.fire({
+      title: 'Retract Job?',
+      text: "This will remove the job from the marketplace and set it to Draft.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, retract it!',
+      customClass: {
+        popup: 'dark:bg-neutral-800 dark:text-white',
+        title: 'dark:text-white',
+        htmlContainer: 'dark:text-neutral-300'
+      }
+    });
+
+    if (!result.isConfirmed) return;
+    setLoading(true);
+    try {
+      const { deleteJob } = await import("@/app/(app)/actions/jobs");
+      const res = await deleteJob(jobId);
+      if (res.success) {
+        toast.success("Job retracted to drafts");
+        router.refresh();
+      } else {
+        toast.error(res.error || "Failed to retract job");
+      }
+    } catch (error) {
+      toast.error("Failed to retract job");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleRetract}
+      disabled={loading}
+      className="btn btn-outline-danger text-sm px-4 py-2 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2"
+    >
+      <Trash2 className="w-4 h-4" />
+      {loading ? "Retracting..." : "Retract"}
     </button>
   );
 }

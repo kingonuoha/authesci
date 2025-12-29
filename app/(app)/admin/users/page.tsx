@@ -20,7 +20,7 @@ export default async function AdminUsersPage({
     const search = typeof resolvedSearchParams.search === 'string' ? resolvedSearchParams.search : undefined;
     const role = typeof resolvedSearchParams.role === 'string' ? resolvedSearchParams.role : undefined;
     const status = typeof resolvedSearchParams.status === 'string' ? resolvedSearchParams.status : undefined;
-    const date = typeof resolvedSearchParams.date === 'string' ? resolvedSearchParams.date : undefined;
+    const lastSeen = typeof resolvedSearchParams.last_seen === 'string' ? resolvedSearchParams.last_seen : undefined;
 
     const pageSize = 12;
     const skip = (page - 1) * pageSize;
@@ -36,7 +36,7 @@ export default async function AdminUsersPage({
             } : {},
             role && role !== 'ALL' ? { role: role as any } : {},
             status === 'BANNED' ? { isBanned: true } : status === 'ACTIVE' ? { isBanned: false } : {},
-            date ? { createdAt: { gte: new Date(date) } } : {},
+            lastSeen ? { lastSeenAt: { gte: new Date(lastSeen) } } : {},
         ]
     };
 
@@ -51,6 +51,7 @@ export default async function AdminUsersPage({
                 role: true,
                 isBanned: true,
                 createdAt: true,
+                lastSeenAt: true,
             },
             take: pageSize,
             skip: skip,

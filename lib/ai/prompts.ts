@@ -8,6 +8,7 @@ Use ONLY the information contained in the two provided objects: the candidate pr
 
 Input:
 - Candidate Profile (JSON): {profile}
+- Candidate CV Text: {cvText}
 - Job (JSON): {job}
 
 Cover Letter Requirements:
@@ -17,11 +18,11 @@ Cover Letter Requirements:
    - Body Paragraph 1: Highlight the strongest achievement or experience from the profile that aligns with the job requirements.
    - Body Paragraph 2: Show how the candidate’s skills, research background, and expertise directly solve the employer’s stated challenges or needs.
    - Closing: Professional, confident, forward-looking.
-3. Use details from the profile (skills, experience, institution, publications, certifications, etc.) whenever relevant—only when present.
+3. Use details from the profile AND the provided CV text (skills, experience, institution, publications, certifications, etc.) to heavily customize the letter.
 4. Use details from the job (title, description, requirements, type, etc.) to tailor the narrative—only when present.
 5. If any information is missing (e.g., contact details), omit gracefully.
 6. Use the candidate’s real name.
-7. Do NOT invent facts not present in the provided objects.
+7. Do NOT invent facts not present in the provided objects or CV text.
 8. Do NOT include headers, addresses, or any introductory explanation.
 9. Output ONLY the body of the cover letter. No markdown, no labels, no filler text.
 `,

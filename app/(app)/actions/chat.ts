@@ -190,10 +190,67 @@ export async function sendMessage(
           // 1. Retrieve relevant context (RAG)
           const context = await findRelevantContext(content, senderId);
           
-          // 2. Generate AI response
-          const aiResponseText = await generateAiResponse(content, context, message.sender);
+          // 2. Fetch user-specific data based on role
+          let userSpecificDataString: string | null = null;
+          const senderProfile = await prisma.profile.findUnique({
+            where: { id: senderId },
+            select: {
+              role: true,
+              // Select relevant data based on potential role
+              applications: {
+                select: {
+                  job: { select: { title: true } },
+                  status: true,
+                },
+              },
+              jobsPosted: {
+                select: {
+                  title: true,
+                  status: true,
+                  applications: { select: { id: true, status: true } },
+                },
+              },
+              collaborations: {
+                select: {
+                  project: { select: { title: true } },
+                  role: true,
+                },
+              },
+              // Add other relevant fields if necessary
+            },
+          });
 
-          // 3. Save AI response
+          if (senderProfile) {
+            if (senderProfile.role === 'SCIENTIST') {
+              let applicationsInfo = senderProfile.applications.map(app => 
+                `Job: ${app.job.title}, Status: ${app.status}`
+              ).join('; ');
+              if (applicationsInfo) applicationsInfo = `User's Applications: [${applicationsInfo}].`;
+
+              let collaborationsInfo = senderProfile.collaborations.map(col =>
+                `Project: ${col.project.title}, Role: ${col.role}`
+              ).join('; ');
+              if (collaborationsInfo) collaborationsInfo = `User's Collaborations: [${collaborationsInfo}].`;
+
+              if (applicationsInfo || collaborationsInfo) {
+                userSpecificDataString = `As a SCIENTIST, here is some information about you: ${applicationsInfo} ${collaborationsInfo}`;
+              }
+            } else if (senderProfile.role === 'EMPLOYER') {
+              let jobsInfo = senderProfile.jobsPosted.map(job => 
+                `Job: ${job.title}, Status: ${job.status}, Applicants: ${job.applications.length}`
+              ).join('; ');
+              if (jobsInfo) jobsInfo = `User's Posted Jobs: [${jobsInfo}].`;
+              
+              if (jobsInfo) {
+                userSpecificDataString = `As an EMPLOYER, here is some information about your listings: ${jobsInfo}`;
+              }
+            }
+          }
+          
+          // 3. Generate AI response
+          const aiResponseText = await generateAiResponse(content, context, message.sender, userSpecificDataString);
+
+          // 4. Save AI response
           await prisma.message.create({
             data: {
               conversationId,

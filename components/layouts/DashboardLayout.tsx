@@ -55,7 +55,7 @@ const DashboardLayout = ({ children, profile, activeProjectCount }: DashboardLay
             toggleMobileSidebar={toggleMobileSidebar}
           />
           <div className="dashboard-main-body">
-            <Breadcrumb pageTitle="Dashboard" activePage="AI" />
+            {/* <Breadcrumb pageTitle="Dashboard" activePage="AI" /> */}
             {children}
           </div>
           <Footer /> {/* Include Footer here */}

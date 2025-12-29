@@ -2,11 +2,17 @@ import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Metadata } from "next";
 import { JobCard } from "@/components/modules/jobs/JobCard";
 import { JobFilter } from "@/components/modules/jobs/JobFilter";
 import { Plus } from "lucide-react";
 import { JobType, Prisma } from "@prisma/client";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Manage Jobs | Authesci",
+  description: "View and manage your job postings.",
+};
 
 export default async function EmployerJobsPage({
   searchParams,
@@ -105,10 +111,16 @@ export default async function EmployerJobsPage({
               appliedAt: app.createdAt
             }));
 
+            // Convert Decimal to number for Client Component serialization
+            const serializedJob = {
+              ...job,
+              finalPrice: job.finalPrice ? Number(job.finalPrice) : null,
+            };
+
             return (
               <JobCard
                 key={job.id}
-                job={job}
+                job={serializedJob as any}
                 isEmployer={true}
                 applications={formattedApplications}
               />

@@ -1,3 +1,8 @@
+// Polyfill DOMMatrix for pdf-parse (pdfjs-dist) in Node environment
+if (typeof DOMMatrix === 'undefined') {
+  (global as any).DOMMatrix = class DOMMatrix {};
+}
+
 const pdf = require('pdf-parse');
 import mammoth from 'mammoth';
 

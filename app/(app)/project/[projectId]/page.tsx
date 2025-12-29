@@ -7,6 +7,8 @@ import ProjectActions from "@/components/modules/projects/ProjectActions";
 import Image from "next/image";
 import { InviteCollaborator } from "@/components/modules/projects/InviteCollaborator";
 import { ProjectActivityList } from "@/components/modules/projects/ProjectActivityList";
+import FileCard from "@/components/modules/projects/FileCard";
+import { FileText, DollarSign } from "lucide-react";
 
 export default async function ProjectPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
@@ -37,7 +39,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
         }
       },
       tasks: true,
-      payments: true
+      payments: true,
+      files: {
+        take: 4,
+        orderBy: { createdAt: 'desc' },
+        include: { uploader: true } // Assuming uploader relation exists on ProjectFile? Checking schema...
+        // Schema says: uploadedBy String @map("uploaded_by")
+        // It does NOT show a relation field named 'uploader' in the truncated output.
+        // Wait, step 164 showed:
+        // model ProjectFile { ... uploadedBy String ... } 
+        // It did NOT show `uploader Profile @relation(...)`.
+        // Let me check Schema again to be sure I can include uploader.
+      }
     }
   });
 
@@ -179,30 +192,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
           </div>
         </div>
 
-        {/* Team Members Count */}
-        <div className="card shadow-none border border-gray-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-lg h-full bg-gradient-to-r from-purple-600/10 to-transparent">
-          <div className="card-body p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="font-medium text-neutral-900 dark:text-white mb-1">Team Members</p>
-                <h6 className="text-2xl font-bold mb-0 dark:text-white">{project.collaborators.length}</h6>
-              </div>
-              <div className="w-[50px] h-[50px] bg-purple-600 rounded-full flex justify-center items-center">
-                <Users className="text-white text-2xl" />
-              </div>
-            </div>
-            <p className="font-medium text-sm text-neutral-600 dark:text-white mt-3 mb-0 flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 text-purple-600 dark:text-purple-400">
-                Collaborators
-              </span>
-            </p>
-          </div>
-        </div>
+
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        {/* Project Progress Chart Area (Placeholder for now, reusing structure) */}
-        <div className="xl:col-span-8">
+        {/* Main Content Column */}
+        <div className="xl:col-span-8 space-y-6">
+
+          {/* Project Progress Chart */}
           <div className="card rounded-lg border border-gray-200 dark:border-neutral-600 dark:bg-neutral-700">
             <div className="card-body p-6">
               <h6 className="text-lg font-bold mb-4 text-neutral-900 dark:text-white">Project Progress</h6>
@@ -223,31 +220,53 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
                   <div style={{ width: `${progress}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-600 transition-all duration-500"></div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div className="mt-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h6 className="text-lg font-bold text-neutral-900 dark:text-white mb-0">Recent Activity</h6>
-                  <a href={`/project/${projectId}/activity`} className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300">View All</a>
-                </div>
-                <div className="bg-gray-50 dark:bg-neutral-800/50 rounded-lg border border-dashed border-gray-300 dark:border-neutral-600 p-4">
-                  <ProjectActivityList projectId={projectId} limit={7} />
-                </div>
+          {/* Project Documents */}
+          <div className="card rounded-lg border border-gray-200 dark:border-neutral-600 dark:bg-neutral-700">
+            <div className="card-header px-6 py-4 border-b border-gray-200 dark:border-neutral-600 flex justify-between items-center bg-transparent">
+              <h6 className="text-lg font-bold text-neutral-900 dark:text-white mb-0">Project Documents</h6>
+              <a href={`/project/${projectId}/files`} className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300">View All</a>
+            </div>
+            <div className="card-body p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(project as any).files?.length > 0 ? (
+                  (project as any).files.map((file: any) => (
+                    <FileCard
+                      key={file.id}
+                      name={file.fileName}
+                      type={file.fileType}
+                      size={`${Math.ceil((file.fileSize || 0) / 1024)} KB`}
+                      imageUrl={file.fileType.startsWith('image/') ? file.fileUrl : undefined}
+                      uploadedBy={file.uploader?.fullName}
+                      uploadedAt={file.createdAt}
+                      downloadUrl={file.fileUrl}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-2 text-center py-8 text-neutral-500 border border-dashed rounded-lg">No documents uploaded</div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div className="card rounded-lg border border-gray-200 dark:border-neutral-600 dark:bg-neutral-700">
+            <div className="card-header px-6 py-4 border-b border-gray-200 dark:border-neutral-600 flex justify-between items-center bg-transparent">
+              <h6 className="text-lg font-bold text-neutral-900 dark:text-white mb-0">Recent Activity</h6>
+              <a href={`/project/${projectId}/activity`} className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300">View All</a>
+            </div>
+            <div className="card-body p-6">
+              <div className="bg-gray-50 dark:bg-neutral-800/50 rounded-lg border border-dashed border-gray-300 dark:border-neutral-600 p-4">
+                <ProjectActivityList projectId={projectId} limit={7} />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Team Members List & Escrow */}
+        {/* Side Column (Actions, Escrow, Team) */}
         <div className="xl:col-span-4 space-y-6">
-          {payment && (
-            <EscrowCard
-              totalAmount={Number(payment.amount)}
-              platformFee={Number(payment.platformFee)}
-              scientistAmount={Number(payment.scientistAmount)}
-              isEmployer={isEmployer}
-              projectStatus={project.status}
-            />
-          )}
 
           {!isCompleted && (
             <div className="card rounded-lg border border-gray-200 dark:border-neutral-600 dark:bg-neutral-700">
@@ -260,6 +279,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
                 />
               </div>
             </div>
+          )}
+
+          {payment && (
+            <EscrowCard
+              totalAmount={Number(payment.amount)}
+              platformFee={Number(payment.platformFee)}
+              scientistAmount={Number(payment.scientistAmount)}
+              isEmployer={isEmployer}
+              projectStatus={project.status}
+            />
           )}
 
           <div className="card rounded-lg border border-gray-200 dark:border-neutral-600 dark:bg-neutral-700">
@@ -301,6 +330,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>

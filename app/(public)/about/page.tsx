@@ -12,19 +12,19 @@ export default function AboutPage() {
         <>
             {/* Breadcumb Section */}
             <section className="breadcumb-section mt40">
-      <div className="cta-about-v1 mx-auto maxw1700 pt120 pb120 bdrs16 position-relative overflow-hidden d-flex align-items-center mx20-lg">
-        <div className="container">
-          <div className="row">
-            <div className="col-xl-5">
-              <div className="position-relative">
-                <h2 className="text-white">About</h2>
-                <p className="text-white mb30">Learn about Authesci's mission to bridge the gap in the African scientific landscape.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+                <div className="cta-about-v1 mx-auto maxw1700 pt120 pb120 bdrs16 position-relative overflow-hidden d-flex align-items-center mx20-lg">
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-xl-5">
+                                <div className="position-relative">
+                                    <h2 className="text-white">About</h2>
+                                    <p className="text-white mb30">Learn about Authesci's mission to bridge the gap in the African scientific landscape.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             {/* About Section */}
             <section className="our-about pt0 pb60">
                 <div className="container">
@@ -47,7 +47,7 @@ export default function AboutPage() {
                                     Whether you are a graduate student looking for your first break, a Principal Investigator seeking a specialist, or a biotech firm hiring top talent, Authesci is your trusted partner.
                                 </p>
                             </div>
-                            <Link href="/register" className="ud-btn btn-thm">
+                            <Link href="/signup" className="ud-btn btn-thm">
                                 Join Our Community <i className="fal fa-arrow-right-long"></i>
                             </Link>
                         </div>
@@ -237,7 +237,7 @@ export default function AboutPage() {
                             <div className="cta-style2">
                                 <h2 className="">Ready to change the future of African Science?</h2>
                                 <p className="">Join thousands of researchers and institutions making a difference today.</p>
-                                <Link href="/register" className="ud-btn btn-thm">
+                                <Link href="/signup" className="ud-btn btn-thm">
                                     Get Started <i className="fal fa-arrow-right-long"></i>
                                 </Link>
                             </div>

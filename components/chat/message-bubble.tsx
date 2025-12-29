@@ -1,9 +1,10 @@
 'use client';
 
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format } from 'date-fns';
-import { Bot } from 'lucide-react';
+import { Bot, FileText, Download } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -22,9 +23,50 @@ interface MessageBubbleProps {
     };
     isCurrentUser: boolean;
     isRead?: boolean;
+    animateTyping?: boolean;
 }
 
-export function MessageBubble({ message, isCurrentUser, isRead }: MessageBubbleProps) {
+export function MessageBubble({ message, isCurrentUser, isRead, animateTyping = false }: MessageBubbleProps) {
+    const [displayedContent, setDisplayedContent] = React.useState(animateTyping ? "" : message.content);
+    const [isTypingComplete, setIsTypingComplete] = React.useState(!animateTyping);
+
+    // Reset if content changes or animation prop changes
+    React.useEffect(() => {
+        if (!animateTyping) {
+            setDisplayedContent(message.content);
+            setIsTypingComplete(true);
+            return;
+        }
+
+        // If we already typed this specific content, don't re-type (unless we want to force it)
+        // But here we rely on the parent to only pass animateTyping=true for new messages.
+        // For safety, if displayedContent matches, stop.
+        if (displayedContent === message.content) {
+            setIsTypingComplete(true);
+            return;
+        }
+
+        setDisplayedContent("");
+        setIsTypingComplete(false);
+
+        const words = message.content.split(" ");
+        let currentIndex = 0;
+        const interval = setInterval(() => {
+            if (currentIndex >= words.length) {
+                clearInterval(interval);
+                setIsTypingComplete(true);
+                return;
+            }
+            // Add next word
+            setDisplayedContent(prev => prev ? prev + " " + words[currentIndex] : words[currentIndex]);
+            currentIndex++;
+        }, 30); // Speed of typing
+
+        return () => clearInterval(interval);
+    }, [message.content, animateTyping]);
+
+    const contentToShow = isTypingComplete ? message.content : displayedContent;
+
     return (
         <div className={cn(
             "max-w-[85%] md:max-w-[70%] flex gap-3",
@@ -57,16 +99,16 @@ export function MessageBubble({ message, isCurrentUser, isRead }: MessageBubbleP
                     "mb-2 text-sm md:text-base leading-relaxed break-words prose dark:prose-invert max-w-none",
                     isCurrentUser
                         ? "text-primary-foreground prose-headings:text-primary-foreground prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-ul:text-primary-foreground prose-ol:text-primary-foreground prose-a:text-primary-foreground prose-code:text-primary-foreground prose-pre:bg-primary-800 prose-pre:text-primary-foreground"
-                        : "text-neutral-700 dark:text-neutral-200 prose-headings:text-neutral-900 dark:prose-headings:text-white prose-p:text-neutral-700 dark:prose-p:text-neutral-200 prose-strong:text-neutral-900 dark:prose-strong:text-white prose-a:text-primary prose-pre:bg-neutral-100 dark:prose-pre:bg-neutral-800"
+                        : "text-neutral-700 dark:text-neutral-100 prose-headings:text-neutral-900 dark:prose-headings:text-neutral-100 prose-p:text-neutral-700 dark:prose-p:text-neutral-200 prose-strong:text-neutral-900 dark:prose-strong:text-white prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:bg-neutral-100 dark:prose-pre:bg-neutral-800 prose-code:text-neutral-800 dark:prose-code:text-neutral-200"
                 )}>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {message.content.split('||SUGGESTIONS')[0]}
+                        {contentToShow.split('||SUGGESTIONS')[0]}
                     </ReactMarkdown>
                 </div>
 
                 {message.attachmentUrl && (
                     <div className="mt-3 mb-1">
-                        {message.attachmentType === 'IMAGE' ? (
+                        {message.attachmentType === 'IMAGE' && !message.attachmentUrl.toLowerCase().endsWith('.pdf') ? (
                             <div className="relative aspect-square max-w-[240px] overflow-hidden rounded-xl border border-white/20">
                                 <img
                                     src={message.attachmentUrl}
@@ -80,12 +122,36 @@ export function MessageBubble({ message, isCurrentUser, isRead }: MessageBubbleP
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={cn(
-                                    "text-xs underline flex items-center gap-1.5 p-2 rounded-lg bg-black/5 hover:bg-black/10 transition-colors",
-                                    isCurrentUser ? "text-white" : "text-primary"
+                                    "flex items-center gap-3 p-3 rounded-xl border transition-all group/file text-left",
+                                    isCurrentUser
+                                        ? "bg-white/10 border-white/20 hover:bg-white/20 text-white"
+                                        : "bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 hover:border-blue-500/50 hover:shadow-sm"
                                 )}
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /></svg>
-                                <span>View Attachment</span>
+                                <div className={cn(
+                                    "w-10 h-10 rounded-lg flex items-center justify-center shrink-0",
+                                    isCurrentUser ? "bg-white/20" : "bg-neutral-100 dark:bg-neutral-700"
+                                )}>
+                                    <FileText className={cn("w-5 h-5", isCurrentUser ? "text-white" : "text-neutral-500 dark:text-neutral-400")} />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className={cn(
+                                        "text-sm font-medium truncate max-w-[150px]",
+                                        isCurrentUser ? "text-white" : "text-neutral-900 dark:text-white"
+                                    )}>
+                                        {decodeURIComponent(message.attachmentUrl.split('/').pop()?.split('?')[0] || "Attachment")}
+                                    </p>
+                                    <p className={cn(
+                                        "text-xs opacity-70",
+                                        isCurrentUser ? "text-white/70" : "text-neutral-500 dark:text-neutral-400"
+                                    )}>
+                                        Download File
+                                    </p>
+                                </div>
+                                <Download className={cn(
+                                    "w-4 h-4 opacity-70 group-hover/file:opacity-100 transition-opacity",
+                                    isCurrentUser ? "text-white" : "text-neutral-400"
+                                )} />
                             </a>
                         )}
                     </div>

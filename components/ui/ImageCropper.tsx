@@ -14,6 +14,10 @@ interface ImageCropperProps {
     open: boolean;
 }
 
+import { Loader2 } from "lucide-react";
+
+// ... existing code ...
+
 export default function ImageCropper({
     imageSrc,
     aspect = 1,
@@ -24,6 +28,9 @@ export default function ImageCropper({
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // ... existing helper functions (onCropChange, onZoomChange, onCropCompleteHandler, createImage, getCroppedImg) ...
 
     const onCropChange = (crop: { x: number; y: number }) => {
         setCrop(crop);
@@ -86,17 +93,21 @@ export default function ImageCropper({
 
     const handleSave = async () => {
         if (imageSrc && croppedAreaPixels) {
+            setIsLoading(true);
             try {
                 const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
-                onCropComplete(croppedImage);
+                // Await if onCropComplete returns a promise
+                await onCropComplete(croppedImage);
             } catch (e) {
                 console.error(e);
+            } finally {
+                setIsLoading(false);
             }
         }
     };
 
     return (
-        <Dialog open={open} onOpenChange={(open) => !open && onCancel()}>
+        <Dialog open={open} onOpenChange={(open) => !open && !isLoading && onCancel()}>
             <DialogContent className="sm:max-w-[600px]">
                 <DialogHeader>
                     <DialogTitle>Crop Image</DialogTitle>
@@ -125,10 +136,13 @@ export default function ImageCropper({
                     />
                 </div>
                 <DialogFooter>
-                    <Button variant="outline" onClick={onCancel}>
+                    <Button variant="outline" onClick={onCancel} disabled={isLoading}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSave}>Save</Button>
+                    <Button onClick={handleSave} disabled={isLoading}>
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Save
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

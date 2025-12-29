@@ -1,23 +1,26 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ProjectFile } from '@prisma/client';
+import { ProjectFile, Profile } from '@prisma/client';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { FileText, Upload, Download } from 'lucide-react';
-import { format } from 'date-fns';
+import { Upload, FileText, HardDrive } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { saveFileRecord } from '@/app/(app)/actions/files';
 import { Progress } from '@/components/ui/progress';
+import FileCard from '@/components/modules/projects/FileCard';
+
+
+// Define the type with relation
+type ProjectFileWithUploader = ProjectFile & { uploader?: Profile };
 
 interface FileManagerProps {
   projectId: string;
-  initialFiles: ProjectFile[];
+  initialFiles: ProjectFileWithUploader[];
   readOnly?: boolean;
 }
 
 export default function FileManager({ projectId, initialFiles, readOnly }: FileManagerProps) {
-  const [files, setFiles] = useState<ProjectFile[]>(initialFiles);
+  const [files, setFiles] = useState<ProjectFileWithUploader[]>(initialFiles);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -77,7 +80,11 @@ export default function FileManager({ projectId, initialFiles, readOnly }: FileM
       const saveResult = await saveFileRecord(projectId, file.name, result.secure_url, file.type, file.size);
 
       if (saveResult.success && saveResult.file) {
-        setFiles(prev => [saveResult.file!, ...prev]);
+        // Optimistically add (uploader will be missing initially until refresh, or we can mock current user if needed)
+        // For now, add without uploader or fetch it.
+        // Let's assume the user reloads to see "Uploaded by Me" or we handle it in actions to return relation.
+        // Action currently returns basic file.
+        setFiles(prev => [saveResult.file as ProjectFileWithUploader, ...prev]);
         toast.success('File uploaded successfully');
       } else {
         throw new Error('Failed to save file record');
@@ -93,7 +100,7 @@ export default function FileManager({ projectId, initialFiles, readOnly }: FileM
     }
   };
 
-  const formatFileSize = (bytes: number) => {
+  const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -101,22 +108,45 @@ export default function FileManager({ projectId, initialFiles, readOnly }: FileM
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  const totalSize = files.reduce((acc, file) => acc + (file.fileSize || 0), 0);
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Documents</h2>
+    <div className="space-y-8">
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-lg flex items-center justify-center">
+            <FileText className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 font-medium">Total Files</p>
+            <h3 className="text-2xl font-bold text-neutral-900 dark:text-white">{files.length}</h3>
+          </div>
+        </div>
+        <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded-lg flex items-center justify-center">
+            <HardDrive className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 font-medium">Total Size</p>
+            <h3 className="text-2xl font-bold text-neutral-900 dark:text-white">{formatSize(totalSize)}</h3>
+          </div>
+        </div>
         {!readOnly && (
-          <div className="relative">
-            <input
-              type="file"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              onChange={handleFileSelect}
-              disabled={isUploading}
-            />
-            <Button disabled={isUploading}>
-              <Upload className="mr-2 h-4 w-4" />
-              {isUploading ? 'Uploading...' : 'Upload File'}
-            </Button>
+          <div className="bg-neutral-50 dark:bg-neutral-800/50 p-6 rounded-xl border border-dashed border-neutral-300 dark:border-neutral-600 flex flex-col items-center justify-center text-center">
+            <div className="relative">
+              <input
+                type="file"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                onChange={handleFileSelect}
+                disabled={isUploading}
+              />
+              <Button disabled={isUploading} variant="secondary" className="pointer-events-none">
+                <Upload className="mr-2 h-4 w-4" />
+                {isUploading ? 'Uploading...' : 'Upload New File'}
+              </Button>
+            </div>
           </div>
         )}
       </div>
@@ -125,46 +155,34 @@ export default function FileManager({ projectId, initialFiles, readOnly }: FileM
         <Progress value={uploadProgress} className="w-full" />
       )}
 
-      <div className="border rounded-md overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Size</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Uploaded</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {files.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                  No files uploaded yet.
-                </TableCell>
-              </TableRow>
-            ) : (
-              files.map((file) => (
-                <TableRow key={file.id}>
-                  <TableCell className="font-medium flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-blue-500" />
-                    {file.fileName}
-                  </TableCell>
-                  <TableCell>{file.fileSize ? formatFileSize(file.fileSize) : '-'}</TableCell>
-                  <TableCell>{file.fileType}</TableCell>
-                  <TableCell>{format(new Date(file.createdAt), 'MMM d, yyyy')}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" asChild>
-                      <a href={file.fileUrl} target="_blank" rel="noopener noreferrer" download>
-                        <Download className="h-4 w-4" />
-                      </a>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+      {/* Files Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {files.length === 0 ? (
+          <div className="col-span-full text-center py-20 bg-neutral-50 dark:bg-neutral-900 rounded-xl border border-dashed border-neutral-200 dark:border-neutral-700">
+            <div className="mx-auto w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4 text-neutral-400">
+              <FileText className="w-8 h-8" />
+            </div>
+            <h3 className="text-lg font-medium text-neutral-900 dark:text-white">No files uploaded yet</h3>
+            {!readOnly && <p className="text-neutral-500 mt-1">Upload documents to share with the project team.</p>}
+          </div>
+        ) : (
+          files.map((file) => (
+            <FileCard
+              key={file.id}
+              name={file.fileName}
+              type={file.fileType}
+              size={formatSize(file.fileSize || 0)}
+              imageUrl={file.fileType.startsWith('image/') ? file.fileUrl : undefined}
+              uploadedBy={file.uploader?.fullName}
+              uploadedAt={file.createdAt}
+              onDownload={() => window.open(file.fileUrl, '_blank')}
+              onDelete={!readOnly ? async () => {
+                // Implement delete logic if needed (requires passing delete action or implementing it here)
+                toast.error("Delete not implemented in this view yet");
+              } : undefined}
+            />
+          ))
+        )}
       </div>
     </div>
   );

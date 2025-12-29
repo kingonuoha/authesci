@@ -40,7 +40,7 @@ export default async function KanbanPage({ params }: { params: Promise<{ project
   const isCompleted = project?.status === 'COMPLETED';
 
   return (
-    <div className="h-[calc(100vh-140px)]">
+    <div className="h-[calc(100vh-140px)] w-full overflow-hidden">
       <KanbanBoard
         projectId={projectId}
         initialTasks={tasks as any}

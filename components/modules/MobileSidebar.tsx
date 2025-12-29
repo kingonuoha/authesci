@@ -28,10 +28,11 @@ export function MobileSidebar({ role, isMobileSidebarOpen, toggleMobileSidebar, 
             <SheetContent side="left" className="p-0 border-r-0 w-[260px] sm:w-[300px] overflow-y-auto">
                 <Sidebar
                     role={role}
-                    isSidebarOpen={true} // Always open within the sheet
+                    isSidebarOpen={true} // Revert to true for expanded mobile view
+                    isMobileSidebarOpen={true} // Force mobile sidebar open class
                     activeProjectCount={activeProjectCount}
-                    className="!h-full !relative !translate-x-0 !w-full" // Override fixed sidebar styles
-                    toggleMobileSidebar={toggleMobileSidebar} // Allow closing
+                    className="!h-full !relative !translate-x-0 !w-full" // Restore original overrides
+                    toggleMobileSidebar={toggleMobileSidebar}
                 />
             </SheetContent>
         </Sheet>

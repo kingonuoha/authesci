@@ -41,9 +41,15 @@ const jobSchema = z.object({
   requirements: z.string().min(10, "Requirements are required"),
   category: z.string().optional(),
   jobType: z.nativeEnum(JobType),
+  projectType: z.enum(["Short-term", "Long-term", "One-time task"]),
   location: z.string().min(1, "Location is required"),
   salaryMode: z.enum(["FIXED", "RANGE"]),
   salaryFixed: z.string().optional(),
+  // ... (omitted parts of schema for brevity, will be handled by replace block context)
+  // Note: I will split this into two replacements if needed, but the tool supports contiguous block.
+  // Let's do the schema update first, then the UI.
+  // Actually, I'll use multi_replace.
+
   salaryMin: z.string().optional(),
   salaryMax: z.string().optional(),
   screeningQuestions: z.array(z.object({ question: z.string().min(1, "Question cannot be empty") })).optional(),
@@ -192,6 +198,7 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
       requirements: initialData?.requirements?.join("\n") || "",
       category: initialData?.category || "",
       jobType: initialData?.jobType || JobType.REMOTE,
+      projectType: (initialData as any)?.projectType || "Short-term",
       location: initialData?.location || "",
       salaryMode: initialMode,
       salaryFixed: initialFixed,
@@ -254,8 +261,13 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
       formData.append("screeningQuestions", JSON.stringify(questions));
     }
 
+    const isNotActive = initialData && initialData.status !== "ACTIVE";
+
     if (jobId) {
       formData.append("jobId", jobId);
+      if (isNotActive) {
+        formData.append("activate", "true");
+      }
     }
 
     startTransition(async () => {
@@ -283,6 +295,11 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
     });
   }
 
+  const isNotActive = initialData && initialData.status !== "ACTIVE";
+  const buttonText = jobId
+    ? (isNotActive ? "Update & Activate Job" : "Update Job")
+    : "Post Job";
+
   return (
     <div className="card h-full p-0 rounded-xl border-0 overflow-hidden">
       <div className="card-header border-b border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 py-4 px-6">
@@ -295,7 +312,7 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
             <input
               type="text"
               className="form-control"
-              placeholder="e.g. Senior Frontend Engineer"
+              placeholder="e.g. Senior Research Scientist"
               {...register("title")}
             />
             {errors.title && <span className="text-danger-600">{errors.title.message}</span>}
@@ -314,11 +331,20 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
           </div>
 
           <div className="col-span-12 md:col-span-6">
+            <label className="form-label">Project Type</label>
+            <select className="form-select w-full" {...register("projectType")}>
+              <option value="Short-term">Short-term</option>
+              <option value="Long-term">Long-term</option>
+              <option value="One-time task">One-time task</option>
+            </select>
+          </div>
+
+          <div className="col-span-12 md:col-span-6">
             <label className="form-label">Category (Optional)</label>
             <input
               type="text"
               className="form-control"
-              placeholder="e.g. Engineering"
+              placeholder="e.g. Molecular Biology"
               list="category-suggestions"
               {...register("category")}
             />
@@ -367,8 +393,8 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">{CURRENCY}</span>
                 <input
                   type="number"
-                  className="form-control pl-12"
-                  placeholder="50000"
+                  className="form-control form-padding-left"
+                  placeholder="e.g. 150000"
                   {...register("salaryFixed")}
                 />
                 {errors.salaryFixed && <span className="text-danger-600">{errors.salaryFixed.message}</span>}
@@ -379,7 +405,7 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">{CURRENCY}</span>
                   <input
                     type="number"
-                    className="form-control pl-12"
+                    className="form-control form-padding-left"
                     placeholder="Min"
                     {...register("salaryMin")}
                   />
@@ -390,7 +416,7 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">{CURRENCY}</span>
                   <input
                     type="number"
-                    className="form-control pl-12"
+                    className="form-control form-padding-left"
                     placeholder="Max"
                     {...register("salaryMax")}
                   />
@@ -404,7 +430,7 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
             <label className="form-label">Description <span className="text-red-500">*</span></label>
             <textarea
               className="form-control min-h-[150px]"
-              placeholder="Describe the role..."
+              placeholder="Describe the research project details, methodology, and expected outcomes..."
               {...register("description")}
             ></textarea>
             {errors.description && <span className="text-danger-600">{errors.description.message}</span>}
@@ -414,7 +440,7 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
             <label className="form-label">Requirements (One per line) <span className="text-red-500">*</span></label>
             <textarea
               className="form-control min-h-[150px]"
-              placeholder="- React experience&#10;- TypeScript knowledge"
+              placeholder="- PhD in Bioinformatics or related field&#10;- Experience with NGS data analysis&#10;- Proficiency in R or Python"
               {...register("requirements")}
             ></textarea>
             {errors.requirements && <span className="text-danger-600">{errors.requirements.message}</span>}
@@ -437,7 +463,7 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder={`Question ${index + 1}`}
+                    placeholder={index === 0 ? "e.g. Have you published any papers in the last 2 years?" : `Question ${index + 1}`}
                     {...register(`screeningQuestions.${index}.question` as const)}
                   />
                   <button
@@ -460,7 +486,8 @@ export function JobForm({ initialData, jobId }: JobFormProps) {
               className="btn btn-primary text-sm btn-sm px-4 py-3 w-full md:w-auto rounded-lg flex items-center justify-center gap-2"
             >
               {isPending && <span className="loading loading-spinner loading-sm"></span>}
-              {isPending ? (jobId ? "Updating Job..." : "Creating Job...") : (jobId ? "Update Job" : "Post Job")}
+              {isPending && <span className="loading loading-spinner loading-sm"></span>}
+              {isPending ? (jobId ? (isNotActive ? "Updating & Activating..." : "Updating Job...") : "Creating Job...") : buttonText}
             </button>
           </div>
         </form>

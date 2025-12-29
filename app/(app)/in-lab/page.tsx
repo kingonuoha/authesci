@@ -102,7 +102,7 @@ export default function InLabPage() {
                             <div className="absolute inset-8 rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50 backdrop-blur-sm">
                                 <div className="relative w-full h-full">
                                     <Image
-                                        src="/assets/images/coming-soon/coming-soon.png" // Using the existing asset
+                                        src="/assets/images/coming-soon/in-lab-2.jpeg" // Using the existing asset
                                         alt="In-Lab Interface Preview"
                                         fill
                                         className="object-cover opacity-80 hover:scale-105 transition-transform duration-700"
@@ -131,7 +131,7 @@ export default function InLabPage() {
                 {/* Footer Section - Mobile Visual */}
                 <div className="mt-16 lg:hidden relative aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
                     <Image
-                        src="/assets/images/coming-soon/coming-soon.png"
+                        src="/assets/images/coming-soon/in-lab-1.jpeg"
                         alt="In-Lab Interface"
                         fill
                         className="object-cover opacity-80"

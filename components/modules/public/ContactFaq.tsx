@@ -2,27 +2,25 @@
 
 import React, { useState } from "react";
 
-const faqItems = [
-    {
-        question: "How do I reset my password?",
-        answer: "You can reset your password by clicking on the 'Forgot Password' link on the login page. Follow the instructions sent to your email to create a new password."
-    },
-    {
-        question: "How do I delete my account?",
-        answer: "If you wish to delete your account, please contact our support team directly through the form above or email us at support@authesci.com. We will process your request within 48 hours."
-    },
-    {
-        question: "Can I change my username?",
-        answer: "Usernames are unique identifiers on Authesci. Generally, they cannot be changed once set. However, if you have a compelling reason (like a legal name change), please contact support."
-    },
-    {
-        question: "How do I report a bug?",
-        answer: "We appreciate your help in improving Authesci! Please use the contact form above and selecting 'Technical Support' or email us with details and screenshots."
-    }
-];
 
-export default function ContactFaq() {
+interface FAQ {
+    id: string;
+    question: string;
+    answer: string;
+}
+
+interface ContactFaqProps {
+    faqs?: FAQ[];
+}
+
+export default function ContactFaq({ faqs = [] }: ContactFaqProps) {
     const [openIndex, setOpenIndex] = useState<number | null>(0); // Open first item by default
+
+    // Fallback if no FAQs provided
+    const displayFaqs = faqs.length > 0 ? faqs : [
+        { id: '1', question: "No FAQs available", answer: "Please check back later." }
+    ];
+
 
     const toggleItem = (index: number) => {
         setOpenIndex(openIndex === index ? null : index);
@@ -46,7 +44,7 @@ export default function ContactFaq() {
                         <div className="ui-content">
                             <div className="accordion-style1 faq-page">
                                 <div className="accordion">
-                                    {faqItems.map((item, index) => {
+                                    {displayFaqs.map((item, index) => {
                                         const isOpen = openIndex === index;
                                         return (
                                             <div

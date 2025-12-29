@@ -58,7 +58,7 @@ export default function PublicFooter() {
                                         <Link href="/jobs" className="text-white">Browse Jobs</Link>
                                     </li>
                                     <li>
-                                        <Link href="/register?role=SCIENTIST" className="text-white">Join as Researcher</Link>
+                                        <Link href="/signup?role=SCIENTIST" className="text-white">Join as Researcher</Link>
                                     </li>
                                     <li>
                                         <Link href="/login" className="text-white">Login</Link>
@@ -70,13 +70,13 @@ export default function PublicFooter() {
                     <div className="col-sm-6 col-lg-3">
                         <div className="footer-widget light-style mb-4 mb-lg-5">
                             <div className="link-style1 light-style mb-3">
-                                <h6 className="mb25 text-white">For Institutions</h6>
+                                <h6 className="mb25 text-white">For Employers</h6>
                                 <ul className="ps-0">
                                     <li>
-                                        <Link href="/register?role=INSTITUTION" className="text-white">Post a Project</Link>
+                                        <Link href="/signup?role=EMPLOYER" className="text-white">Post a Project</Link>
                                     </li>
                                     <li>
-                                        <Link href="/register?role=INSTITUTION" className="text-white">Find Talent</Link>
+                                        <Link href="/login" className="text-white">Find Talent</Link>
                                     </li>
                                 </ul>
                             </div>
@@ -96,23 +96,23 @@ export default function PublicFooter() {
                     <div className="col-md-6">
                         <div className="footer_bottom_right_btns text-center text-lg-end">
                             <ul className="p-0 m-0">
-                                <li className="list-inline-item">
-                                    <a href="#" className="text-white">
+                                {/* <li className="list-inline-item">
+                                    <a href="https://facebook.com/authesci" target="_blank" rel="noopener noreferrer" className="text-white">
                                         <i className="fab fa-facebook-f"></i>
                                     </a>
-                                </li>
-                                <li className="list-inline-item">
-                                    <a href="#" className="text-white">
+                                </li> */}
+                                {/* <li className="list-inline-item">
+                                    <a href="https://twitter.com/authesci" target="_blank" rel="noopener noreferrer" className="text-white">
                                         <i className="fab fa-twitter"></i>
                                     </a>
-                                </li>
+                                </li> */}
                                 <li className="list-inline-item">
-                                    <a href="#" className="text-white">
+                                    <a href="https://www.instagram.com/authesci_" target="_blank" rel="noopener noreferrer" className="text-white">
                                         <i className="fab fa-instagram"></i>
                                     </a>
                                 </li>
                                 <li className="list-inline-item">
-                                    <a href="#" className="text-white">
+                                    <a href="https://www.linkedin.com/company/authesci/" target="_blank" rel="noopener noreferrer" className="text-white">
                                         <i className="fab fa-linkedin-in"></i>
                                     </a>
                                 </li>

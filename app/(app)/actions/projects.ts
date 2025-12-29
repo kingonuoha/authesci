@@ -300,15 +300,23 @@ export async function inviteCollaborator(projectId: string, email: string) {
       }
     });
 
-    await createNotification(
-      invitee.id,
-      "PROJECT_INVITATION",
-      `You have been added as a collaborator to "${project.title}".`,
-      "New Project Invitation",
-      `/project/${projectId}`
-    );
-
-    // Send Email to Invitee
+    // 4. Notify Invitee (if they have an account)
+    const existingUser = await prisma.profile.findFirst({ where: { email } });
+    if (existingUser) {
+        await createNotification(
+            existingUser.userId,
+            "PROJECT_INVITATION",
+            `${profile.fullName} invited you to collaborate on project "${project.title}"`,
+            "Project Invitation",
+            `/project/${projectId}`,
+            {
+                visual_type: "image",
+                visual_resource: profile.avatarUrl
+            },
+            "image",
+            profile.avatarUrl || undefined
+        );
+    }  // Send Email to Invitee
     try {
         await sendEmail({
             to: invitee.email,

@@ -251,7 +251,7 @@ export async function fundProject(
         title: job.title,
         description: job.description,
         budget: finalPrice,
-        status: "ACTIVE", // As per PRD, but effectively pending payment
+        status: "PENDING", // Initial status pending payment verification
       },
     });
 

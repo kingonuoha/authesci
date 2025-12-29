@@ -26,6 +26,7 @@ interface User {
     role: string;
     isBanned: boolean;
     createdAt: Date;
+    lastSeenAt: Date | null;
 }
 
 interface AdminUserTableProps {
@@ -97,6 +98,14 @@ export function AdminUserTable({ users }: AdminUserTableProps) {
                             <div className="flex justify-between">
                                 <span className="text-neutral-500">Joined:</span>
                                 <span>{formatDistanceToNow(new Date(user.createdAt), { addSuffix: true })}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-neutral-500">Last Seen:</span>
+                                <span>
+                                    {user.lastSeenAt 
+                                        ? formatDistanceToNow(new Date(user.lastSeenAt), { addSuffix: true })
+                                        : "Never"}
+                                </span>
                             </div>
                         </div>
                     </div>

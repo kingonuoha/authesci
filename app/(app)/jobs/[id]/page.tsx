@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MapPin, Briefcase, DollarSign, Clock, ArrowLeft, Building2 } from "lucide-react";
+import { MapPin, Briefcase, DollarSign, Clock, ArrowLeft, Building2, Shapes, Info } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { ApplicantAvatarGroup } from "@/components/modules/jobs/ApplicantAvatarGroup";
@@ -55,7 +55,7 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
                 {/* Main Content */}
                 <div className="lg:col-span-8 space-y-10">
                     {/* Header */}
-                    <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-10 shadow-sm">
+                    <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-8 shadow-sm">
                         <div className="flex flex-col gap-6">
                             <div className="flex justify-between items-start">
                                 <div className="flex items-start gap-4">
@@ -74,8 +74,8 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
                                         </div>
                                     )}
                                     <div>
-                                        <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-3">{job.title}</h1>
-                                        <p className="text-lg text-neutral-500 dark:text-neutral-400 font-medium">{job.employer.institution}</p>
+                                        <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white mb-2">{job.title}</h1>
+                                        <p className="text-base text-neutral-500 dark:text-neutral-400 font-medium">{job.employer.institution}</p>
                                     </div>
                                 </div>
                                 <span className={`badge px-4 py-1.5 rounded-full text-sm font-medium ${job.status === "ACTIVE" ? "bg-success-100 text-success-700" : "bg-neutral-100 text-neutral-700"
@@ -84,11 +84,21 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
                                 </span>
                             </div>
 
-                            <div className="flex flex-wrap gap-4 text-sm text-neutral-500 dark:text-neutral-400 mt-2">
-                                <div className="flex items-center gap-2 bg-neutral-50 dark:bg-neutral-700/50 px-4 py-2 rounded-lg">
+                            <div className="flex flex-wrap gap-3 text-sm text-neutral-500 dark:text-neutral-400 mt-2">
+                                <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-lg font-semibold ring-1 ring-blue-500/10">
                                     <Briefcase className="w-4 h-4" />
-                                    <span className="capitalize">{job.jobType.replace("_", " ")}</span>
+                                    <span className="capitalize">{job.jobType.toLowerCase().replace("_", " ")}</span>
                                 </div>
+                                <div className="flex items-center gap-2 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 px-4 py-2 rounded-lg font-semibold ring-1 ring-purple-500/10">
+                                    <Shapes className="w-4 h-4" />
+                                    <span>{job.projectType || "Short-term"}</span>
+                                </div>
+                                {job.category && (
+                                    <div className="flex items-center gap-2 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 px-4 py-2 rounded-lg font-medium border border-neutral-200 dark:border-neutral-700">
+                                        <Info className="w-4 h-4" />
+                                        <span>{job.category}</span>
+                                    </div>
+                                )}
                                 {job.location && (
                                     <div className="flex items-center gap-2 bg-neutral-50 dark:bg-neutral-700/50 px-4 py-2 rounded-lg">
                                         <MapPin className="w-4 h-4" />
@@ -96,9 +106,11 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
                                     </div>
                                 )}
                                 {job.salaryRange && (
-                                    <div className="flex items-center gap-2 bg-neutral-50 dark:bg-neutral-700/50 px-4 py-2 rounded-lg">
-                                        <DollarSign className="w-4 h-4" />
-                                        <span>{job.salaryRange}</span>
+                                    <div className="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 px-4 py-2 rounded-lg border border-green-200 dark:border-green-800 shadow-sm">
+                                        <DollarSign className="w-4 h-4 text-green-600 dark:text-green-400" />
+                                        <span className="font-bold text-green-700 dark:text-green-400">
+                                            {job.salaryRange.replace(/\d+/g, (m) => Number(m).toLocaleString())}
+                                        </span>
                                     </div>
                                 )}
                                 <div className="flex items-center gap-2 bg-neutral-50 dark:bg-neutral-700/50 px-4 py-2 rounded-lg">
@@ -110,10 +122,10 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
                     </div>
 
                     {/* Description & Requirements */}
-                    <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-10 shadow-sm space-y-10">
+                    <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-8 shadow-sm space-y-10">
                         <section>
-                            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">About the Role</h2>
-                            <div className="prose max-w-none text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap leading-relaxed text-lg">
+                            <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">About the Role</h2>
+                            <div className="prose max-w-none text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap leading-relaxed text-base dark:prose-invert">
                                 {job.description}
                             </div>
                         </section>
@@ -121,11 +133,11 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
                         <div className="border-t border-neutral-100 dark:border-neutral-700 my-8"></div>
 
                         <section>
-                            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">Requirements</h2>
-                            <ul className="space-y-4 text-neutral-600 dark:text-neutral-300 text-lg">
+                            <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">Requirements</h2>
+                            <ul className="space-y-4 text-neutral-600 dark:text-neutral-300 text-base">
                                 {job.requirements.map((req, index) => (
                                     <li key={index} className="flex items-start gap-3">
-                                        <span className="mt-2.5 w-1.5 h-1.5 bg-neutral-900 dark:bg-white rounded-full flex-shrink-0" />
+                                        <span className="mt-2.5 w-1.5 h-1.5 bg-neutral-900 dark:bg-neutral-300 rounded-full flex-shrink-0" />
                                         <span>{req}</span>
                                     </li>
                                 ))}
@@ -137,7 +149,7 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
                 {/* Sidebar / Sticky Actions */}
                 <div className="lg:col-span-4">
                     <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-6 shadow-sm sticky top-24">
-                        <h3 className="text-lg font-semibold mb-4">Interested in this job?</h3>
+                        <h3 className="text-lg font-semibold mb-4 text-neutral-900 dark:text-neutral-100">Interested in this job?</h3>
 
                         {job.applications.length > 0 && (
                             <div className="mb-6">

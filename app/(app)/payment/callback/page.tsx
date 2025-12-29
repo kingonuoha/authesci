@@ -11,7 +11,7 @@ import { Suspense } from "react";
 function PaymentCallbackContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "success" | "error" | "initializing">("loading");
   const [projectId, setProjectId] = useState<string | null>(null);
   const verifiedRef = useRef(false);
 
@@ -34,8 +34,9 @@ function PaymentCallbackContent() {
         const result = await verifyPayment(reference);
 
         if (result.success) {
-          setStatus("success");
-          toast.success("Payment successful! Project created.");
+          toast.success("Payment confirmed!");
+          setStatus("initializing");
+
           if (result.projectId) {
             setProjectId(result.projectId);
             // Optional: Auto redirect after a few seconds
@@ -67,6 +68,14 @@ function PaymentCallbackContent() {
             <Loader2 className="w-12 h-12 text-primary-600 animate-spin mx-auto mb-4" />
             <h2 className="text-xl font-bold mb-2 text-neutral-900 dark:text-white">Verifying Payment</h2>
             <p className="text-neutral-500 dark:text-neutral-400">Please wait while we confirm your transaction...</p>
+          </>
+        )}
+
+        {status === "initializing" && (
+          <>
+            <Loader2 className="w-12 h-12 text-primary-600 animate-spin mx-auto mb-4" />
+            <h2 className="text-xl font-bold mb-2 text-neutral-900 dark:text-white">Initializing Project</h2>
+            <p className="text-neutral-500 dark:text-neutral-400">Please wait while we set up your workspace...</p>
           </>
         )}
 

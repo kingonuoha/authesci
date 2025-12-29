@@ -22,7 +22,7 @@ export function ProfileCard({ profile }: ProfileCardProps) {
         height={150}
         className="w-full object-cover h-[150px]"
       />
-      
+
       {/* Profile Content with negative margin to overlap cover */}
       <div className="pb-6 ms-6 mb-6 me-6 -mt-[100px]">
         <div className="text-center border-b border-neutral-200 dark:border-neutral-600 pb-6">
@@ -35,7 +35,7 @@ export function ProfileCard({ profile }: ProfileCardProps) {
               className="border-4 border-white dark:border-neutral-700 rounded-full object-cover"
             />
           </div>
-          
+
           {/* Name and Email */}
           <div className="mt-4 flex items-center justify-center gap-2">
             <h6 className="mb-0 text-lg font-semibold text-neutral-900 dark:text-white">
@@ -47,7 +47,7 @@ export function ProfileCard({ profile }: ProfileCardProps) {
             {profile.email}
           </span>
         </div>
-        
+
         {/* Personal Info Section */}
         <div className="mt-6">
           <h6 className="text-xl font-semibold mb-4 text-neutral-900 dark:text-white">
@@ -88,14 +88,7 @@ export function ProfileCard({ profile }: ProfileCardProps) {
                 </span>
               </li>
             )}
-            <li className="flex items-start gap-1">
-              <span className="w-[30%] text-sm font-semibold text-neutral-600 dark:text-neutral-200">
-                Bio
-              </span>
-              <span className="w-[70%] text-secondary-light text-sm font-medium">
-                : {profile.bio || "No bio provided."}
-              </span>
-            </li>
+
           </ul>
         </div>
       </div>

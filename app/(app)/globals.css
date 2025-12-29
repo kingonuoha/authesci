@@ -107,3 +107,51 @@
 .d-footer {
   margin-top: auto;
 }
+
+/* Fix for mobile sidebar links not showing */
+.sidebar.sidebar-open .sidebar-menu-link-text {
+  display: inline-block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: auto !important;
+}
+
+.sidebar.sidebar-open .sidebar-menu li a .menu-icon {
+  margin-inline-end: 0.5rem !important;
+  display: inline-block !important;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Force Input Padding for Currency Fields */
+.form-padding-left {
+  padding-left: 3rem !important;
+}
+
+@media (min-width: 768px) {
+  .form-padding-left {
+    padding-left: 3.5rem !important;
+  }
+}

@@ -58,6 +58,22 @@ export async function createTask(
       },
     });
 
+    if (imageUrl) {
+        try {
+            // Fetch file size from Cloudinary/URL
+            const headRes = await fetch(imageUrl, { method: 'HEAD' });
+            const size = Number(headRes.headers.get('content-length') || 0);
+            if (size > 0) {
+                await prisma.profile.update({
+                    where: { id: profile.id },
+                    data: { storageUsed: { increment: size } }
+                });
+            }
+        } catch (e) {
+            console.error("Failed to update storage for task image", e);
+        }
+    }
+
     await logProjectActivity(projectId, profile.id, "TASK_CREATED", { taskId: task.id, title });
 
     revalidatePath(`/project/${projectId}/kanban`);
@@ -142,6 +158,21 @@ export async function updateTask(
             imageUrl: data.imageUrl,
         },
       });
+
+      if (data.imageUrl) {
+        try {
+            const headRes = await fetch(data.imageUrl, { method: 'HEAD' });
+            const size = Number(headRes.headers.get('content-length') || 0);
+            if (size > 0) {
+                await prisma.profile.update({
+                    where: { id: profile.id },
+                    data: { storageUsed: { increment: size } }
+                });
+            }
+        } catch (e) {
+            console.error("Failed to update storage for task image update", e);
+        }
+      }
 
       await logProjectActivity(projectId, profile.id, "TASK_UPDATED", { taskId, title: task.title });
   

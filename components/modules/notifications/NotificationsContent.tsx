@@ -227,7 +227,12 @@ export default function NotificationsContent() {
                                         className={`p-4 transition-colors hover:bg-gray-50 dark:hover:bg-neutral-700/50 ${!note.read ? 'bg-blue-50/30 dark:bg-blue-900/10' : ''}`}
                                     >
                                         <div className="flex items-start gap-4">
-                                            <div className={`mt-1 relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full overflow-hidden ${!note.read ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700'}`}>
+                                            <div className={`mt-1 relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full overflow-hidden ${note.metadata?.visual_type === 'image' ? '' :
+                                                    note.type === 'SUCCESS' || note.title?.includes('Success') ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
+                                                        note.type === 'ERROR' || note.title?.includes('Failed') ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' :
+                                                            note.type === 'WARNING' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                                                'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                                }`}>
                                                 {note.metadata?.visual_type === 'image' && note.metadata?.visual_resource ? (
                                                     <img
                                                         src={note.metadata.visual_resource}

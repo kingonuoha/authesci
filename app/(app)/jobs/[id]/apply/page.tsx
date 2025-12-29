@@ -13,8 +13,25 @@ export default async function ApplyPage({ params }: { params: Promise<{ id: stri
         include: { employer: true },
     });
 
-    if (!job || job.status !== "ACTIVE") {
+    if (!job) {
         notFound();
+    }
+
+    if (job.status === "CLOSED" || job.status === "PENDING_PAYMENT") {
+        return (
+            <div className="container py-20 max-w-2xl text-center min-h-[60vh] flex flex-col items-center justify-center">
+                <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <ArrowLeft className="w-8 h-8 text-neutral-400" />
+                </div>
+                <h1 className="text-3xl font-bold mb-4 text-neutral-900 dark:text-white">Job Closed</h1>
+                <p className="text-xl text-neutral-500 dark:text-neutral-400 mb-8 max-w-md mx-auto">
+                    This position is no longer accepting applications.
+                </p>
+                <Link href="/jobs" className="btn btn-primary px-8 py-3 rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 transition-colors">
+                    Back to Job Board
+                </Link>
+            </div>
+        );
     }
 
     const supabase = await createClient();

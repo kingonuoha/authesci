@@ -5,7 +5,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GeneralTab } from "@/components/modules/settings/GeneralTab";
 import { NotificationsTab } from "@/components/modules/settings/NotificationsTab";
 import { SecurityTab } from "@/components/modules/settings/SecurityTab";
-import Breadcrumb from "@/components/modules/Breadcrumb";
+import { StorageInfo } from "@/components/modules/settings/StorageInfo";
+import { checkStorageCapacity } from "@/app/(app)/actions/storage";
+import { DangerZone } from "@/components/modules/settings/DangerZone";
+import { Role } from "@prisma/client";
 
 export const metadata: Metadata = {
     title: "Settings | Authesci",
@@ -15,10 +18,14 @@ export const metadata: Metadata = {
 export default async function SettingsPage() {
     const { user } = await getAuthenticatedUser();
 
-    const profile = await prisma.profile.findUnique({
-        where: { userId: user.id },
-        select: { settings: true },
-    });
+    // This is a server component, so we can fetch data directly.
+    const [profile, storageData] = await Promise.all([
+        prisma.profile.findUnique({
+            where: { userId: user.id },
+            select: { settings: true, role: true },
+        }),
+        checkStorageCapacity(0) // Call with 0 to just get current usage
+    ]);
 
     const settings = (profile?.settings as any) || {};
 
@@ -30,6 +37,12 @@ export default async function SettingsPage() {
 
             <div className="card border-0 bg-white dark:bg-neutral-700 rounded-2xl shadow-sm">
                 <div className="card-body p-6">
+
+                    <StorageInfo
+                        storageUsed={storageData.storageUsed}
+                        storageCapacity={storageData.storageCapacity}
+                    />
+
                     <Tabs defaultValue="general" className="w-full">
                         <TabsList className="mb-8 w-full justify-start bg-transparent border-b border-neutral-200 dark:border-neutral-600 rounded-none h-auto p-0 space-x-6">
                             <TabsTrigger
@@ -50,6 +63,14 @@ export default async function SettingsPage() {
                             >
                                 Security
                             </TabsTrigger>
+                            {profile?.role === Role.ADMIN && (
+                                <TabsTrigger
+                                    value="danger"
+                                    className="rounded-none border-b-2 border-transparent px-4 py-3 bg-transparent text-red-500 font-medium data-[state=active]:border-red-600 data-[state=active]:text-red-600 dark:text-red-400 dark:data-[state=active]:text-red-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                                >
+                                    Danger Zone
+                                </TabsTrigger>
+                            )}
                         </TabsList>
 
                         <TabsContent value="general" className="mt-6 focus-visible:outline-none ring-0">
@@ -63,9 +84,16 @@ export default async function SettingsPage() {
                         <TabsContent value="security" className="mt-6 focus-visible:outline-none ring-0">
                             <SecurityTab />
                         </TabsContent>
+
+                        {profile?.role === Role.ADMIN && (
+                            <TabsContent value="danger" className="mt-6 focus-visible:outline-none ring-0">
+                                <DangerZone />
+                            </TabsContent>
+                        )}
                     </Tabs>
                 </div>
             </div>
         </div>
     );
 }
+

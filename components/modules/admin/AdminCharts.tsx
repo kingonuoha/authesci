@@ -204,12 +204,20 @@ export function AdminCharts({ userRoleDistribution, deviceRatio }: AdminChartsPr
           </div>
         </div>
         <div className="min-h-[350px]">
-          <ApexChartWrapper
-            options={pageViewsOptions}
-            series={pageViewsSeries}
-            type="area"
-            height={350}
-          />
+          {chartData.reduce((acc, curr) => acc + curr.total, 0) === 0 ? (
+            <div className="flex flex-col items-center justify-center h-[350px] text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-800">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="mb-4 opacity-50"><path d="M3 3v18h18" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" /></svg>
+              <p className="text-sm font-medium">No page views recorded for this period</p>
+              <p className="text-xs mt-1 opacity-75">Waiting for traffic...</p>
+            </div>
+          ) : (
+            <ApexChartWrapper
+              options={pageViewsOptions}
+              series={pageViewsSeries}
+              type="area"
+              height={350}
+            />
+          )}
         </div>
       </Card>
 

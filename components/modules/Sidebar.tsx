@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { X, FlaskConical } from 'lucide-react';
 import { Role } from '@prisma/client';
 import { NAV_LINKS } from '@/lib/constants/navigation';
+import pkg from '@/package.json';
 
 interface SidebarProps {
   role: Role;
@@ -51,13 +52,11 @@ const Sidebar = ({ role, isSidebarOpen, toggleSidebar, isMobileSidebarOpen, togg
         <ul className="sidebar-menu" id="sidebar-menu">
           {currentNavLinks.map((link, index) => (
             <li key={index} suppressHydrationWarning>
-              <Link href={link.href} className={`flex items-center justify-between ${pathname === link.href ? 'active-page' : ''}`}>
-                <div className="flex items-center gap-2">
-                  {link.icon && <link.icon className="menu-icon" />}
-                  <span>{link.label}</span>
-                </div>
+              <Link href={link.href} className={`flex items-center ${pathname === link.href ? 'active-page' : ''}`}>
+                {link.icon && <link.icon className="menu-icon" />}
+                <span className="sidebar-menu-link-text flex-1">{link.label}</span>
                 {link.label === 'Projects' && activeProjectCount && activeProjectCount > 0 && (
-                  <span className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 py-0.5 px-2 rounded-full text-xs font-medium mr-2">
+                  <span className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 py-0.5 px-2 rounded-full text-xs font-medium">
                     {activeProjectCount}
                   </span>
                 )}
@@ -65,6 +64,9 @@ const Sidebar = ({ role, isSidebarOpen, toggleSidebar, isMobileSidebarOpen, togg
             </li>
           ))}
         </ul>
+      </div>
+      <div className="sidebar-version text-xs text-neutral-500 dark:text-neutral-400 p-4">
+        v{pkg.version}
       </div>
     </aside>
   );
