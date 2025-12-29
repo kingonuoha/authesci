@@ -22,7 +22,7 @@ export function AdminUserFilters() {
     const [search, setSearch] = useState(searchParams.get("search") || "");
     const [role, setRole] = useState(searchParams.get("role") || "ALL");
     const [status, setStatus] = useState(searchParams.get("status") || "ALL"); // Banned/Active
-    const [date, setDate] = useState(searchParams.get("date") || ""); // Simple date string for now
+    const [lastSeen, setLastSeen] = useState(searchParams.get("last_seen") || "");
 
     // Debounce search
     const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -43,19 +43,19 @@ export function AdminUserFilters() {
         if (status && status !== "ALL") params.set("status", status);
         else params.delete("status");
 
-        if (date) params.set("date", date);
-        else params.delete("date");
+        if (lastSeen) params.set("last_seen", lastSeen);
+        else params.delete("last_seen");
 
         params.set("page", "1"); // Reset to page 1 on filter change
 
         router.push(`?${params.toString()}`);
-    }, [debouncedSearch, role, status, date, router]); // Intentionally not including searchParams to avoid loop
+    }, [debouncedSearch, role, status, lastSeen, router]); // Intentionally not including searchParams
 
     const clearFilters = () => {
         setSearch("");
         setRole("ALL");
         setStatus("ALL");
-        setDate("");
+        setLastSeen("");
         router.push("?");
     };
 
@@ -103,13 +103,23 @@ export function AdminUserFilters() {
                 {/* For date, using a simple input type="date" for join date filtering (Joined After) */}
                 <Input
                     type="date"
-                    placeholder="Joined after..."
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    title="Joined After"
+                    placeholder="Last Seen After..."
+                    value={lastSeen}
+                    onChange={(e) => {
+                        const selectedDate = new Date(e.target.value);
+                        const today = new Date();
+                        if (selectedDate > today) {
+                            // Prevent future dates
+                            return;
+                        }
+                        setLastSeen(e.target.value);
+                    }}
+                    max={new Date().toISOString().split("T")[0]}
+                    title="Filter by Last Seen"
+                    className="cursor-pointer"
                 />
             </div>
-            {(search || role !== "ALL" || status !== "ALL" || date) && (
+            {(search || role !== "ALL" || status !== "ALL" || lastSeen) && (
                 <div className="flex justify-end">
                     <Button variant="ghost" size="sm" onClick={clearFilters} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
                         <X className="w-4 h-4 mr-2" />

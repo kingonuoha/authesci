@@ -271,6 +271,7 @@ export async function promoteUserToAdminAction(userId: string) {
       data: { role: Role.ADMIN },
     });
     revalidatePath("/admin/users");
+    revalidatePath("/", "layout"); // Force full refresh to update Sidebar/Layout
     return { status: "success", message: "User promoted to Admin successfully" };
   } catch (error) {
     console.error("Error promoting user:", error);

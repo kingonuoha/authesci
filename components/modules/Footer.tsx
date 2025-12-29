@@ -42,8 +42,8 @@ const Footer: React.FC = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 text-center">
-            <h2 className="text-2xl font-bold mb-2">Authesci V1.0.3</h2>
-            <p className="text-sm text-neutral-500">Build 2025.12.16</p>
+            <h2 className="text-2xl font-bold mb-2">Authesci V1.0.5</h2>
+            <p className="text-sm text-neutral-500">Build 2025.12.29</p>
           </div>
         </DialogContent>
       </Dialog>
